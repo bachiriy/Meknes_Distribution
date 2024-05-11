@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('hoods', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->foreignId('city_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }
