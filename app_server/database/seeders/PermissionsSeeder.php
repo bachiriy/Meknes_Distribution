@@ -44,14 +44,14 @@ class PermissionsSeeder extends Seeder
     public function run(): void
     {
         foreach ($this->adminPermissions as $permission) {
-            Permission::create(['name' => $permission]);
+            Permission::create(['guard_name' => 'api', 'name' => $permission]);
         }
 
         foreach ($this->roles as $role) {
-            Role::create(['name' => $role]);
+            Role::create(['guard_name' => 'api','name' => $role]);
         }
 
-        Role::findByName('admin')->givePermissionTo($this->adminPermissions);
-        Role::findByName('sub-admin')->givePermissionTo($this->subAdminPermissions);
+        Role::findByName('admin', 'api')->givePermissionTo($this->adminPermissions);
+        Role::findByName('sub-admin', 'api')->givePermissionTo($this->subAdminPermissions);
     }
 }
