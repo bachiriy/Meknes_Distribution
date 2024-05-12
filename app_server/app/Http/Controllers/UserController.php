@@ -31,4 +31,13 @@ class UserController extends Controller
         ];
         return response()->json($response);
     }
+
+    function destroy(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $user = User::find($request->id);
+        $user->delete();
+        return response()->json([
+            'status' => 'success'
+        ]);
+    }
 }
