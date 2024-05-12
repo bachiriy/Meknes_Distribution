@@ -8,7 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     use HasFactory;
-    protected $fillable = [];
+
+    protected $fillable = [
+        'name',
+        'brand',
+        'model',
+    ];
 
 
     function clientFiles(): \Illuminate\Database\Eloquent\Relations\HasMany
