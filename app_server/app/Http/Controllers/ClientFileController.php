@@ -59,7 +59,7 @@ class ClientFileController extends Controller
         $clientFile = ClientFile::find($id);
         $clientFile->delete();
         return response()->json([
-            'status' => 'success'
+            'status' => 'Client File Deleted Successfully'
         ]);
     }
 }

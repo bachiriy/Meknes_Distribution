@@ -55,7 +55,8 @@ class ProductController extends Controller
         $product = Product::find($id);
         $product->delete();
         return response()->json([
-            'status' => 'success'
+            'status' => 'Product Deleted Successfully'
         ]);
     }
+
 }
