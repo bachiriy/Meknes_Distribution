@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,8 +15,16 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-Route::middleware('auth:api')->group( function () {
+Route::middleware('auth:api')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
+
+    // Admin Routes
+    Route::group(['middleware' => ['role:admin']], function () {
+        Route::prefix('users')->group(function () {
+            Route::post('assignRole', [UserController::class, 'assignRoleToUser']);
+        });
+    });
+
 
 });
 
