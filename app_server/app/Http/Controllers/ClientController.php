@@ -21,10 +21,14 @@ class ClientController extends Controller
     function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'CIN_ICE' => 'required|string',
+            'type' => 'required|string',
+            'email' => 'required|email',
+            'phone' => 'required|string',
+            'address_exploitation' => 'required|string',
+            'address_facturation' => 'required|string',
             'first_name' => 'required|string',
             'last_name' => 'required|string',
-            'card_id' => 'required|string',
-            'address' => 'required|string',
         ]);
 
         if ($validator->fails()) {
@@ -32,10 +36,16 @@ class ClientController extends Controller
         }
 
         $data = $request->only(
+            'CIN_ICE',
+            'type',
             'first_name',
             'last_name',
-            'card_id',
-            'address',
+            'email',
+            'phone',
+            'address_exploitation',
+            'suite_address_exploitation',
+            'address_facturation',
+            'suite_address_facturation',
         );
 
         $client = Client::create($data);
