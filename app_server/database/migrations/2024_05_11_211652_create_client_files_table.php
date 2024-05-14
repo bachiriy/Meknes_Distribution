@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('client_files', function (Blueprint $table) {
             $table->id();
             $table->foreignId('client_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('hood_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('commune_id')->constrained()->cascadeOnDelete();
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
             $table->string('exploitation_address');
             $table->string('exploitation_surface');
