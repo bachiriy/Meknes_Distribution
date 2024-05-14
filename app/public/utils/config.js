@@ -2,8 +2,8 @@ const { join } = require("path");
 const isDev = require("electron-is-dev");
 
 let config = {
-	appName: "Electron React Tailwind Template",
-	icon: join(__dirname, "..", "/favicon.ico"),
+	appName: "Meknes Distribution",
+	icon: join(__dirname, "..", "/md-icon.png"),
 	tray: null,
 	isQuiting: false,
 	mainWindow: null,

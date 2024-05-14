@@ -5,7 +5,7 @@ import {
 	IoExpandOutline,
 	IoRemove,
 } from "react-icons/io5";
-import Amethyst from "../../assets/amethyst.png";
+import Amethyst from "../../assets/logo-sm.png";
 
 const { getCurrentWindow, app } = window.require("@electron/remote");
 
@@ -28,7 +28,7 @@ export const Titlebar: FC = () => {
 	const onQuit = () => app.quit();
 
 	return (
-		<div className="title-bar sticky top-0 select-none">
+		<div className="title-bar sticky top-0 select-none z-50">
 			<div className="menu-button-container">
 				<img
 					id="icon"
@@ -37,27 +37,24 @@ export const Titlebar: FC = () => {
 					alt="amethyst"
 				/>
 			</div>
-			<div className="app-name-container select-none">
-				<p>Electron React Tailwind Template</p>
-			</div>
 			<div className="window-controls-container">
 				<button
 					title="Minimize"
-					className="minimize-button focus:outline-none hover:bg-gray-700"
+					className="minimize-button focus:outline-none hover:animate-spin hover:text-yellow-400"
 					onClick={onMinimize}
 				>
 					<IoRemove />
 				</button>
 				<button
 					title="Maximize"
-					className="min-max-button focus:outline-none hover:bg-gray-700"
+					className="min-max-button focus:outline-none hover:animate-pulse hover:text-green-400"
 					onClick={onMaximize}
 				>
 					{maximized ? <IoContractOutline /> : <IoExpandOutline />}
 				</button>
 				<button
 					title="Close"
-					className="close-button focus:outline-none hover:bg-gray-700"
+					className="close-button focus:outline-none hover:animate-ping hover:text-red-800"
 					onClick={onQuit}
 				>
 					<IoCloseOutline />
