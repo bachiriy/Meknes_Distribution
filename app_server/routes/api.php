@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ClientController;
+use App\Http\Controllers\ClientFileController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use App\Models\Client;
 use App\Models\ClientFile;
@@ -27,28 +30,26 @@ Route::middleware('auth:api')->group(function () {
             Route::post('assignRole', [UserController::class, 'assignRoleToUser']);
         });
     });
-
     Route::prefix('products')->group(function () {
-        Route::get('', [Product::class, 'index']);
-        Route::post('', [Product::class, 'store']);
-        Route::put('/{id}', [Product::class, 'update']);
-        Route::delete('/{id}', [Product::class, 'destroy']);
+        Route::get('', [ProductController::class, 'index']);
+        Route::post('', [ProductController::class, 'store']);
+        Route::put('/{id}', [ProductController::class, 'update']);
+        Route::delete('/{id}', [ProductController::class, 'destroy']);
     });
 
     Route::prefix('clients')->group(function () {
-        Route::get('', [Client::class, 'index']);
-        Route::post('', [Client::class, 'store']);
-        Route::put('/{id}', [Client::class, 'update']);
-        Route::delete('/{id}', [Client::class, 'destroy']);
+        Route::get('', [ClientController::class, 'index']);
+        Route::post('', [ClientController::class, 'store']);
+        Route::put('/{id}', [ClientController::class, 'update']);
+        Route::delete('/{id}', [ClientController::class, 'destroy']);
     });
 
     Route::prefix('clientFiles')->group(function () {
-        Route::get('', [ClientFile::class, 'index']);
-        Route::post('', [ClientFile::class, 'store']);
-        Route::put('/{id}', [ClientFile::class, 'update']);
-        Route::delete('/{id}', [ClientFile::class, 'destroy']);
+        Route::get('', [ClientFileController::class, 'index']);
+        Route::post('', [ClientFileController::class, 'store']);
+        Route::put('/{id}', [ClientFileController::class, 'update']);
+        Route::delete('/{id}', [ClientFileController::class, 'destroy']);
     });
-
 
 });
 
