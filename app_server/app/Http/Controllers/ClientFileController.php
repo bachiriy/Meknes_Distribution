@@ -22,7 +22,7 @@ class ClientFileController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'client_id' => 'required|numeric|exists:client,id',
-            'hood_id' => 'required|numeric|exists:hood,id',
+            'commune_id' => 'required|numeric|exists:communes,id',
             'product_id' => 'required|numeric|exists:product,id',
             'exploitation_address' => 'required|string',
             'exploitation_surface' => 'required|string',
@@ -34,7 +34,7 @@ class ClientFileController extends Controller
 
         $data = $request->only(
             'client_id',
-            'hood_id',
+            'commune_id',
             'product_id',
             'exploitation_address',
             'exploitation_surface'
