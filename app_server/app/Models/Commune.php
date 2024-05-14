@@ -5,17 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Hood extends Model
+class Commune extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'name',
-        'city_id'
     ];
 
-    function city(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    function caidat(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(City::class);
+        return $this->belongsTo(Caidat::class);
     }
 
     function clientFiles(): \Illuminate\Database\Eloquent\Relations\HasMany
