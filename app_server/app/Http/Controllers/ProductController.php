@@ -21,9 +21,18 @@ class ProductController extends Controller
     function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'brand' => 'required|string',
-            'model' => 'required|string',
-            'name' => 'required|string',
+            'reference' => 'required|string',
+            'designation' => 'required|string',
+            'image' => 'required|string',
+            'prix_tarif' => 'required|numeric',
+            'prix_achat' => 'required|numeric',
+            'prix_vente' => 'required|numeric',
+            'marge_brut' => 'required|numeric',
+            'remise' => 'required|numeric',
+            'TVA' => 'required|numeric',
+            'prix_vente_net' => 'required|numeric',
+            'category_id' => 'required|numeric|exists:categories,id',
+            'group_id' => 'required|numeric|exists:groups,id'
         ]);
 
         if ($validator->fails()) {
@@ -31,9 +40,18 @@ class ProductController extends Controller
         }
 
         $data = $request->only(
-            'name',
-            'brand',
-            'model',
+            'reference',
+            'designation',
+            'image',
+            'prix_tarif',
+            'prix_achat',
+            'prix_vente',
+            'marge_brut',
+            'remise',
+            'TVA',
+            'prix_vente_net',
+            'category_id',
+            'group_id'
         );
 
         $product = Product::create($data);
