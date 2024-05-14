@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             PermissionsSeeder::class,
             AdminSeeder::class,
-            /*CommentSeeder::class,*/
+            CitiesSeeder::class
         ]);
     }
 }
