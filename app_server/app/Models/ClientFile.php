@@ -23,9 +23,9 @@ class ClientFile extends Model
         return $this->belongsTo(Client::class);
     }
 
-    function hood(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    function commune(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(Hood::class);
+        return $this->belongsTo(Commune::class);
     }
 
     function product(): \Illuminate\Database\Eloquent\Relations\BelongsTo
