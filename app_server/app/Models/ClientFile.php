@@ -10,17 +10,14 @@ class ClientFile extends Model
     use HasFactory;
 
     protected $fillable = [
-        'client_id',
-        'hood_id',
+        'commune_id',
         'product_id',
-        'exploitation_address',
         'exploitation_surface',
     ];
 
-
-    function client(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    function client(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
-        return $this->belongsTo(Client::class);
+        return $this->belongsToMany(Client::class, 'client_partners');
     }
 
     function commune(): \Illuminate\Database\Eloquent\Relations\BelongsTo
