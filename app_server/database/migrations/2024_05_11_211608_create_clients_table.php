@@ -13,6 +13,7 @@ return new class extends Migration {
         Schema::create('clients', function (Blueprint $table) {
             $table->id();
             $table->string('CIN_ICE');
+            $table->string('CIN_file');
             $table->string('type');
             $table->string('first_name');
             $table->string('last_name');
