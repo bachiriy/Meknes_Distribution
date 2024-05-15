@@ -39,4 +39,8 @@ class Product extends Model
     {
         return $this->belongsTo(Group::class);
     }
+    function supplier(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Supplier::class, 'supplier_id');
+    }
 }

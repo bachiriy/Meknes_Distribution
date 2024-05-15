@@ -9,15 +9,20 @@ class Group extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'category_id'];
 
-    function products(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function products(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Product::class);
     }
 
-    function tarifs(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function tarifs(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Tarif::class);
+    }
+
+    public function category(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Category::class);
     }
 }
