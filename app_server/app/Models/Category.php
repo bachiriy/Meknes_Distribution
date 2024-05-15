@@ -11,13 +11,18 @@ class Category extends Model
 
     protected $fillable = ['name'];
 
-    function products (): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function products(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Product::class);
     }
 
-    function tarifs (): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function tarifs(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Tarif::class);
+    }
+
+    public function groups(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Group::class);
     }
 }
