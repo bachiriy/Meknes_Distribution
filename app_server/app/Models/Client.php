@@ -4,21 +4,30 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Client extends Model
+class Client extends Model implements HasMedia
 {
-    use HasFactory;
+    use HasFactory, InteractsWithMedia;
 
     protected $fillable = [
+        'CIN_ICE',
+        'CIN_file',
+        'type',
         'first_name',
         'last_name',
-        'card_id',
-        'address',
+        'email',
+        'phone',
+        'address_exploitation',
+        'suite_address_exploitation',
+        'address_facturation',
+        'suite_address_facturation',
     ];
 
 
-    function clientFiles(): \Illuminate\Database\Eloquent\Relations\HasMany
+    function clientFiles(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
-        return $this->hasMany(ClientFile::class);
+        return $this->belongsToMany(ClientFile::class, 'client_partners');
     }
 }

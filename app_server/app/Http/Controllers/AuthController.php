@@ -83,4 +83,8 @@ class AuthController extends Controller
             return response()->json(['error' => 'Not authenticated']);
         }
     }
+
+    public function isConnected(){
+        return Auth::guard('api')->check() ? true : false;
+    }
 }

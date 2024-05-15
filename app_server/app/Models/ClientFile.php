@@ -4,28 +4,27 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class ClientFile extends Model
+class ClientFile extends Model implements HasMedia
 {
-    use HasFactory;
+    use HasFactory, InteractsWithMedia;
 
     protected $fillable = [
-        'client_id',
-        'hood_id',
+        'commune_id',
         'product_id',
-        'exploitation_address',
         'exploitation_surface',
     ];
 
-
-    function client(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    function client(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
-        return $this->belongsTo(Client::class);
+        return $this->belongsToMany(Client::class, 'client_partners');
     }
 
-    function hood(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    function commune(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(Hood::class);
+        return $this->belongsTo(Commune::class);
     }
 
     function product(): \Illuminate\Database\Eloquent\Relations\BelongsTo
