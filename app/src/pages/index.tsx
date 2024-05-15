@@ -1,14 +1,15 @@
-import { FC } from "react";
 import { Layout } from "../components/Layout";
-import Bg1 from "../assets/bg-1.png";
 import Aside from "../components/Aside";
+import { Login } from "../components/Login";
 
 let isLoggedIn = true;
 
-export const IndexPage: FC = () => {
+export const IndexPage = () => {
 	return (
 		<Layout>
-			{/* <Aside /> */}
+			{
+				isLoggedIn ? <Login /> : <Aside inPage={1} />
+			}
 		</Layout>
 	);
 };
