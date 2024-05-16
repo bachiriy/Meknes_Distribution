@@ -33,7 +33,7 @@ const Aside = ({ inPage, setIsConnected }) => {
       {loading ? (
         <Spinner />
       ) : (
-        <aside className="h-full w-12 py-4 flex flex-col space-y-8 items-center justify-center fixed bg-[#0a0a0a] text-white">
+        <aside className="h-full w-12 py-4 flex flex-col space-y-8 items-center fixed bg-[#0a0a0a] text-white">
           <div
             className={
               "h-6 w-6 flex items-center justify-center rounded-lg cursor-pointer hover:text-white hover:duration-300 hover:ease-linear focus:bg-white " +
@@ -158,3 +158,5 @@ const Aside = ({ inPage, setIsConnected }) => {
     </>
   );
 };
+
+export default Aside;
