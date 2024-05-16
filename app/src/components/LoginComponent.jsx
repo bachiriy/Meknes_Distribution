@@ -5,11 +5,9 @@ import Cookies from "js-cookie";
 import Spinner from "../components/Spinner";
 
 export const LoginComponent = (props) => {
-  const [token, setToken] = useState("");
-  const [user, setUser] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
 
   const handleLogin = async (e) => {
