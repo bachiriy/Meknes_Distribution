@@ -84,7 +84,8 @@ class AuthController extends Controller
         }
     }
 
-    public function isConnected(){
-        return Auth::guard('api')->check() ? true : false;
+    public function isConnected(): \Illuminate\Http\JsonResponse
+    {
+        return response()->json(['data' => Auth::guard('api')->check()]);
     }
 }
