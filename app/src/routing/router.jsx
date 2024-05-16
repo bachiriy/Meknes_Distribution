@@ -4,9 +4,11 @@ import { useLayoutEffect, useState } from "react";
 import authChecker from "../utils/authChecker";
 import { Home } from "../pages/home";
 import { Layout } from "../components/Layout";
+import { Product } from "../pages/product";
 
 export const Router = (props) => {
   const [isConnected, setIsConnected] = useState(false);
+  const [page, setPage] = useState(1);
   useLayoutEffect(() => {
     const waitForIt = async () => {
       setIsConnected(await authChecker());
@@ -22,8 +24,18 @@ export const Router = (props) => {
         )}
 
         {isConnected && (
-          <Route element={<Layout setIsConnected={setIsConnected} />}>
-            <Route path="/" element={<Home />} />
+          <Route
+            element={
+              <Layout
+                setIsConnected={setIsConnected}
+                page={page}
+                setPage={setPage}
+              />
+            }
+          >
+            {page === 1 && <Route path="/" element={<Home />} />}
+            {page === 2 && <Route path="/" element={<Product />} />}
+            {/* {page === 3 && <Route path="/"  />}   for client */}
           </Route>
         )}
       </Routes>
