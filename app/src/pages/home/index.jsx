@@ -1,10 +1,10 @@
 import React from "react";
 import Aside from "../../components/Aside";
 
-export const Home = () => {
+export const Home = (props) => {
   return (
     <main>
-      <Aside inPage={1} />
+      <Aside setIsConnected={props.setIsConnected} inPage={1} />
     </main>
   );
 };

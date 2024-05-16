@@ -9,7 +9,7 @@ export const LoginComponent = (props) => {
   const [user, setUser] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
 
   const handleLogin = async (e) => {
@@ -22,14 +22,14 @@ export const LoginComponent = (props) => {
       },
       body: JSON.stringify({ email: username, password }),
     });
+    const data = await response.json();
     if (response.ok) {
-      const data = await response.json();
       Cookies.set("token", data.data.token, { expires: 7 });
       Cookies.set("user", JSON.stringify(data.data.user), { expires: 7 });
       console.log(JSON.parse(Cookies.get("user")));
       props.setIsConnected(true);
     } else {
-      alert("data");
+      console.log(data);
     }
     setLoading(false);
   };
@@ -121,6 +121,7 @@ export const LoginComponent = (props) => {
                       name="email"
                       className="mt-1 p-2 w-full rounded-md border border-gray-500 bg-white text-sm text-gray-700 shadow-sm"
                     />
+                    {/* <p className="text-red-800">hey this is an error</p> */}
                   </div>
                   <div className="col-span-6">
                     <label
