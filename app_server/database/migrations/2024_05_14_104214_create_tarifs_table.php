@@ -13,14 +13,14 @@ return new class extends Migration
     {
         Schema::create('tarifs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('category_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('group_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
             $table->string('marque')->nullable();
             $table->string('modele');
             $table->string('designation');
             $table->string('composition_remise');
             $table->string('taux_subvention')->nullable();
             $table->string('plafond_subvention')->nullable();
+            $table->string('cout_revient')->nullable();
             $table->timestamps();
         });
     }

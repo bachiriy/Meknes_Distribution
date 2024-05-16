@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('client_files', function (Blueprint $table) {
+        Schema::create('client_file_delivery_note', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('commune_id')->constrained()->cascadeOnDelete();
-            $table->string('exploitation_surface');
+            $table->foreignId('client_file_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('delivery_note_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('client_files');
+        Schema::dropIfExists('client_file_delivery_note');
     }
 };

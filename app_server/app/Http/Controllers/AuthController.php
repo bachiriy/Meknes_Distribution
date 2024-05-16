@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-    function register(Request $request)
+    function register(Request $request): \Illuminate\Http\JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|max:255',
@@ -40,7 +40,7 @@ class AuthController extends Controller
         return response()->json($response);
     }
 
-    function login(Request $request)
+    function login(Request $request): \Illuminate\Http\JsonResponse
     {
         $credentials = $request->only('email', 'password');
 
@@ -74,7 +74,7 @@ class AuthController extends Controller
         }
     }
 
-    function logout(Request $request)
+    function logout(Request $request): \Illuminate\Http\JsonResponse
     {
         if (Auth::check()) {
             Auth::user()->token()->revoke();
