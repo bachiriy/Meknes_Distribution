@@ -4,8 +4,11 @@ import Cookies from "js-cookie";
 import Spinner from './Spinner';
 import { useState } from "react";
 
-const Aside = ({ inPage, setIsConnected }) => {
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
+
+const Aside = ({ inPage, setIsConnected }) => {
     const [loading, setLoading] = useState(false)
 
     const handleLogOut = async (e) => {
@@ -21,7 +24,6 @@ const Aside = ({ inPage, setIsConnected }) => {
         if (response.ok) {
             Cookies.remove('token');
             Cookies.remove('user');
-            console.log('token removed');
             setIsConnected(false);
         } else {
             const errors = await response.json();
