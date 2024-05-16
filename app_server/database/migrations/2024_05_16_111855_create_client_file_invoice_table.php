@@ -4,17 +4,16 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('client_files', function (Blueprint $table) {
+        Schema::create('client_file_invoice', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('commune_id')->constrained()->cascadeOnDelete();
-            $table->string('exploitation_surface');
+            $table->foreignId('client_file_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('invoice_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }
@@ -24,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('client_files');
+        Schema::dropIfExists('client_file_invoice');
     }
 };

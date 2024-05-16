@@ -27,7 +27,7 @@ export const Router = (props) => {
 
           {isConnected && (
             <>
-              <Route path="/" element={<Home />} />
+              <Route path="/" element={<Home setIsConnected={setIsConnected} />} />
             </>
           )}
         </Route>

@@ -25,9 +25,19 @@ class Product extends Model
     ];
 
 
-    function clientFiles(): \Illuminate\Database\Eloquent\Relations\HasMany
+    function clientFile(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
-        return $this->hasMany(ClientFile::class);
+        return $this->belongsToMany(ClientFile::class);
+    }
+
+    function invoice(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Invoice::class);
+    }
+
+    function deliveryNote(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(DeliveryNote::class);
     }
 
     function category(): \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -39,6 +49,7 @@ class Product extends Model
     {
         return $this->belongsTo(Group::class);
     }
+
     function supplier(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Supplier::class, 'supplier_id');

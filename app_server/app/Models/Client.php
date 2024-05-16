@@ -15,6 +15,7 @@ class Client extends Model implements HasMedia
         'CIN_ICE',
         'CIN_file',
         'type',
+        'role',
         'first_name',
         'last_name',
         'email',
