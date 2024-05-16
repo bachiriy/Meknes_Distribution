@@ -28,6 +28,11 @@ const Aside = ({ page, setPage, setIsConnected }) => {
     setLoading(false);
   };
 
+  const handlePage = (pageValue, pageLink) => {
+    setPage(pageValue);
+    // window.location.href = pageLink;
+  };
+
   return (
     <>
       {loading ? (
@@ -36,7 +41,7 @@ const Aside = ({ page, setPage, setIsConnected }) => {
         <aside className="h-full w-12 py-4 flex flex-col space-y-8 items-center fixed bg-[#0a0a0a] text-white">
           <div
             onClick={() => {
-              setPage(1);
+              handlePage(1, '/');
             }}
             className={
               "h-6 w-6 flex items-center justify-center rounded-lg cursor-pointer hover:text-white hover:duration-300 hover:ease-linear focus:bg-white " +
@@ -63,7 +68,7 @@ const Aside = ({ page, setPage, setIsConnected }) => {
 
           <div
             onClick={() => {
-              setPage(2);
+              handlePage(2, '/products');
             }}
             className={
               "h-6 w-6 flex items-center justify-center rounded-lg cursor-pointer hover:text-white hover:duration-300 hover:ease-linear focus:bg-white " +
@@ -93,7 +98,7 @@ const Aside = ({ page, setPage, setIsConnected }) => {
 
           <div
             onClick={() => {
-              setPage(3);
+              handlePage(3, '/clients');
             }}
             className={
               "h-6 w-6 flex items-center justify-center rounded-lg cursor-pointer hover:text-white hover:duration-300 hover:ease-linear focus:bg-white " +
@@ -115,7 +120,7 @@ const Aside = ({ page, setPage, setIsConnected }) => {
           </div>
           <div
             onClick={() => {
-              setPage(4);
+              handlePage(4);
             }}
             className={
               "h-6 w-6 flex items-center justify-center rounded-lg cursor-pointer hover:text-white hover:duration-300 hover:ease-linear focus:bg-white " +
@@ -140,7 +145,7 @@ const Aside = ({ page, setPage, setIsConnected }) => {
 
           <div
             onClick={() => {
-              setPage(5);
+              handlePage(5);
             }}
             className={
               "h-6 w-6 flex items-center justify-center rounded-lg cursor-pointer hover:text-white hover:duration-300 hover:ease-linear focus:bg-white " +
@@ -169,14 +174,27 @@ const Aside = ({ page, setPage, setIsConnected }) => {
             </svg>
           </div>
           <div className="flex flex-col items-center justify-end h-full">
-                        <form
-                            onSubmit={handleLogOut}
-                        >
-                            <button>
-                                <svg className="h-6 w-6 text-gray-600 hover:text-red-500 cursor-pointer" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z" />  <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" />  <path d="M7 12h14l-3 -3m0 6l3 -3" /></svg>
-                            </button>
-                        </form>
-                    </div>
+            <form onSubmit={handleLogOut}>
+              <button>
+                <svg
+                  className="h-6 w-6 text-gray-600 hover:text-red-500 cursor-pointer"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  stroke-width="2"
+                  stroke="currentColor"
+                  fill="none"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  {" "}
+                  <path stroke="none" d="M0 0h24v24H0z" />{" "}
+                  <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" />{" "}
+                  <path d="M7 12h14l-3 -3m0 6l3 -3" />
+                </svg>
+              </button>
+            </form>
+          </div>
         </aside>
       )}
     </>
