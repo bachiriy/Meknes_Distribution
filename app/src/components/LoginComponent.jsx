@@ -2,6 +2,7 @@ import React from "react";
 import AuthBg from "../assets/bg-1.png";
 import { useState } from "react";
 import Cookies from "js-cookie";
+import Spinner from "../components/Spinner";
 
 export const LoginComponent = (props) => {
   const [token, setToken] = useState("");
@@ -32,7 +33,6 @@ export const LoginComponent = (props) => {
     }
     setLoading(false);
   };
-
   return (
     <>
       {loading ? (<Spinner />) : (
