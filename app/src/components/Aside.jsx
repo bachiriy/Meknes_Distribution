@@ -4,7 +4,7 @@ import Spinner from "./Spinner";
 import { useState } from "react";
 import "react-toastify/dist/ReactToastify.css";
 
-const Aside = ({ inPage, setIsConnected }) => {
+const Aside = ({ page, setPage, setIsConnected }) => {
   const [loading, setLoading] = useState(false);
 
   const handleLogOut = async (e) => {
@@ -35,29 +35,39 @@ const Aside = ({ inPage, setIsConnected }) => {
       ) : (
         <aside className="h-full w-12 py-4 flex flex-col space-y-8 items-center fixed bg-[#0a0a0a] text-white">
           <div
+            onClick={() => {
+              setPage(1);
+            }}
             className={
               "h-6 w-6 flex items-center justify-center rounded-lg cursor-pointer hover:text-white hover:duration-300 hover:ease-linear focus:bg-white " +
-              (inPage === 1 ? "text-white" : "text-neutral-600")
+              (page === 1 ? "text-white" : "text-neutral-600")
             }
           >
             <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              viewBox="0 0 20 20"
-              fill="currentColor"
+              class="h-6 w-6"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+              fill="none"
+              stroke-linecap="round"
+              stroke-linejoin="round"
             >
-              <path
-                fill-rule="evenodd"
-                d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                clip-rule="evenodd"
-              />
+              {" "}
+              <path stroke="none" d="M0 0h24v24H0z" />{" "}
+              <path d="M16 5v4a1 1 0 0 0 1 1h4" />{" "}
+              <path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2 -2v-7l-5 -5h-11a2 2 0 0 0 -2 2z" />
             </svg>
           </div>
 
           <div
+            onClick={() => {
+              setPage(2);
+            }}
             className={
               "h-6 w-6 flex items-center justify-center rounded-lg cursor-pointer hover:text-white hover:duration-300 hover:ease-linear focus:bg-white " +
-              (inPage === 2 ? "text-white" : "text-neutral-600")
+              (page === 2 ? "text-white" : "text-neutral-600")
             }
           >
             <svg
@@ -82,32 +92,34 @@ const Aside = ({ inPage, setIsConnected }) => {
           </div>
 
           <div
+            onClick={() => {
+              setPage(3);
+            }}
             className={
               "h-6 w-6 flex items-center justify-center rounded-lg cursor-pointer hover:text-white hover:duration-300 hover:ease-linear focus:bg-white " +
-              (inPage === 3 ? "text-white" : "text-neutral-600")
+              (page === 3 ? "text-white" : "text-neutral-600")
             }
           >
             <svg
-              class="h-6 w-6"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              stroke-width="2"
-              stroke="currentColor"
-              fill="none"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              viewBox="0 0 20 20"
+              fill="currentColor"
             >
-              {" "}
-              <path stroke="none" d="M0 0h24v24H0z" />{" "}
-              <path d="M16 5v4a1 1 0 0 0 1 1h4" />{" "}
-              <path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2 -2v-7l-5 -5h-11a2 2 0 0 0 -2 2z" />
+              <path
+                fill-rule="evenodd"
+                d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                clip-rule="evenodd"
+              />
             </svg>
           </div>
           <div
+            onClick={() => {
+              setPage(4);
+            }}
             className={
               "h-6 w-6 flex items-center justify-center rounded-lg cursor-pointer hover:text-white hover:duration-300 hover:ease-linear focus:bg-white " +
-              (inPage === 4 ? "text-white" : "text-neutral-600")
+              (page === 4 ? "text-white" : "text-neutral-600")
             }
           >
             <svg
@@ -127,9 +139,12 @@ const Aside = ({ inPage, setIsConnected }) => {
           </div>
 
           <div
+            onClick={() => {
+              setPage(5);
+            }}
             className={
               "h-6 w-6 flex items-center justify-center rounded-lg cursor-pointer hover:text-white hover:duration-300 hover:ease-linear focus:bg-white " +
-              (inPage === 5 ? "text-white" : "text-neutral-600")
+              (page === 5 ? "text-white" : "text-neutral-600")
             }
           >
             <svg
@@ -153,6 +168,15 @@ const Aside = ({ inPage, setIsConnected }) => {
               />
             </svg>
           </div>
+          <div className="flex flex-col items-center justify-end h-full">
+                        <form
+                            onSubmit={handleLogOut}
+                        >
+                            <button>
+                                <svg className="h-6 w-6 text-gray-600 hover:text-red-500 cursor-pointer" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z" />  <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" />  <path d="M7 12h14l-3 -3m0 6l3 -3" /></svg>
+                            </button>
+                        </form>
+                    </div>
         </aside>
       )}
     </>

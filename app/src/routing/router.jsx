@@ -3,6 +3,7 @@ import Login from "../pages/login";
 import { useLayoutEffect, useState } from "react";
 import authChecker from "../utils/authChecker";
 import { Home } from "../pages/home";
+import { Layout } from "../components/Layout";
 
 export const Router = (props) => {
   const [isConnected, setIsConnected] = useState(false);
@@ -11,26 +12,20 @@ export const Router = (props) => {
       setIsConnected(await authChecker());
     };
     waitForIt();
-    props.setLoading(false)
-  });
+    props.setLoading(false);
+  }, []);
   return (
     <HashRouter>
       <Routes>
-        <Route path="/">
-          {/* <Route index element={<IndexPage />} /> */}
-          {!isConnected && (
-            <Route
-              path="/"
-              element={<Login setIsConnected={setIsConnected} />}
-            />
-          )}
+        {!isConnected && (
+          <Route path="/" element={<Login setIsConnected={setIsConnected} />} />
+        )}
 
-          {isConnected && (
-            <>
-              <Route path="/" element={<Home setIsConnected={setIsConnected} />} />
-            </>
-          )}
-        </Route>
+        {isConnected && (
+          <Route element={<Layout setIsConnected={setIsConnected} />}>
+            <Route path="/" element={<Home />} />
+          </Route>
+        )}
       </Routes>
     </HashRouter>
   );
