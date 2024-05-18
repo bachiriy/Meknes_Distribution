@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import DataTable from "../../components/DataTable";
-import getProductData from "./getData";
+// import getProductData from "./getData";
 import Spinner from "../../components/Spinner";
+import GET from "../../utils/GET";
 
 const columns = [
   {
@@ -64,7 +65,8 @@ export const Product = () => {
   useEffect(() => {
     const waitForIt = async () => {
       setLoading(true);
-      setData(await getProductData());
+      let d = await GET('products')
+      setData(d.products);
       setLoading(false);
       console.log(data);
     };
