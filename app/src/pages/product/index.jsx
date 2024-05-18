@@ -65,10 +65,14 @@ export const Product = () => {
   useEffect(() => {
     const waitForIt = async () => {
       setLoading(true);
-      let d = await GET('products')
-      setData(d.products);
+      let products = sessionStorage.getItem("products");
+      if (!products) {
+        let d = await GET("products");
+        products = d.product;
+        sessionStorage.setItem("products", JSON.stringify(products));
+      } else products = JSON.parse(products);
+      setData(products);
       setLoading(false);
-      console.log(data);
     };
 
     waitForIt();
