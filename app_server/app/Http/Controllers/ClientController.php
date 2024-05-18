@@ -22,7 +22,6 @@ class ClientController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'CIN_ICE' => 'required|string',
-            'CIN_file' => 'required|file|mimes:jpg,png,pdf',
             'type' => 'required|string',
             'email' => 'required|email',
             'phone' => 'required|string',
@@ -36,7 +35,7 @@ class ClientController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $path = $request->CIN_file->store('cartes_national', 'public');
+/*        $path = $request->CIN_file->store('cartes_national', 'public');*/
 
         $data = $request->only(
             'CIN_ICE',
@@ -49,11 +48,12 @@ class ClientController extends Controller
             'suite_address_exploitation',
             'address_facturation',
             'suite_address_facturation',
+            'role'
         );
 
         $client = Client::create($data);
-        $client->addMedia($path)
-            ->toMediaCollection();
+/*        $client->addMedia($path)
+            ->toMediaCollection();*/
         $response = [
             'status' => 'success',
             'message' => 'Client is created successfully.',
