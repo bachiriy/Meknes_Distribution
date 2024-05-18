@@ -27,7 +27,8 @@ const Client = () => {
     useEffect(() => {
         let recieve = async () => {
             setLoading(true);
-            setData(await GET('clients'));
+            const d = await GET('products');
+            setData(d.products);
             setLoading(false);
         };
         recieve();
@@ -38,7 +39,7 @@ const Client = () => {
     return loading ? (<Spinner />) : 
     (
         <div className="ml-12 p-4">
-            {data ? (<ClinetTable columns={columns} data={data} />) : (<p>No Data.</p>)}
+            {data ? (<ClinetTable data={data} columns={columns} />) : (<p>No Data.</p>)}
         </div>
     );
 }
