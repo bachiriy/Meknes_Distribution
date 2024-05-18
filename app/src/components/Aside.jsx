@@ -4,10 +4,9 @@ import Spinner from "./Spinner";
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Tooltip } from "flowbite-react";
 
-const Aside = ({ page, setPage, setIsConnected }) => {
-  const [loading, setLoading] = useState(false);
-
+const Aside = ({ inPage }) => {
   const handleLogOut = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -56,22 +55,29 @@ const Aside = ({ page, setPage, setIsConnected }) => {
               (page === 1 ? "text-white" : "text-neutral-600")
             }
           >
-            <svg
-              class="h-6 w-6"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              stroke-width="2"
-              stroke="currentColor"
-              fill="none"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+            <Tooltip
+              content="Dossiers Client"
+              placement="right"
+              animation="duration-500"
+              className="text-center"
             >
-              {" "}
-              <path stroke="none" d="M0 0h24v24H0z" />{" "}
-              <path d="M16 5v4a1 1 0 0 0 1 1h4" />{" "}
-              <path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2 -2v-7l-5 -5h-11a2 2 0 0 0 -2 2z" />
-            </svg>
+              <svg
+                class="h-6 w-6"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                stroke-width="2"
+                stroke="currentColor"
+                fill="none"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                {" "}
+                <path stroke="none" d="M0 0h24v24H0z" />{" "}
+                <path d="M16 5v4a1 1 0 0 0 1 1h4" />{" "}
+                <path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2 -2v-7l-5 -5h-11a2 2 0 0 0 -2 2z" />
+              </svg>
+            </Tooltip>
           </div>
 
           <div
@@ -83,25 +89,32 @@ const Aside = ({ page, setPage, setIsConnected }) => {
               (page === 2 ? "text-white" : "text-neutral-600")
             }
           >
-            <svg
-              class="h-6 w-6"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              stroke-width="2"
-              stroke="currentColor"
-              fill="none"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+            <Tooltip
+              content="Products"
+              placement="right"
+              animation="duration-500"
+              className="text-center"
             >
-              {" "}
-              <path stroke="none" d="M0 0h24v24H0z" />{" "}
-              <circle cx="7" cy="15" r="4" />{" "}
-              <line x1="7" y1="15" x2="7" y2="15.01" />{" "}
-              <circle cx="19" cy="17" r="2" /> <path d="M10.5 17h6.5" />{" "}
-              <path d="M20 15.2v-4.2a1 1 0 0 0 -1 -1h-6l-2 -5h-6v6.5" />{" "}
-              <path d="M18 5h-1a1 1 0 0 0 -1 1v4" />
-            </svg>
+              <svg
+                class="h-6 w-6"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                stroke-width="2"
+                stroke="currentColor"
+                fill="none"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                {" "}
+                <path stroke="none" d="M0 0h24v24H0z" />{" "}
+                <circle cx="7" cy="15" r="4" />{" "}
+                <line x1="7" y1="15" x2="7" y2="15.01" />{" "}
+                <circle cx="19" cy="17" r="2" /> <path d="M10.5 17h6.5" />{" "}
+                <path d="M20 15.2v-4.2a1 1 0 0 0 -1 -1h-6l-2 -5h-6v6.5" />{" "}
+                <path d="M18 5h-1a1 1 0 0 0 -1 1v4" />
+              </svg>
+            </Tooltip>
           </div>
 
           <div
@@ -113,18 +126,25 @@ const Aside = ({ page, setPage, setIsConnected }) => {
               (page === 3 ? "text-white" : "text-neutral-600")
             }
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              viewBox="0 0 20 20"
-              fill="currentColor"
+            <Tooltip
+              content="Clients"
+              placement="right"
+              animation="duration-500"
+              className="text-center"
             >
-              <path
-                fill-rule="evenodd"
-                d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                clip-rule="evenodd"
-              />
-            </svg>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </Tooltip>
           </div>
           <div
             onClick={() => {
@@ -135,20 +155,27 @@ const Aside = ({ page, setPage, setIsConnected }) => {
               (page === 4 ? "text-white" : "text-neutral-600")
             }
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+            <Tooltip
+              content="Parametre"
+              placement="right"
+              animation="duration-500"
+              className="text-center"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
-              />
-            </svg>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                />
+              </svg>
+            </Tooltip>
           </div>
 
           <div
@@ -184,22 +211,29 @@ const Aside = ({ page, setPage, setIsConnected }) => {
           <div className="flex flex-col items-center justify-end h-full">
             <form onSubmit={handleLogOut}>
               <button>
-                <svg
-                  className="h-6 w-6 text-gray-600 hover:text-red-500 cursor-pointer"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                  stroke="currentColor"
-                  fill="none"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                <Tooltip
+                  content="Deconnexion"
+                  placement="right"
+                  animation="duration-500"
+                  className="text-center"
                 >
-                  {" "}
-                  <path stroke="none" d="M0 0h24v24H0z" />{" "}
-                  <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" />{" "}
-                  <path d="M7 12h14l-3 -3m0 6l3 -3" />
-                </svg>
+                  <svg
+                    className="h-6 w-6 text-gray-600 hover:text-red-500 cursor-pointer"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    stroke-width="2"
+                    stroke="currentColor"
+                    fill="none"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    {" "}
+                    <path stroke="none" d="M0 0h24v24H0z" />{" "}
+                    <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" />{" "}
+                    <path d="M7 12h14l-3 -3m0 6l3 -3" />
+                  </svg>
+                </Tooltip>
               </button>
             </form>
           </div>
