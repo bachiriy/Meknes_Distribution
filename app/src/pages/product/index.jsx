@@ -77,7 +77,11 @@ export const Product = () => {
   ) : (
     <div className="ml-12 p-4">
       <h1 className="pb-12 text-center">Products Table</h1>
-      {data && <DataTable data={data} columns={columns} />}
+      {data ? (
+        <DataTable data={data} columns={columns} />
+      ) : (
+        <div className="text-center">Table is Empty</div>
+      )}
     </div>
   );
 };
