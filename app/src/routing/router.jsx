@@ -5,6 +5,8 @@ import authChecker from "../utils/authChecker";
 import { Home } from "../pages/home";
 import { Layout } from "../components/Layout";
 import { Product } from "../pages/product";
+import Client from "../pages/client";
+
 
 export const Router = (props) => {
   const [isConnected, setIsConnected] = useState(false);
@@ -35,7 +37,9 @@ export const Router = (props) => {
           >
             {page === 1 && <Route path="/" element={<Home />} />}
             {page === 2 && <Route path="/" element={<Product />} />}
-            {/* {page === 3 && <Route path="/"  />}   for client */}
+            {page === 3 && <Route path="/" element={<Client />} />}
+            {page === 4 && <Route path="/" element={<Client />} />}
+            {page === 5 && <Route path="/" element={<Client />} />}
           </Route>
         )}
       </Routes>
