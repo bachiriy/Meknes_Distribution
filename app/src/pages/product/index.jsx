@@ -59,12 +59,11 @@ const columns = [
   },
 ];
 export const Product = () => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
 
   useEffect(() => {
     const waitForIt = async () => {
-      setLoading(true);
       let products = sessionStorage.getItem("products");
       if (!products) {
         let d = await GET("products");
