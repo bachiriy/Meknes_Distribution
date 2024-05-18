@@ -27,7 +27,7 @@ const Client = () => {
     useEffect(() => {
         let recieve = async () => {
             setLoading(true);
-            const d = await GET('products');
+            const d = await GET('clients');
             setData(d.products);
             setLoading(false);
         };
