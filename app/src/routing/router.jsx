@@ -6,19 +6,25 @@ import { Home } from "../pages/home";
 import { Layout } from "../components/Layout";
 import { Product } from "../pages/product";
 import Client from "../pages/client";
-
+import Spinner from "../components/Spinner";
 
 export const Router = (props) => {
   const [isConnected, setIsConnected] = useState(false);
   const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+
   useLayoutEffect(() => {
+    setLoading(true);
     const waitForIt = async () => {
       setIsConnected(await authChecker());
     };
     waitForIt();
+    setLoading(false);
     props.setLoading(false);
   }, []);
-  return (
+  return loading ? (
+    <Spinner />
+  ) : (
     <HashRouter>
       <Routes>
         {!isConnected && (
