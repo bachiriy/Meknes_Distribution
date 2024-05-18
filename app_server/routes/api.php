@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClientFileController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
 use App\Models\Client;
 use App\Models\ClientFile;
@@ -30,6 +31,14 @@ Route::middleware('auth:api')->group(function () {
             Route::post('assignRole', [UserController::class, 'assignRoleToUser']);
         });
     });
+
+    Route::prefix('suppliers')->group(function () {
+        Route::get('', [SupplierController::class, 'index']);
+        Route::post('', [SupplierController::class, 'store']);
+        Route::put('/{id}', [SupplierController::class, 'update']);
+        Route::delete('/{id}', [SupplierController::class, 'destroy']);
+    });
+
     Route::prefix('products')->group(function () {
         Route::get('', [ProductController::class, 'index']);
         Route::post('', [ProductController::class, 'store']);

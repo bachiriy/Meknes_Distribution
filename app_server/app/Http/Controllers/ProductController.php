@@ -4,13 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
     function index(): \Illuminate\Http\JsonResponse
     {
-        $products = Product::all();
+        $products = Cache::get('products');
+        if (!$products) {
+            $products = Product::with(['group.category', 'supplier'])
+                ->get();
+            Cache::put('products', $products, 1440);
+        }
         $response = [
             'message' => 'success',
             'products' => $products
@@ -18,7 +24,7 @@ class ProductController extends Controller
         return response()->json($response, 200);
     }
 
-    function store(Request $request)
+    function store(Request $request): \Illuminate\Http\JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'reference' => 'required|string',
@@ -51,10 +57,12 @@ class ProductController extends Controller
             'TVA',
             'prix_vente_net',
             'category_id',
-            'group_id'
+            'group_id',
+            'supplier_id'
         );
 
         $product = Product::create($data);
+        Cache::forget('products');
         $response = [
             'status' => 'success',
             'message' => 'Product is created successfully.',

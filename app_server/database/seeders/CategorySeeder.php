@@ -42,12 +42,12 @@ class CategorySeeder extends Seeder
         ];
 
         foreach ($categories as $category) {
-            $category = Category::create(['name' => $category['name']]);
+            $category_id = Category::create(['name' => $category['name']]);
             foreach ($category['groups'] as $group) {
                 Group::create(
                     [
                         'name' => $group,
-                        'category_id' => $category->id
+                        'category_id' => $category_id->id
                     ]);
             }
         }
