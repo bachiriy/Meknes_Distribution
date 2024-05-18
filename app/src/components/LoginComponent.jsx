@@ -4,38 +4,60 @@ import { useState } from "react";
 import Cookies from "js-cookie";
 import Spinner from "../components/Spinner";
 
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 export const LoginComponent = (props) => {
-  const [token, setToken] = useState("");
-  const [user, setUser] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(true);
-
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const response = await fetch("http://127.0.0.1:8000/api/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email: username, password }),
-    });
-    if (response.ok) {
+
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: username, password }),
+      });
+
       const data = await response.json();
-      Cookies.set("token", data.data.token, { expires: 7 });
-      Cookies.set("user", JSON.stringify(data.data.user), { expires: 7 });
-      console.log(JSON.parse(Cookies.get("user")));
-      props.setIsConnected(true);
-    } else {
-      alert("data");
+
+      if (response.ok) {
+        if (data.status === "success") {
+          setLoading(false);
+          console.log(data);
+          Cookies.set("token", data.data.token, { expires: 7 });
+          Cookies.set("user", JSON.stringify(data.data.user), { expires: 7 });
+          console.log(JSON.parse(Cookies.get("user")));
+          props.setIsConnected(true);
+        }
+      } else {
+        setLoading(false);
+        console.log(data.message);
+        if (data.errors) {
+          if (data.errors.email) toast.error(data.errors.email[0]);
+          if (data.errors.password) toast.error(data.errors.password[0]);
+        }
+        if (data.status === "failed") toast.error(data.message);
+      }
+    } catch (error) {
+      setLoading(false);
+      console.error("An error occurred:", error);
+      toast.error("An unexpected error occurred. Please try again later.");
     }
-    setLoading(false);
   };
+
   return (
     <>
-      {loading ? (<Spinner />) : (
+      <ToastContainer />
+      {loading ? (
+        <Spinner />
+      ) : (
         <section className="bg-white">
           <div className="lg:grid lg:min-h-screen lg:grid-cols-12">
             <section className="relative flex h-32 items-end bg-gray-900 lg:col-span-5 lg:h-full xl:col-span-6">
@@ -116,11 +138,12 @@ export const LoginComponent = (props) => {
                     <input
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
-                      type="email"
+                      type="text"
                       id="Email"
                       name="email"
                       className="mt-1 p-2 w-full rounded-md border border-gray-500 bg-white text-sm text-gray-700 shadow-sm"
                     />
+                    {/* <p className="text-red-800">hey this is an error</p> */}
                   </div>
                   <div className="col-span-6">
                     <label
@@ -150,7 +173,7 @@ export const LoginComponent = (props) => {
             </div>
           </div>
         </section>
-        )}
+      )}
     </>
   );
 };

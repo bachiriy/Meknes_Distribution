@@ -1,10 +1,7 @@
-import React from "react";
-import Aside from "../../components/Aside";
-
-export const Home = () => {
+export const Home = (props) => {
   return (
-    <main>
-      <Aside inPage={1} />
-    </main>
+    <div>
+      <h1 className="text-center">Home</h1>
+    </div>
   );
 };
