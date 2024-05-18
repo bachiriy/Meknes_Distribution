@@ -4,49 +4,56 @@ import { useState } from "react";
 import Cookies from "js-cookie";
 import Spinner from "../components/Spinner";
 
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export const LoginComponent = (props) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-
-  const handleLogin = async (e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
     setLoading(true);
-    const response = await fetch("http://127.0.0.1:8000/api/login", {
+    fetch("http://127.0.0.1:8000/api/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Accept: "application/json",
       },
       body: JSON.stringify({ email: username, password }),
-    });
-    const data = await response.json();
-    if (response.ok) {
-      if(data.status === 'success'){
+    })
+      .then((response) => response.json())
+      .then((data) => () => {
+        if (data.status === "success") {
+          setLoading(false);
+          console.log(data);
+          Cookies.set("token", data.data.token, { expires: 7 });
+          Cookies.set("user", JSON.stringify(data.data.user), { expires: 7 });
+          console.log(JSON.parse(Cookies.get("user")));
+          props.setIsConnected(true);
+        } else {
+          setLoading(false);
+          console.log(data.message);
+          if (data.errors) {
+            if (data.errors.email) toast.error(data.errors.email[0]);
+            if (data.errors.password) toast.error(data.errors.password[0]);
+          }
+          if (data.status === "failed") toast.error(data.message);
+        }
+      })
+      .catch((e) => {
         setLoading(false);
-        console.log(data);
-        Cookies.set("token", data.data.token, { expires: 7 });
-        Cookies.set("user", JSON.stringify(data.data.user), { expires: 7 });
-        console.log(JSON.parse(Cookies.get("user")));
-        props.setIsConnected(true);
-      }
-    } else {
-      setLoading(false);
-      console.log(data.message);
-      if (data.errors) {
-        if (data.errors.email) toast.error(data.errors.email[0]);
-        if (data.errors.password) toast.error(data.errors.password[0]);
-      }
-      if(data.status === 'failed')toast.error(data.message);
-    }
+        toast.error("operation failed");
+      });
   };
+
   return (
     <>
       <ToastContainer />
-      {loading ? (<Spinner />) : (
+      {loading ? (
+        <Spinner />
+      ) : (
         <section className="bg-white">
           <div className="lg:grid lg:min-h-screen lg:grid-cols-12">
             <section className="relative flex h-32 items-end bg-gray-900 lg:col-span-5 lg:h-full xl:col-span-6">
