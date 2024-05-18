@@ -2,6 +2,7 @@ import React from "react";
 import Cookies from "js-cookie";
 import Spinner from "./Spinner";
 import { useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Aside = ({ page, setPage, setIsConnected }) => {
@@ -10,22 +11,28 @@ const Aside = ({ page, setPage, setIsConnected }) => {
   const handleLogOut = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const response = await fetch("http://127.0.0.1:8000/api/logout", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + Cookies.get("token"),
-      },
-    });
-    if (response.ok) {
-      Cookies.remove("token");
-      Cookies.remove("user");
-      setIsConnected(false);
-    } else {
-      const errors = await response.json();
-      console.log("error loging out : " + errors);
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + Cookies.get("token"),
+        },
+      });
+      if (response.ok) {
+        Cookies.remove("token");
+        Cookies.remove("user");
+        setIsConnected(false);
+      } else {
+        const errors = await response.json();
+        console.log("error loging out : " + errors);
+      }
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.error("An error occurred:", error);
+      toast.error("An unexpected error occurred. Please try again later.");
     }
-    setLoading(false);
   };
 
   const handlePage = (pageValue, pageLink) => {
@@ -35,13 +42,14 @@ const Aside = ({ page, setPage, setIsConnected }) => {
 
   return (
     <>
+      <ToastContainer />
       {loading ? (
         <Spinner />
       ) : (
         <aside className="h-full w-12 py-4 flex flex-col space-y-8 items-center fixed bg-[#0a0a0a] text-white">
           <div
             onClick={() => {
-              handlePage(1, '/');
+              handlePage(1, "/");
             }}
             className={
               "h-6 w-6 flex items-center justify-center rounded-lg cursor-pointer hover:text-white hover:duration-300 hover:ease-linear focus:bg-white " +
@@ -68,7 +76,7 @@ const Aside = ({ page, setPage, setIsConnected }) => {
 
           <div
             onClick={() => {
-              handlePage(2, '/products');
+              handlePage(2, "/products");
             }}
             className={
               "h-6 w-6 flex items-center justify-center rounded-lg cursor-pointer hover:text-white hover:duration-300 hover:ease-linear focus:bg-white " +
@@ -98,7 +106,7 @@ const Aside = ({ page, setPage, setIsConnected }) => {
 
           <div
             onClick={() => {
-              handlePage(3, '/clients');
+              handlePage(3, "/clients");
             }}
             className={
               "h-6 w-6 flex items-center justify-center rounded-lg cursor-pointer hover:text-white hover:duration-300 hover:ease-linear focus:bg-white " +
