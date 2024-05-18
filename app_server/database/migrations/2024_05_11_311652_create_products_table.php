@@ -23,7 +23,6 @@ return new class extends Migration
             $table->float('remise');
             $table->float('TVA');
             $table->float('prix_vente_net');
-            $table->foreignId('category_id')->constrained()->cascadeOnDelete();
             $table->foreignId('group_id')->constrained()->cascadeOnDelete();
             $table->foreignId('supplier_id')->constrained()->cascadeOnDelete();
             $table->timestamps();

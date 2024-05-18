@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Supplier;
 use Illuminate\Http\Request;
 
 class SupplierController extends Controller
@@ -12,7 +13,12 @@ class SupplierController extends Controller
      */
     public function index()
     {
-        //
+        $suppliers = Supplier::all();
+        $response = [
+            'message' => 'success',
+            'suppliers' => $suppliers
+        ];
+        return response()->json($response, 200);
     }
 
     /**

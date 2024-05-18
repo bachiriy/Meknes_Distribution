@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('remise_f_composition');
             $table->float('remise_f');
             $table->date('date_debut');
-            $table->date('date_fin');
+            $table->date('date_fin')->nullable();
             $table->timestamps();
         });
 
