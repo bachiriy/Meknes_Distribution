@@ -20,8 +20,8 @@ class Product extends Model
         'remise',
         'TVA',
         'prix_vente_net',
-        'category_id',
-        'group_id'
+        'group_id',
+        'supplier_id'
     ];
 
 
