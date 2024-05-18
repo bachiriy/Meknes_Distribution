@@ -3,41 +3,34 @@ import Login from "../pages/login";
 import { useLayoutEffect, useState } from "react";
 import authChecker from "../utils/authChecker";
 import { Home } from "../pages/home";
-<<<<<<< Updated upstream
-=======
 import { Layout } from "../components/Layout";
 import { Product } from "../pages/product";
 import Client from "../pages/client";
->>>>>>> Stashed changes
+import Spinner from "../components/Spinner";
 
-export const Router = () => {
+export const Router = (props) => {
   const [isConnected, setIsConnected] = useState(false);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+
   useLayoutEffect(() => {
+    setLoading(true);
     const waitForIt = async () => {
       setIsConnected(await authChecker());
     };
     waitForIt();
-  });
-  return (
+    setLoading(false);
+    props.setLoading(false);
+  }, []);
+  return loading ? (
+    <Spinner />
+  ) : (
     <HashRouter>
       <Routes>
-        <Route path="/">
-          {/* <Route index element={<IndexPage />} /> */}
-          {!isConnected && (
-            <Route
-              path="/"
-              element={<Login setIsConnected={setIsConnected} />}
-            />
-          )}
+        {!isConnected && (
+          <Route path="/" element={<Login setIsConnected={setIsConnected} />} />
+        )}
 
-<<<<<<< Updated upstream
-          {isConnected && (
-            <>
-              <Route path="/" element={<Home setIsConnected={setIsConnected} />} />
-            </>
-          )}
-        </Route>
-=======
         {isConnected && (
           <Route
             element={
@@ -55,7 +48,6 @@ export const Router = () => {
             {page === 5 && <Route path="/" element={<Client />} />}
           </Route>
         )}
->>>>>>> Stashed changes
       </Routes>
     </HashRouter>
   );
