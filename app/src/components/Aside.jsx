@@ -23,6 +23,7 @@ const Aside = ({ page, setPage, setIsConnected }) => {
       if (response.ok) {
         Cookies.remove("token");
         Cookies.remove("user");
+        setPage(1);
         setIsConnected(false);
       } else {
         const errors = await response.json();
@@ -38,7 +39,10 @@ const Aside = ({ page, setPage, setIsConnected }) => {
   };
 
   const handlePage = (pageValue, pageLink) => {
-    setPage(pageValue);
+    setPage(10);
+    setTimeout(() => {
+      setPage(pageValue);
+    }, 1000);
     // window.location.href = pageLink;
   };
 
