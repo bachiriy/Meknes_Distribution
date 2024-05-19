@@ -10,6 +10,7 @@ const Aside = ({ page, setPage, setIsConnected }) => {
   const handleLogOut = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setPage(0);
     try {
       const response = await fetch("http://127.0.0.1:8000/api/logout", {
         method: "POST",
