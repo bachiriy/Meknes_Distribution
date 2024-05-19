@@ -9,6 +9,17 @@ use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
+
+    function index()
+    {
+        $users = User::with('roles')->get();
+        $response = [
+            'status' => 'success',
+            'users' => $users
+        ];
+        return response()->json($response);
+    }
+
     function assignRoleToUser(Request $request): \Illuminate\Http\JsonResponse
     {
         $data = $request->only('user_id', 'role_id');
