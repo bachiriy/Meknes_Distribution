@@ -116,8 +116,23 @@ const Aside = ({ page, setPage, setIsConnected }) => {
         page === pageValue ? "text-white" : "text-neutral-600"
       }`}
     >
-      <Tooltip content={tooltip} placement="right" animation="duration-500" className="text-center">
-        <svg className="h-6 w-6" width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
+      <Tooltip
+        content={tooltip}
+        placement="right"
+        animation="duration-500"
+        className="text-center"
+      >
+        <svg
+          className="h-6 w-6"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          strokeWidth="2"
+          stroke="currentColor"
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
           {icon}
         </svg>
       </Tooltip>
@@ -137,7 +152,12 @@ const Aside = ({ page, setPage, setIsConnected }) => {
           <div className="flex flex-col items-center justify-end h-full">
             <form onSubmit={handleLogOut}>
               <button>
-                <Tooltip content="Deconnexion" placement="right" animation="duration-500" className="text-center">
+                <Tooltip
+                  content="Deconnexion"
+                  placement="right"
+                  animation="duration-500"
+                  className="text-center"
+                >
                   <svg
                     className="h-6 w-6 text-gray-600 hover:text-red-500 cursor-pointer"
                     width="24"
