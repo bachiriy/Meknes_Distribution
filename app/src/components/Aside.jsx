@@ -7,7 +7,6 @@ import { Tooltip } from "flowbite-react";
 
 const Aside = ({ page, setPage, setIsConnected }) => {
   const [loading, setLoading] = useState(false);
-
   const handleLogOut = async (e) => {
     e.preventDefault();
     setLoading(true);
