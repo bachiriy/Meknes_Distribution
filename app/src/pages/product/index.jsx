@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import DataTable from "../../components/DataTable";
-// import getProductData from "./getData";
 import Spinner from "../../components/Spinner";
 import GET from "../../utils/GET";
 
@@ -63,30 +62,21 @@ export const Product = () => {
   const [data, setData] = useState(null);
 
   useEffect(() => {
-    const waitForIt = async () => {
-      let products = sessionStorage.getItem("products");
-      if (!products) {
-        let d = await GET("products");
-        products = d.product;
-        sessionStorage.setItem("products", JSON.stringify(products));
-      } else products = JSON.parse(products);
-      setData(products);
-      setLoading(false);
+    let recieve = async () => {
+        setLoading(true);
+        const d = await GET('products');
+        setData(d.products);
+        setLoading(false);
     };
-
-    waitForIt();
-  }, []);
+    recieve();
+}, []);
 
   return loading ? (
     <Spinner />
   ) : (
     <div className="ml-12 p-4">
       <h1 className="pb-12 text-center">Products Table</h1>
-      {data ? (
-        <DataTable data={data} columns={columns} />
-      ) : (
-        <div className="text-center">Table is Empty</div>
-      )}
+      {data && <DataTable data={data} columns={columns} />}
     </div>
   );
 };
