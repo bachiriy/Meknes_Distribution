@@ -154,7 +154,7 @@ const Aside = ({ page, setPage, setIsConnected }) => {
       {loading ? (
         <Spinner />
       ) : (
-        <aside className="h-full w-12 py-4 flex flex-col space-y-8 items-center fixed bg-[#0a0a0a] text-white">
+        <aside className="h-screen w-12 py-4 flex fixed z-50 flex-col space-y-8 items-center bg-[#0a0a0a] text-white">
           {menuItems.map((item, index) => (
             <MenuItem key={index} {...item} />
           ))}
