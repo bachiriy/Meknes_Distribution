@@ -58,7 +58,7 @@ const Aside = ({ page, setPage, setIsConnected }) => {
     {
       pageValue: 2,
       pageLink: "/products",
-      tooltip: "Products",
+      tooltip: "Prodiuts",
       icon: (
         <>
           <circle cx="7" cy="15" r="4" />
@@ -95,7 +95,7 @@ const Aside = ({ page, setPage, setIsConnected }) => {
     {
       pageValue: 5,
       pageLink: "Users",
-      tooltip: "Users",
+      tooltip: "Utilisateurs",
       icon: (
         <path
           stroke-linecap="round"
