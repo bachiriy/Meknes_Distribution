@@ -28,7 +28,7 @@ const Client = () => {
         let recieve = async () => {
             setLoading(true);
             const d = await GET('clients');
-            setData(d.products);
+            setData(d.clients);
             setLoading(false);
         };
         recieve();
