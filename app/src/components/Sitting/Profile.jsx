@@ -19,7 +19,7 @@ import {
 
 export default function Profile() {
   return (
-    <section style={{ backgroundColor: '#eee' }}>
+    <section className='w-full' style={{ backgroundColor: '#eee' }}>
       <MDBContainer className="py-5">
         <MDBRow>
           <MDBCol>
