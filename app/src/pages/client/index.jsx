@@ -38,7 +38,7 @@ const Client = () => {
 
     return loading ? (<Spinner />) : 
     (
-        <div className="">
+        <div className="overflow-auto">
             {data ? (<ClinetTable data={data} columns={columns} />) : (<p>No Data.</p>)}
         </div>
     );

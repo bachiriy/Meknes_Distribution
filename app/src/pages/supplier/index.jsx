@@ -51,7 +51,7 @@ const Supplier = () => {
   return loading ? (
     <Spinner />
   ) : (
-    <div className="ml-12 p-4">
+    <div className="overflow-auto">
       <h1 className="pb-12 text-center">Suppliers Table</h1>
       {data ? (
         <DataTable data={data} columns={columns} />

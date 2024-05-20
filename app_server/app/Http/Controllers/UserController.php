@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
@@ -57,20 +59,32 @@ class UserController extends Controller
             'name' => 'required|max:255',
             'id' => 'required|numeric|exists:users',
             'role_id' => 'required|numeric|exists:roles,id',
-            'email' => 'required|email|unique:users,email,' . $id,
-            'password' => 'required|string|min:8'
+            'email' => [
+                'email',
+                'max:255',
+                Rule::unique('users')->ignore($id)
+            ]
         ]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
-
-        $data['password'] = Hash::make($data['password']);
-
         $user = User::find($id);
+
+
+        if (isset($data['password'])) {
+            $validator = Validator::make(['password' => $data['password']], [
+                'password' => 'required|string|min:8'
+            ]);
+            if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], 422);
+            }
+            $data['password'] = Hash::make($data['password']);
+            $user->password = $data['password'];
+        }
+
         $user->name = $data['name'];
         $user->email = $data['email'];
-        $user->password = $data['password'];
         $user->save();
         $this->assignRoleToUser([
             'user_id' => $id,
