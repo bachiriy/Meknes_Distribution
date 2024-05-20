@@ -9,6 +9,7 @@ import Client from "../pages/client";
 import Spinner from "../components/Spinner";
 import Supplier from "../pages/supplier";
 import { User } from "../pages/user";
+import Category from "../pages/Category";
 
 export const Router = (props) => {
   const [isConnected, setIsConnected] = useState(false);
@@ -49,6 +50,7 @@ export const Router = (props) => {
             {page === 3 && <Route path="/" element={<Client />} />}
             {page === 4 && <Route path="/" element={<Supplier />} />}
             {page === 5 && <Route path="/" element={<User />} />}
+            {page === 6 && <Route path="/" element={<Category />} />}
             {page === 10 && <Route path="/" element={<Spinner />} />}
           </Route>
         )}
