@@ -38,6 +38,7 @@ class UserController extends Controller
 
         $user = User::create($data);
         $user->assignRole('sub-admin');
+        $user = User::with('roles')->where('id', $user->id)->first();
         $response = [
             'status' => 'success',
             'message' => 'User is created successfully.',
@@ -50,11 +51,12 @@ class UserController extends Controller
 
     function update(Request $request, $id)
     {
-        $data = $request->only('name', 'email', 'password');
+        $data = $request->only('name', 'email', 'password', 'role_id');
         $data['id'] = $id;
         $validator = Validator::make($data, [
             'name' => 'required|max:255',
             'id' => 'required|numeric|exists:users',
+            'role_id' => 'required|numeric|exists:roles,id',
             'email' => 'required|email|unique:users,email,' . $id,
             'password' => 'required|string|min:8'
         ]);
@@ -70,6 +72,11 @@ class UserController extends Controller
         $user->email = $data['email'];
         $user->password = $data['password'];
         $user->save();
+        $this->assignRoleToUser([
+            'user_id' => $id,
+            'role_id' => $data['role_id']
+        ]);
+        $user = User::with('roles')->where('id', $id)->first();
         $response = [
             'status' => 'success',
             'message' => 'User is updated successfully.',
@@ -90,26 +97,11 @@ class UserController extends Controller
         ]);
     }
 
-    function assignRoleToUser(Request $request): \Illuminate\Http\JsonResponse
+    function assignRoleToUser($data): void
     {
-        $data = $request->only('user_id', 'role_id');
-
-        $validator = Validator::make($data, [
-            'user_id' => 'required|numeric|exists:users,id',
-            'role_id' => 'required|numeric|exists:roles,id'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
         $user = User::find($data['user_id']);
         $user->roles()->detach();
         $role = Role::findById($data['role_id'], 'api');
         $user->assignRole($role);
-        $response = [
-            'status' => 'success',
-            'message' => 'Role has been assigned to User successfully.',
-        ];
-        return response()->json($response);
     }
 }
