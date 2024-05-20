@@ -72,6 +72,4 @@ Route::middleware('auth:api')->group(function () {
 
 // Auth
 Route::post('login', [AuthController::class, 'login'])->name('login');
-Route::post('register', [AuthController::class, 'register']);
-
 Route::post('isConnected', [AuthController::class, 'isConnected']);
