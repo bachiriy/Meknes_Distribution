@@ -54,7 +54,7 @@ export const Router = (props) => {
             {page === 4 && <Route path="/" element={<Supplier />} />}
             {page === 5 && <Route path="/" element={<User />} />}
             {page === 6 && <Route path="/" element={<Category />} />}
-            {page === 6 && <Route path="/" element={<Sitting />} />}
+            {page === 7 && <Route path="/" element={<Sitting />} />}
             {page === 10 && <Route path="/" element={<Spinner />} />}
           </Route>
         )}
