@@ -12,7 +12,7 @@ const Aside = ({ page, setPage, setIsConnected }) => {
     setLoading(true);
     setPage(0);
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/logout", {
+      const response = await fetch(import.meta.env.VITE_REACT_APP_API_URL + "logout", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
