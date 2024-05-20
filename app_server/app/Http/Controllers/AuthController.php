@@ -10,36 +10,6 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-    function register(Request $request): \Illuminate\Http\JsonResponse
-    {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|max:255',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|string|min:8'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        $data = $request->only('name', 'email', 'password');
-        $data['password'] = Hash::make($data['password']);
-
-        $user = User::create($data);
-
-        $token = $user->createToken('oauth2')->accessToken;
-        $user->assignRole('sub-admin');
-        $response = [
-            'status' => 'success',
-            'message' => 'User is created successfully.',
-            'data' => [
-                'user' => $user,
-                'token' => $token,
-            ],
-        ];
-        return response()->json($response);
-    }
-
     function login(Request $request): \Illuminate\Http\JsonResponse
     {
         $credentials = $request->only('email', 'password');

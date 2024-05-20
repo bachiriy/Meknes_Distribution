@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
 
-    function index()
+    function index(): \Illuminate\Http\JsonResponse
     {
         $users = User::with('roles')->get();
         $response = [
@@ -20,25 +21,68 @@ class UserController extends Controller
         return response()->json($response);
     }
 
-    function assignRoleToUser(Request $request): \Illuminate\Http\JsonResponse
+    function store(Request $request): \Illuminate\Http\JsonResponse
     {
-        $data = $request->only('user_id', 'role_id');
-
-        $validator = Validator::make($data, [
-            'user_id' => 'required|numeric|exists:users,id',
-            'role_id' => 'required|numeric|exists:roles,id'
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|max:255',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|string|min:8'
         ]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
-        $user = User::find($data['user_id']);
-        $user->roles()->detach();
-        $role = Role::findById($data['role_id'], 'api');
-        $user->assignRole($role);
+
+        $data = $request->only('name', 'email', 'password');
+        $data['password'] = Hash::make($data['password']);
+
+        $user = User::create($data);
+        $user->assignRole('sub-admin');
+        $user = User::with('roles')->where('id', $user->id)->first();
         $response = [
             'status' => 'success',
-            'message' => 'Role has been assigned to User successfully.',
+            'message' => 'User is created successfully.',
+            'data' => [
+                'user' => $user
+            ]
+        ];
+        return response()->json($response);
+    }
+
+    function update(Request $request, $id)
+    {
+        $data = $request->only('name', 'email', 'password', 'role_id');
+        $data['id'] = $id;
+        $validator = Validator::make($data, [
+            'name' => 'required|max:255',
+            'id' => 'required|numeric|exists:users',
+            'role_id' => 'required|numeric|exists:roles,id',
+            'email' => 'required|email|unique:users,email,' . $id,
+            'password' => 'required|string|min:8'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $data['password'] = Hash::make($data['password']);
+
+        $user = User::find($id);
+        $user->name = $data['name'];
+        $user->email = $data['email'];
+        $user->password = $data['password'];
+        $user->save();
+        $this->assignRoleToUser([
+            'user_id' => $id,
+            'role_id' => $data['role_id']
+        ]);
+        $user = User::with('roles')->where('id', $id)->first();
+        $response = [
+            'status' => 'success',
+            'message' => 'User is updated successfully.',
+            'data' => [
+                'user' => $user
+            ]
         ];
         return response()->json($response);
     }
@@ -48,7 +92,16 @@ class UserController extends Controller
         $user = User::find($request->id);
         $user->delete();
         return response()->json([
-            'status' => 'success'
+            'status' => 'success',
+            'message' => 'User has been deleted successfully'
         ]);
+    }
+
+    function assignRoleToUser($data): void
+    {
+        $user = User::find($data['user_id']);
+        $user->roles()->detach();
+        $role = Role::findById($data['role_id'], 'api');
+        $user->assignRole($role);
     }
 }
