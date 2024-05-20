@@ -72,7 +72,7 @@ class UserController extends Controller
         $user = User::find($id);
 
 
-        if ($data['password']) {
+        if (isset($data['password'])) {
             $validator = Validator::make(['password' => $data['password']], [
                 'password' => 'required|string|min:8'
             ]);
