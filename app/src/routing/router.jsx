@@ -11,7 +11,7 @@ import Supplier from "../pages/supplier";
 import { User } from "../pages/user";
 import Category from "../pages/Category";
 import Sitting from "../pages/sitting";
-import 'mdb-react-ui-kit/dist/css/mdb.min.css';
+import "mdb-react-ui-kit/dist/css/mdb.min.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
 export const Router = (props) => {
