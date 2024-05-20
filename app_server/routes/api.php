@@ -60,6 +60,13 @@ Route::middleware('auth:api')->group(function () {
         Route::delete('/{id}', [ClientFileController::class, 'destroy']);
     });
 
+
+    Route::prefix('users')->group(function () {
+        Route::get('', [UserController::class, 'index']);
+        Route::post('', [UserController::class, 'store']);
+        Route::put('/{id}', [UserController::class, 'update']);
+        Route::delete('/{id}', [UserController::class, 'destroy']);
+    });
 });
 
 

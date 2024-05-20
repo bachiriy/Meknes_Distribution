@@ -7,6 +7,8 @@ import { Layout } from "../components/Layout";
 import { Product } from "../pages/product";
 import Client from "../pages/client";
 import Spinner from "../components/Spinner";
+import Supplier from "../pages/supplier";
+import { User } from "../pages/user";
 
 export const Router = (props) => {
   const [isConnected, setIsConnected] = useState(false);
@@ -41,11 +43,13 @@ export const Router = (props) => {
               />
             }
           >
+            {page === 0 && <Route path="/" />}
             {page === 1 && <Route path="/" element={<Home />} />}
             {page === 2 && <Route path="/" element={<Product />} />}
             {page === 3 && <Route path="/" element={<Client />} />}
-            {page === 4 && <Route path="/" element={<Client />} />}
-            {page === 5 && <Route path="/" element={<Client />} />}
+            {page === 4 && <Route path="/" element={<Supplier />} />}
+            {page === 5 && <Route path="/" element={<User />} />}
+            {page === 10 && <Route path="/" element={<Spinner />} />}
           </Route>
         )}
       </Routes>

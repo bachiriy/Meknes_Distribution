@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import DataTable from "../../components/DataTable";
-import getProductData from "./getData";
 import Spinner from "../../components/Spinner";
+import GET from "../../utils/GET";
 
 const columns = [
   {
@@ -58,30 +58,25 @@ const columns = [
   },
 ];
 export const Product = () => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
 
   useEffect(() => {
-    const waitForIt = async () => {
-      setLoading(true);
-      setData(await getProductData());
-      setLoading(false);
-      console.log(data);
+    let recieve = async () => {
+        setLoading(true);
+        const d = await GET('products');
+        setData(d.products);
+        setLoading(false);
     };
-
-    waitForIt();
-  }, []);
+    recieve();
+}, []);
 
   return loading ? (
     <Spinner />
   ) : (
     <div className="ml-12 p-4">
       <h1 className="pb-12 text-center">Products Table</h1>
-      {data ? (
-        <DataTable data={data} columns={columns} />
-      ) : (
-        <div className="text-center">Table is Empty</div>
-      )}
+      {data && <DataTable data={data} columns={columns} />}
     </div>
   );
 };
