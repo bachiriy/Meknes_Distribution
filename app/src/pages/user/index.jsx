@@ -32,7 +32,7 @@ export const User = () => {
   return loading ? (
     <Spinner />
   ) : (
-    <div className="ml-12 p-4">
+    <div className="overflow-auto">
       {data ? <DataTable data={data} columns={columns} /> : <p>No Data.</p>}
     </div>
   );
