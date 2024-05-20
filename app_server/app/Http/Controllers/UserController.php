@@ -55,7 +55,7 @@ class UserController extends Controller
         $validator = Validator::make($data, [
             'name' => 'required|max:255',
             'id' => 'required|numeric|exists:users',
-            'email' => 'required|email|unique:users',
+            'email' => 'required|email|unique:users,email,' . $id,
             'password' => 'required|string|min:8'
         ]);
 
@@ -69,7 +69,7 @@ class UserController extends Controller
         $user->name = $data['name'];
         $user->email = $data['email'];
         $user->password = $data['password'];
-        $user->assignRole('sub-admin');
+        $user->save();
         $response = [
             'status' => 'success',
             'message' => 'User is updated successfully.',
@@ -85,7 +85,8 @@ class UserController extends Controller
         $user = User::find($request->id);
         $user->delete();
         return response()->json([
-            'status' => 'success'
+            'status' => 'success',
+            'message' => 'User has been deleted successfully'
         ]);
     }
 
