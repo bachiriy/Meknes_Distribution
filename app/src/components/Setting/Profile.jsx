@@ -27,14 +27,28 @@ import PUT from "../../utils/PUT";
 import { json } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import POST from "../../utils/POSTPIC";
+import { dark } from "@mui/material/styles/createPalette";
 
 export default function Profile() {
   const user = JSON.parse(Cookies.get("user"));
   const [name, setName] = useState(user.name);
   const [picture, setPicture] = useState(user.picture);
   const [email, setEmail] = useState(user.email);
+  const [password, setPassword] = useState('')
   const [fetch, setFetch] = useState(false);
   const [picFetch, setPicFetch] = useState(false);
+  const [CanChangePw, setChangePwAbility] = useState(false);
+  const [pwFetch, setPwFetch] = useState(false);
+
+  const changePw = async () => {
+    if(!password) return toast.error('Mot de passe requis!');
+    setPwFetch(true);
+    const response = await PUT('users/' + user.id, {email: user.email, name: user.name, role_id: user.roles[0].id, password});
+    if(response.errors) toast.error(response.errors.password[0]);
+    if(response.status === 'success') toast.success(response.message)
+    setPwFetch(false);
+  }
+
 
   const updateUserInfo = async () => {
     setFetch(true);
@@ -67,6 +81,7 @@ export default function Profile() {
       const response = await POST("users/picture", formData);
       Cookies.set("user", JSON.stringify(response.data.user), { expires: 3 });
       setPicture(response.data.user.picture);
+      console.log(response.data.user);
       setPicFetch(false);
     } catch (error) {
       console.error("Error updating picture:", error);
@@ -223,7 +238,7 @@ export default function Profile() {
                   <input
                     disabled
                     className="form-control cursor-not-allowed"
-                    value={user.roles[0].name}
+                    value={user.roles[0].name.toUpperCase()}
                     type="text"
                     placeholder="Role"
                   />
@@ -246,6 +261,53 @@ export default function Profile() {
                   )}
                 </div>
               </form>
+            </MDBCard>
+            <MDBCard className="p-4 mb-4">
+              <div className="my-4">
+                <MDBSwitch
+                  id="flexSwitchCheckDefault"
+                  label="Changer le mot de passe"
+                  checked={CanChangePw}
+                  onChange={(e) => setChangePwAbility(e.target.checked)}
+                />
+
+              </div>
+              {CanChangePw && (
+
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    changePw();
+                  }}
+                >
+                  <MDBInputGroup disabled textBefore="🔒" className="mb-3">
+                    <input
+                      className="form-control"
+                      onChange={(e) => setPassword(e.target.value)}
+                      value={password}
+                      type="password"
+                      placeholder="Tapez le nouveau mot de passe ici ..."
+                    />
+                  </MDBInputGroup>
+                  <div className="flex justify-end">
+                    {pwFetch ? (
+                      <MDBBtn disabled color="dark">
+                        <MDBSpinner
+                          size="sm"
+                          role="status"
+                          tag="span"
+                          className="me-2"
+                        />
+                        Loading...
+                      </MDBBtn>
+                    ) : (
+                      <MDBBtn className="w-20" color="dark">
+                        Save
+                      </MDBBtn>
+                    )}
+                  </div>
+                </form>
+              )}
             </MDBCard>
 
             <MDBRow>

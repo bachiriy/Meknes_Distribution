@@ -13,11 +13,7 @@ async function PUT(endpoint, body) { // body : Object
         body: JSON.stringify(body)
     });
 
-    if (response.ok) {
-        return await response.json();
-    } else {
-        return 'response not OK';
-    }
+   return await response.json();
 }
 
 export default PUT;
