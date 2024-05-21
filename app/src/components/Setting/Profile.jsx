@@ -82,7 +82,7 @@ export default function Profile() {
       const response = await POST("users/picture", formData);
       Cookies.set("user", JSON.stringify(response.data.user), { expires: 3 });
       setPicture(response.data.user.picture);
-      console.log(response.data.user);
+      if (response.status === 'success') toast.success(response.message);
       setPicFetch(false);
     } catch (error) {
       console.error("Error updating picture:", error);
