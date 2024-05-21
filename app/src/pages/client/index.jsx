@@ -1,21 +1,20 @@
-import ClinetTable from "../../components/DataTable";
+import Table from "../../components/Table";
 import Spinner from "../../components/Spinner";
 import GET from '../../utils/GET';
 import { useEffect, useState } from "react";
 
 const columns = [
-    { accessorKey: "id", header: "Id", size: 100 },
-    { accessorKey: "designation", header: "Designation", size: 200 },
-    { accessorKey: "supplier.name", header: "Fournisseur", size: 100 },
-    { accessorKey: "group.name", header: "Group", size: 200 },
-    { accessorKey: "group.category.name", header: "Category" },
-    { accessorKey: "marge_brut", header: "Marge Brut" },
-    { accessorKey: "prix_achat", header: "Prix Achat" },
-    { accessorKey: "prix_tarif", header: "Prix Tarif" },
-    { accessorKey: "prix_vente", header: "Prix Vente" },
-    { accessorKey: "prix_vente_net", header: "Prix Vente Net" },
-    { accessorKey: "remise", header: "Remise" },
-    { accessorKey: "reference", header: "Reference" },
+    { accessorKey: "id", header: "Id", enableEditing: false},
+    { accessorKey: "first_name", header: "Prénom"},
+    { accessorKey: "last_name", header: "Nom"},
+    { accessorKey: "email", header: "Email"},
+    { accessorKey: "phone", header: "Tel"},
+    { accessorKey: "raison_sociale", header: "Raison Sociale"},
+    { accessorKey: "CIN_ICE", header: "CIN ou ICE"},
+    { accessorKey: "type", header: "Type Du Client"},
+    { accessorKey: "role", header: "Role Du Client"},
+    { accessorKey: "address_exploitation", header: "Address D'exploitation"},
+    { accessorKey: "address_facturation", header: "Address De Facturation"},
 ];
 
 
@@ -39,7 +38,7 @@ const Client = () => {
     return loading ? (<Spinner />) : 
     (
         <div className="overflow-auto">
-            {data ? (<ClinetTable data={data} columns={columns} />) : (<p>No Data.</p>)}
+            {data ? (<Table data={data} columns={columns} />) : (<p>No Data.</p>)}
         </div>
     );
 }
