@@ -12,13 +12,16 @@ const Aside = ({ page, setPage, setIsConnected }) => {
     setLoading(true);
     setPage(0);
     try {
-      const response = await fetch(import.meta.env.VITE_REACT_APP_API_URL + "logout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + Cookies.get("token"),
-        },
-      });
+      const response = await fetch(
+        import.meta.env.VITE_REACT_APP_API_URL + "logout",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + Cookies.get("token"),
+          },
+        }
+      );
 
       if (response.ok) {
         Cookies.remove("token");
@@ -122,6 +125,18 @@ const Aside = ({ page, setPage, setIsConnected }) => {
     },
     {
       pageValue: 7,
+      pageLink: "",
+      tooltip: "Statistiques",
+      icon: (
+        <>
+          <path stroke="none" d="M0 0h24v24H0z" />{" "}
+          <line x1="4" y1="19" x2="20" y2="19" />{" "}
+          <polyline points="4 15 8 9 12 11 16 6 20 10" />
+        </>
+      ),
+    },
+    {
+      pageValue: 8,
       pageLink: "",
       tooltip: "Parametres",
       icon: (
