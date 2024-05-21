@@ -41,9 +41,13 @@
       padding-top: 30px;
     }
 
-    /* Make the icons white */
     .titlebar-button img {
+      opacity: .7;
       filter: brightness(0) invert(1);
+    }
+
+    #titlebar-close:hover {
+      background-color: rgb(255, 30, 30);
     }
   </style>
 
@@ -63,18 +67,7 @@
   </div>
   <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
-  <script>
-    import { appWindow } from '@tauri-apps/api/window';
-    document
-      .getElementById('titlebar-minimize')
-      .addEventListener('click', () => appWindow.minimize());
-    document
-      .getElementById('titlebar-maximize')
-      .addEventListener('click', () => appWindow.toggleMaximize());
-    document
-      .getElementById('titlebar-close')
-      .addEventListener('click', () => appWindow.close());
-  </script>
+
 </body>
 
 </html>
