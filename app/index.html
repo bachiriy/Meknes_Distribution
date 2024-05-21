@@ -13,7 +13,8 @@
       background: #0a0a0a;
       user-select: none;
       display: flex;
-      justify-content: flex-end;
+      align-items: center;
+      justify-content: space-between;
       top: 0;
       left: 0;
       right: 0;
@@ -49,6 +50,14 @@
     #titlebar-close:hover {
       background-color: rgb(255, 30, 30);
     }
+
+    .titlebar-logo {
+      height: 30px;
+      padding: 9px;
+    }
+    .titlebar-logo img {
+      height: 100%;
+    }
   </style>
 
 </head>
@@ -56,16 +65,23 @@
 <body>
   <div data-tauri-drag-region class="titlebar">
    
-    <div class="titlebar-button" id="titlebar-minimize">
-      <img src="https://api.iconify.design/mdi:window-minimize.svg" alt="minimize" />
+    <div class="titlebar-logo">
+      <img src="src/assets/logo-sm.png" alt="Logo" />
     </div>
-    <div class="titlebar-button" id="titlebar-maximize">
-      <img src="https://api.iconify.design/mdi:window-maximize.svg" alt="maximize" />
+
+    <div>
+      <div class="titlebar-button" id="titlebar-minimize">
+        <img src="https://api.iconify.design/mdi:window-minimize.svg" alt="minimize" />
+      </div>
+      <div class="titlebar-button" id="titlebar-maximize">
+        <img src="https://api.iconify.design/mdi:window-maximize.svg" alt="maximize" />
+      </div>
+      <div class="titlebar-button" id="titlebar-close">
+        <img src="https://api.iconify.design/mdi:close.svg" alt="close" />
+      </div>
     </div>
-    <div class="titlebar-button" id="titlebar-close">
-      <img src="https://api.iconify.design/mdi:close.svg" alt="close" />
+
     </div>
-  </div>
   <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
 
