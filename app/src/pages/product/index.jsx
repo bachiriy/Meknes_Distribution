@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Table from "../../components/Table";
 import Spinner from "../../components/Spinner";
 import GET from "../../utils/GET";
+import { validateProduct } from "../../utils/validationFunctions";
 
 const columns = [
   {
@@ -73,7 +74,14 @@ export const Product = () => {
   ) : (
     <div className="overflow-auto">
       <h1 className="pb-12 text-center">Products Table</h1>
-      {data && <Table data={data} columns={columns} />}
+      {data && (
+        <Table
+          data={data}
+          columns={columns}
+          entityType="Product"
+          validateEntity={validateProduct}
+        />
+      )}
     </div>
   );
 };

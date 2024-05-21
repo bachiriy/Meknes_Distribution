@@ -2,23 +2,23 @@ import { useEffect, useState } from "react";
 import Table from "../../components/Table";
 import Spinner from "../../components/Spinner";
 import GET from "../../utils/GET";
-
+import { validateCategory } from "../../utils/validationFunctions";
 
 const columns = [
-    {
-      accessorKey: "id",
-      header: "Id",
-      enableEditing: false
-    },
-    {
-      accessorKey: "name",
-      header: "Category Name",
-    },
-    {
-        accessorKey: "groups",
-        header: "Groups",
-    }
-  ];
+  {
+    accessorKey: "id",
+    header: "Id",
+    enableEditing: false,
+  },
+  {
+    accessorKey: "name",
+    header: "Category Name",
+  },
+  {
+    accessorKey: "groups",
+    header: "Groups",
+  },
+];
 
 function Category() {
   const [loading, setLoading] = useState(true);
@@ -30,7 +30,11 @@ function Category() {
       const d = await GET("categories");
       const processedData = d.categories.map((category) => ({
         ...category,
-        groups: category.groups.slice(0, 3).map((group) => group.name).join(", ") + "...",
+        groups:
+          category.groups
+            .slice(0, 3)
+            .map((group) => group.name)
+            .join(", ") + "...",
       }));
       setData(processedData);
       setLoading(false);
@@ -44,7 +48,12 @@ function Category() {
     <div className="overflow-auto">
       <h1 className="pb-12 text-center">Categories Table</h1>
       {data ? (
-        <DataTable data={data} columns={columns} />
+        <Table
+          data={data}
+          columns={columns}
+          entityType="Category"
+          validateEntity={validateCategory}
+        />
       ) : (
         <div className="text-center">Table is Empty</div>
       )}

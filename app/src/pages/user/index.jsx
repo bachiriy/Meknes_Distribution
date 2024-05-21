@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Spinner from "../../components/Spinner";
 import GET from "../../utils/GET";
 import Table from "../../components/Table";
+import { validateUser } from "../../utils/validationFunctions";
 
 const columns = [
   { accessorKey: "id", header: "Id", enableEditing: false },
@@ -9,7 +10,6 @@ const columns = [
   { accessorKey: "email", header: "Email" },
   { accessorKey: "roleName", header: "Role" },
 ];
-
 
 export const User = () => {
   const [loading, setLoading] = useState(false);
@@ -34,7 +34,16 @@ export const User = () => {
     <Spinner />
   ) : (
     <div className="overflow-auto w-full h-full p-6 flex justify-center items-center">
-      {data ? <Table data={data} columns={columns} /> : <p>No Data.</p>}
+      {data ? (
+        <Table
+          data={data}
+          columns={columns}
+          entityType="User"
+          validateEntity={validateUser}
+        />
+      ) : (
+        <p>No Data.</p>
+      )}
     </div>
   );
 };

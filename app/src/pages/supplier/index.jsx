@@ -4,12 +4,13 @@ import Spinner from "../../components/Spinner";
 import GET from "../../utils/GET";
 
 import React from "react";
+import { validateSupplier } from "../../utils/validationFunctions";
 
 const columns = [
   {
     accessorKey: "id",
     header: "Id",
-    enableEditing: false
+    enableEditing: false,
   },
   {
     accessorKey: "name",
@@ -38,13 +39,13 @@ const Supplier = () => {
 
   useEffect(() => {
     let recieve = async () => {
-        setLoading(true);
-        const d = await GET('suppliers');
-        setData(d.suppliers);
-        setLoading(false);
+      setLoading(true);
+      const d = await GET("suppliers");
+      setData(d.suppliers);
+      setLoading(false);
     };
     recieve();
-}, []);
+  }, []);
 
   return loading ? (
     <Spinner />
@@ -52,7 +53,12 @@ const Supplier = () => {
     <div className="overflow-auto">
       <h1 className="pb-12 text-center">Suppliers Table</h1>
       {data ? (
-        <Table data={data} columns={columns} />
+        <Table
+          data={data}
+          columns={columns}
+          entityType="Supplier"
+          validateEntity={validateSupplier}
+        />
       ) : (
         <div className="text-center">Table is Empty</div>
       )}
