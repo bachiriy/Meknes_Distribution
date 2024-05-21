@@ -54,7 +54,7 @@ export const LoginComponent = (props) => {
 
   return (
     <>
-      <ToastContainer />
+      <ToastContainer className="mt-10" />
       {loading ? (
         <Spinner />
       ) : (

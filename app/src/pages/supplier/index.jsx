@@ -1,25 +1,24 @@
 import { useEffect, useState } from "react";
-import DataTable from "../../components/DataTable";
+import Table from "../../components/Table";
 import Spinner from "../../components/Spinner";
 import GET from "../../utils/GET";
 
 import React from "react";
+import { validateSupplier } from "../../utils/validationFunctions";
 
 const columns = [
   {
     accessorKey: "id",
     header: "Id",
-    size: 100,
+    enableEditing: false,
   },
   {
     accessorKey: "name",
     header: "Fournisseur",
-    size: 200,
   },
   {
     accessorKey: "remise_f",
     header: "Remise",
-    size: 200,
   },
   {
     accessorKey: "remise_f_composition",
@@ -40,13 +39,13 @@ const Supplier = () => {
 
   useEffect(() => {
     let recieve = async () => {
-        setLoading(true);
-        const d = await GET('suppliers');
-        setData(d.suppliers);
-        setLoading(false);
+      setLoading(true);
+      const d = await GET("suppliers");
+      setData(d.suppliers);
+      setLoading(false);
     };
     recieve();
-}, []);
+  }, []);
 
   return loading ? (
     <Spinner />
@@ -54,7 +53,12 @@ const Supplier = () => {
     <div className="overflow-auto">
       <h1 className="pb-12 text-center">Suppliers Table</h1>
       {data ? (
-        <DataTable data={data} columns={columns} />
+        <Table
+          data={data}
+          columns={columns}
+          entityType="Supplier"
+          validateEntity={validateSupplier}
+        />
       ) : (
         <div className="text-center">Table is Empty</div>
       )}

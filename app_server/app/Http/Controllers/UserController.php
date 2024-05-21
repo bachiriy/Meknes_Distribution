@@ -119,7 +119,7 @@ class UserController extends Controller
         $user->assignRole($role);
     }
 
-    function createUserPicture(Request $request)
+    function createUserPicture(Request $request): \Illuminate\Http\JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'user_id' => 'required|numeric|exists:users,id',
@@ -130,7 +130,12 @@ class UserController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $user = User::find($request['user_id']);
+        $path = $request->file('picture')->store('users/picture', 'public');
+        $user = User::with('roles')
+            ->where('id', $request['user_id'])
+            ->first();
+        $user->clearMediaCollection('user_picture');
+        $user->addMedia(storage_path('app/public/' . $path))->toMediaCollection('user_picture');
         $mediaItems = $user->getMedia('user_picture');
         $publicUrl = $mediaItems[0]->getUrl();
         $user->picture = $publicUrl;
