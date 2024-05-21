@@ -118,4 +118,31 @@ class UserController extends Controller
         $role = Role::findById($data['role_id'], 'api');
         $user->assignRole($role);
     }
+
+    function createUserPicture(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required|numeric|exists:users,id',
+            'picture' => 'required|file|mimes:jpg,png,jpeg',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $user = User::find($request['user_id']);
+        $mediaItems = $user->getMedia('user_picture');
+        $publicUrl = $mediaItems[0]->getUrl();
+        $user->picture = $publicUrl;
+        $user->save();
+
+        $response = [
+            'status' => 'success',
+            'message' => "User's picture is changed successfully.",
+            'data' => [
+                'user' => $user
+            ]
+        ];
+        return response()->json($response);
+    }
 }
