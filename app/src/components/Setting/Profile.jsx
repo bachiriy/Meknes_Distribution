@@ -56,14 +56,15 @@ export default function Profile() {
       name,
       email,
       id: user.id,
-      password: "password",
-      role_id: 1,
+      role_id: user.roles[0].id,
     });
     if (respone.status === "success") {
       toast.success(respone.message);
-    }
-    Cookies.remove("user");
-    Cookies.set("user", JSON.stringify(respone.data.user), { expires: 3 });
+      Cookies.remove("user");
+      Cookies.set("user", JSON.stringify(respone.data.user), { expires: 3 });
+    };
+    if(respone.errors && respone.errors.name) toast.error(respone.errors.name[0]);
+    if(respone.errors && respone.errors.email) toast.error(respone.errors.email[0]);
     setFetch(false);
   };
 
