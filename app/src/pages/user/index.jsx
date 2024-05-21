@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
-import DataTable from "../../components/DataTable";
 import Spinner from "../../components/Spinner";
 import GET from "../../utils/GET";
+import Table from "../../components/Table";
 
 const columns = [
-  { accessorKey: "id", header: "Id", size: 100 },
-  { accessorKey: "name", header: "Nom", size: 200 },
-  { accessorKey: "email", header: "Email", size: 100 },
-  { accessorKey: "roleName", header: "Role", size: 200 },
+  { accessorKey: "id", header: "Id", enableEditing: false },
+  { accessorKey: "name", header: "Nom" },
+  { accessorKey: "email", header: "Email" },
+  { accessorKey: "roleName", header: "Role" },
 ];
+
 
 export const User = () => {
   const [loading, setLoading] = useState(false);
@@ -32,8 +33,8 @@ export const User = () => {
   return loading ? (
     <Spinner />
   ) : (
-    <div className="overflow-auto">
-      {data ? <DataTable data={data} columns={columns} /> : <p>No Data.</p>}
+    <div className="overflow-auto w-full h-full p-6 flex justify-center items-center">
+      {data ? <Table data={data} columns={columns} /> : <p>No Data.</p>}
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import DataTable from "../../components/DataTable";
+import Table from "../../components/Table";
 import Spinner from "../../components/Spinner";
 import GET from "../../utils/GET";
 
@@ -7,22 +7,19 @@ const columns = [
   {
     accessorKey: "id",
     header: "Id",
-    size: 100,
+    enableEditing: false,
   },
   {
     accessorKey: "designation",
     header: "Designation",
-    size: 200,
   },
   {
     accessorKey: "supplier.name",
     header: "Fournisseur",
-    size: 100,
   },
   {
     accessorKey: "group.name",
     header: "Group",
-    size: 200,
   },
   {
     accessorKey: "group.category.name",
@@ -63,20 +60,20 @@ export const Product = () => {
 
   useEffect(() => {
     let recieve = async () => {
-        setLoading(true);
-        const d = await GET('products');
-        setData(d.products);
-        setLoading(false);
+      setLoading(true);
+      const d = await GET("products");
+      setData(d.products);
+      setLoading(false);
     };
     recieve();
-}, []);
+  }, []);
 
   return loading ? (
     <Spinner />
   ) : (
     <div className="overflow-auto">
       <h1 className="pb-12 text-center">Products Table</h1>
-      {data && <DataTable data={data} columns={columns} />}
+      {data && <Table data={data} columns={columns} />}
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import DataTable from "../../components/DataTable";
+import Table from "../../components/Table";
 import Spinner from "../../components/Spinner";
 import GET from "../../utils/GET";
 
@@ -8,17 +8,15 @@ const columns = [
     {
       accessorKey: "id",
       header: "Id",
-      size: 100,
+      enableEditing: false
     },
     {
       accessorKey: "name",
       header: "Category Name",
-      size: 200,
     },
     {
         accessorKey: "groups",
         header: "Groups",
-        size: 400,
     }
   ];
 
