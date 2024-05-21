@@ -10,7 +10,7 @@ import Spinner from "../components/Spinner";
 import Supplier from "../pages/supplier";
 import { User } from "../pages/user";
 import Category from "../pages/Category";
-import Sitting from "../pages/sitting";
+import Setting from "../pages/setting";
 import "mdb-react-ui-kit/dist/css/mdb.min.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
@@ -54,7 +54,7 @@ export const Router = (props) => {
             {page === 4 && <Route path="/" element={<Supplier />} />}
             {page === 5 && <Route path="/" element={<User />} />}
             {page === 6 && <Route path="/" element={<Category />} />}
-            {page === 7 && <Route path="/" element={<Sitting />} />}
+            {page === 7 && <Route path="/" element={<Setting />} />}
             {page === 10 && <Route path="/" element={<Spinner />} />}
           </Route>
         )}
