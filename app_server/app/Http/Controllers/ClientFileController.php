@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ClientFile;
+use App\Models\ClientFileProduct;
 use App\Models\ClientPartner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -11,7 +12,13 @@ class ClientFileController extends Controller
 {
     function index(): \Illuminate\Http\JsonResponse
     {
-        $clientFiles = ClientFile::all();
+        $clientFiles = ClientFile::with('invoices')
+            ->with('deliveryNotes')
+            ->with('commune.caidat.cercle.province.region')
+            ->with('products.group.category')
+            ->with('clients')
+            ->get();
+
         $response = [
             'message' => 'success',
             'clientFiles' => $clientFiles
@@ -22,9 +29,11 @@ class ClientFileController extends Controller
     function store(Request $request): \Illuminate\Http\JsonResponse
     {
         $validator = Validator::make($request->all(), [
+            'client_ids' => 'required|array',
             'client_ids.*' => 'required|numeric|exists:clients,id',
             'commune_id' => 'required|numeric|exists:communes,id',
-            'product_id' => 'required|numeric|exists:products,id',
+            'product_ids' => 'required|array',
+            'product_ids.*' => 'required|numeric|exists:products,id',
             'exploitation_surface' => 'required|string',
         ]);
 
@@ -34,7 +43,7 @@ class ClientFileController extends Controller
 
         $data = $request->only(
             'commune_id',
-            'product_id',
+            'more_detail',
             'exploitation_surface'
         );
 
@@ -46,6 +55,21 @@ class ClientFileController extends Controller
                 'client_id' => $id
             ]);
         }
+
+        foreach ($request['product_ids'] as $id) {
+            ClientFileProduct::create([
+                'client_file_id' => $clientFile->id,
+                'product_id' => $id
+            ]);
+        }
+
+        $clientFile = ClientFile::with('invoices')
+            ->with('deliveryNotes')
+            ->with('commune.caidat.cercle.province.region')
+            ->with('products')
+            ->with('clients')
+            ->where('id', $clientFile->id)
+            ->first();
 
         $response = [
             'status' => 'success',

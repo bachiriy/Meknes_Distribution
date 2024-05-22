@@ -14,9 +14,10 @@ class ClientFile extends Model implements HasMedia
     protected $fillable = [
         'commune_id',
         'exploitation_surface',
+        'more_detail'
     ];
 
-    function client(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    function clients(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(Client::class, 'client_partners');
     }
@@ -26,17 +27,17 @@ class ClientFile extends Model implements HasMedia
         return $this->belongsTo(Commune::class);
     }
 
-    function product(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    function products(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(Product::class, 'client_file_products');
     }
 
-    function deliveryNote(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    function deliveryNotes(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(DeliveryNote::class, 'client_file_delivery_note');
     }
 
-    function invoice(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    function invoices(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(Invoice::class, 'client_file_invoice');
     }

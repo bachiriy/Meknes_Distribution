@@ -25,19 +25,9 @@ class Product extends Model
     ];
 
 
-    function clientFile(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    function clientFiles(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(ClientFile::class);
-    }
-
-    function invoice(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
-    {
-        return $this->belongsToMany(Invoice::class);
-    }
-
-    function deliveryNote(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
-    {
-        return $this->belongsToMany(DeliveryNote::class);
     }
 
     function category(): \Illuminate\Database\Eloquent\Relations\BelongsTo
