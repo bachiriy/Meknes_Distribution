@@ -16,7 +16,7 @@ class StatsController extends Controller
             ->groupBy('communes.id')
             ->havingRaw('COUNT(client_files.id) > 0')
             ->orderBy('client_files_count', 'desc')
-            ->take(5)
+            ->take(4)
             ->get();
 
         $communeIds = $topCommunes->pluck('id')->toArray();
@@ -46,6 +46,16 @@ class StatsController extends Controller
         $response = [
             'message' => 'success',
             'searchedCommune' => $communeWithFiles
+        ];
+        return response()->json($response, 200);
+    }
+
+    function getCommunes(): \Illuminate\Http\JsonResponse
+    {
+        $communes = ClientFileAddress::all();
+        $response = [
+            'message' => 'success',
+            'communes' => $communes
         ];
         return response()->json($response, 200);
     }
