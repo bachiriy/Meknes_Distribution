@@ -91,7 +91,7 @@ export default function Profile() {
   };
 
   return (
-    <section className="w-full ml-12" style={{ backgroundColor: "white" }}>
+    <section className="" style={{ backgroundColor: "white" }}>
       <ToastContainer className="mt-6" />
       <MDBContainer className="py-5">
         <MDBRow>
