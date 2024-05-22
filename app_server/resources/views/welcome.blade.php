@@ -10,26 +10,8 @@
 
 <div class="container mx-auto p-4">
     <h1 class="text-3xl font-bold mb-6">API Endpoints</h1>
-
     <!-- Endpoint Card -->
-    <div class="bg-white rounded-lg shadow-md p-6 mb-4">
-        <h2 class="text-xl font-semibold mb-2"><span class="text-green-500">GET</span> /api/users</h2>
-        <p class="text-gray-700 mb-2">Retrieve a list of users</p>
-        <div class="mb-4">
-            <h3 class="font-medium">Headers</h3>
-            <ul class="list-disc list-inside ml-4">
-                <li>Authorization: Bearer &lt;token&gt;</li>
-                <li>Content-Type: application/json</li>
-            </ul>
-        </div>
-        <div class="mb-4">
-            <h3 class="font-medium">Parameters</h3>
-            <ul class="list-disc list-inside ml-4">
-                <li>page: integer (optional)</li>
-                <li>limit: integer (optional)</li>
-            </ul>
-        </div>
-    </div>
+
 
     <!-- Add more endpoint cards as needed -->
     <div class="bg-white rounded-lg shadow-md p-6 mb-4">
@@ -62,7 +44,6 @@
             </ul>
         </div>
     </div>
-
     <!-- register endpoint -->
     <div class="bg-white rounded-lg shadow-md p-6 mb-4">
         <h2 class="text-xl font-semibold mb-2"><span class="text-yellow-500">POST</span> /api/register</h2>
@@ -84,7 +65,25 @@
     </div>
 
 
-    <!-- User Picture endpoint -->
+    <!-- Users -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-4">
+        <h2 class="text-xl font-semibold mb-2"><span class="text-green-500">GET</span> /api/users</h2>
+        <p class="text-gray-700 mb-2">Retrieve a list of users</p>
+        <div class="mb-4">
+            <h3 class="font-medium">Headers</h3>
+            <ul class="list-disc list-inside ml-4">
+                <li>Authorization: Bearer &lt;token&gt;</li>
+                <li>Content-Type: application/json</li>
+            </ul>
+        </div>
+        <div class="mb-4">
+            <h3 class="font-medium">Parameters</h3>
+            <ul class="list-disc list-inside ml-4">
+                <li>page: integer (optional)</li>
+                <li>limit: integer (optional)</li>
+            </ul>
+        </div>
+    </div>
     <div class="bg-white rounded-lg shadow-md p-6 mb-4">
         <h2 class="text-xl font-semibold mb-2"><span class="text-yellow-500">POST</span> /api/users/picture</h2>
         <p class="text-gray-700 mb-2">Upload User Picture</p>
@@ -112,5 +111,30 @@
     </div>
 </div>
 
+
+    {{--Client File--}}
+    <div class="bg-white rounded-lg shadow-md p-6 mb-4">
+        <h2 class="text-xl font-semibold mb-2"><span class="text-green-500">POST</span> /api/clientFiles</h2>
+        <p class="text-gray-700 mb-2">Store client File</p>
+        <div class="mb-4">
+            <h3 class="font-medium">Headers</h3>
+            <ul class="list-disc list-inside ml-4">
+                <li>Authorization: Bearer &lt;token&gt;</li>
+                <li>Content-Type: application/json</li>
+            </ul>
+        </div>
+        <div class="mb-4">
+            <h3 class="font-medium">Parameters</h3>
+            <ul class="list-disc list-inside ml-4">
+                <li>product_ids: array of integers (required)</li>
+                <li>client_ids: array of integers (required)</li>
+                <li>commun_id: integer (required)</li>
+                <li>exploitation_surface: float (required)</li>
+                <li>more_detail: text (optional)</li>
+                <li>status: enum - ['in progress', 'completed', 'archived'] (optional)</li>
+            </ul>
+        </div>
+    </div>
+</div>
 </body>
 </html>
