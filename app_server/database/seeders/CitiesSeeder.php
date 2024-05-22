@@ -47,8 +47,11 @@ class CitiesSeeder extends Seeder
                 $commune = $caidat->communes()->firstOrCreate(['name' => $communeName]);
 
                 $addressParts = [$regionName, $prefProvName, $cercleName, $communeName];
-                $uniqueAddressParts = array_unique($addressParts);
-                $fullAddress = implode(', ', $uniqueAddressParts);
+                $normalizedAddressParts = array_map(function($name) {
+                    return preg_replace('/\s*\(.*?\)$/', '', $name);
+                }, $addressParts);
+                $uniqueNormalizedAddressParts = array_unique($normalizedAddressParts);
+                $fullAddress = implode(', ', array_intersect_key($addressParts, $uniqueNormalizedAddressParts));
 
                 ClientFileAddress::create([
                     'full_address' => $fullAddress,
