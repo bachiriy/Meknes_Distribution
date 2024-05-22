@@ -80,6 +80,7 @@ Route::middleware('auth:api')->group(function () {
 
     Route::prefix('stats')->group(function () {
         Route::get('', [StatsController::class, 'index']);
+        Route::get('/search/{input}', [StatsController::class, 'searchByCommune']);
     });
 });
 

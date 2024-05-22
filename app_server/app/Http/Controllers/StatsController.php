@@ -33,4 +33,20 @@ class StatsController extends Controller
         ];
         return response()->json($response, 200);
     }
+
+
+    function searchByCommune($input): \Illuminate\Http\JsonResponse
+    {
+        $searchPrompt = '%' . strtoupper($input) . '%';
+        $communeWithFiles = ClientFileAddress::with(['commune.clientFiles'])
+            ->whereHas('commune', function ($query) use ($searchPrompt) {
+                $query->where('full_address', 'like', $searchPrompt);
+            })
+            ->get();
+        $response = [
+            'message' => 'success',
+            'searchedCommune' => $communeWithFiles
+        ];
+        return response()->json($response, 200);
+    }
 }
