@@ -45,7 +45,7 @@ function Category() {
   return loading ? (
     <Spinner />
   ) : (
-    <div className="overflow-auto">
+    <div className="">
       <h1 className="pb-12 text-center">Categories Table</h1>
       {data ? (
         <Table
