@@ -211,7 +211,7 @@ export default function Profile() {
                   updateUserInfo();
                 }}
               >
-                <MDBInputGroup textBefore="@" className="mb-3">
+                <MDBInputGroup textAfter="Name" className="mb-3">
                   <input
                     className="form-control"
                     onChange={(e) => setName(e.target.value)}
@@ -221,7 +221,7 @@ export default function Profile() {
                   />
                 </MDBInputGroup>
 
-                <MDBInputGroup className="mb-3" textAfter="@gmail.com">
+                <MDBInputGroup className="mb-3" textAfter="Email">
                   <input
                     className="form-control"
                     onChange={(e) => setEmail(e.target.value)}
