@@ -13,9 +13,11 @@ import Category from "../pages/Category";
 import Setting from "../pages/setting";
 import "mdb-react-ui-kit/dist/css/mdb.min.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import Stats from "../pages/stats";
+import { invoke } from '@tauri-apps/api/tauri'
 
 export const Router = (props) => {
-  const [isConnected, setIsConnected] = useState(false);
+  const [isConnected, setIsConnected] = useState(true);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
 
@@ -25,6 +27,7 @@ export const Router = (props) => {
       setIsConnected(await authChecker());
     };
     waitForIt();
+    invoke('close_splashscreen');
     setLoading(false);
     props.setLoading(false);
   }, []);
@@ -54,7 +57,8 @@ export const Router = (props) => {
             {page === 4 && <Route path="/" element={<Supplier />} />}
             {page === 5 && <Route path="/" element={<User />} />}
             {page === 6 && <Route path="/" element={<Category />} />}
-            {page === 7 && <Route path="/" element={<Setting />} />}
+            {page === 7 && <Route path="/" element={<Stats />} />}
+            {page === 8 && <Route path="/" element={<Setting />} />}
             {page === 10 && <Route path="/" element={<Spinner />} />}
           </Route>
         )}
