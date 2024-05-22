@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\ClientFileAddress;
-use App\Models\PrefProv;
 use App\Models\Region;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -16,9 +15,9 @@ class CitiesSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    public function run(): void
+    public function run()
     {
-        $contents = Storage::get('T_ADRESSE.txt');
+        $contents = Storage::disk('public')->get('T_ADRESSE.txt');
         $lines = explode("\n", $contents);
 
         foreach ($lines as $line) {
@@ -47,7 +46,7 @@ class CitiesSeeder extends Seeder
                 $commune = $caidat->communes()->firstOrCreate(['name' => $communeName]);
 
                 $addressParts = [$regionName, $prefProvName, $cercleName, $communeName];
-                $normalizedAddressParts = array_map(function($name) {
+                $normalizedAddressParts = array_map(function ($name) {
                     return preg_replace('/\s*\(.*?\)$/', '', $name);
                 }, $addressParts);
                 $uniqueNormalizedAddressParts = array_unique($normalizedAddressParts);
