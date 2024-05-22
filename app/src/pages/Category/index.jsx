@@ -2,9 +2,7 @@ import { useEffect, useState } from "react";
 import Table from "../../components/Table";
 import Spinner from "../../components/Spinner";
 import GET from "../../utils/GET";
-
-import React from "react";
-import { validateSupplier } from "../../utils/validationFunctions";
+import { validateCategory } from "../../utils/validationFunctions";
 
 const columns = [
   {
@@ -14,34 +12,31 @@ const columns = [
   },
   {
     accessorKey: "name",
-    header: "Fournisseur",
+    header: "Category Name",
   },
   {
-    accessorKey: "remise_f",
-    header: "Remise",
-  },
-  {
-    accessorKey: "remise_f_composition",
-    header: "Remise Composition",
-  },
-  {
-    accessorKey: "date_debut",
-    header: "Date de Debut",
-  },
-  {
-    accessorKey: "date_fin",
-    header: "Date de Fin",
+    accessorKey: "groups",
+    header: "Groups",
   },
 ];
-const Supplier = () => {
+
+function Category() {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
 
   useEffect(() => {
     let recieve = async () => {
       setLoading(true);
-      const d = await GET("suppliers");
-      setData(d.suppliers);
+      const d = await GET("categories");
+      const processedData = d.categories.map((category) => ({
+        ...category,
+        groups:
+          category.groups
+            .slice(0, 3)
+            .map((group) => group.name)
+            .join(", ") + "...",
+      }));
+      setData(processedData);
       setLoading(false);
     };
     recieve();
@@ -51,19 +46,19 @@ const Supplier = () => {
     <Spinner />
   ) : (
     <div className="overflow-auto">
-      <h1 className="pb-12 text-center">Suppliers Table</h1>
+      <h1 className="pb-12 text-center">Categories Table</h1>
       {data ? (
         <Table
           data={data}
           columns={columns}
-          entityType="Supplier"
-          validateEntity={validateSupplier}
+          entityType="Category"
+          validateEntity={validateCategory}
         />
       ) : (
         <div className="text-center">Table is Empty</div>
       )}
     </div>
   );
-};
+}
 
-export default Supplier;
+export default Category;

@@ -17,12 +17,12 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-const CrudTable = ({ columns, data }) => {
+const Table = ({ columns, data, entityType, validateEntity }) => {
   const [validationErrors, setValidationErrors] = useState({});
 
   const memoizedColumns = useMemo(() => {
     return columns.map((col) => {
-      if (col.accessorKey === 'name' || col.accessorKey === 'email') {
+      if (col.required) {
         return {
           ...col,
           muiEditTextFieldProps: {
@@ -43,73 +43,73 @@ const CrudTable = ({ columns, data }) => {
 
   const queryClient = useQueryClient();
 
-  const createUser = useMutation({
-    mutationFn: async (user) => {
+  const createEntity = useMutation({
+    mutationFn: async (entity) => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       return Promise.resolve();
     },
-    onMutate: (newUserInfo) => {
-      queryClient.setQueryData(['users'], (prevUsers) => [
-        ...prevUsers,
+    onMutate: (newEntityInfo) => {
+      queryClient.setQueryData([entityType], (prevEntities) => [
+        ...prevEntities,
         {
-          ...newUserInfo,
+          ...newEntityInfo,
           id: (Math.random() + 1).toString(36).substring(7),
         },
       ]);
     },
   });
 
-  const updateUser = useMutation({
-    mutationFn: async (user) => {
+  const updateEntity = useMutation({
+    mutationFn: async (entity) => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       return Promise.resolve();
     },
-    onMutate: (newUserInfo) => {
-      queryClient.setQueryData(['users'], (prevUsers) =>
-        prevUsers?.map((prevUser) =>
-          prevUser.id === newUserInfo.id ? newUserInfo : prevUser
+    onMutate: (newEntityInfo) => {
+      queryClient.setQueryData([entityType], (prevEntities) =>
+        prevEntities?.map((prevEntity) =>
+          prevEntity.id === newEntityInfo.id ? newEntityInfo : prevEntity
         )
       );
     },
   });
 
-  const deleteUser = useMutation({
-    mutationFn: async (userId) => {
+  const deleteEntity = useMutation({
+    mutationFn: async (entityId) => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       return Promise.resolve();
     },
-    onMutate: (userId) => {
-      queryClient.setQueryData(['users'], (prevUsers) =>
-        prevUsers?.filter((user) => user.id !== userId)
+    onMutate: (entityId) => {
+      queryClient.setQueryData([entityType], (prevEntities) =>
+        prevEntities?.filter((entity) => entity.id !== entityId)
       );
     },
   });
 
-  const handleCreateUser = async ({ values, table }) => {
-    const newValidationErrors = validateUser(values);
+  const handleCreateEntity = async ({ values, table }) => {
+    const newValidationErrors = validateEntity(values);
     if (Object.values(newValidationErrors).some((error) => error)) {
       setValidationErrors(newValidationErrors);
       return;
     }
     setValidationErrors({});
-    await createUser.mutateAsync(values);
+    await createEntity.mutateAsync(values);
     table.setCreatingRow(null);
   };
 
-  const handleSaveUser = async ({ values, table }) => {
-    const newValidationErrors = validateUser(values);
+  const handleSaveEntity = async ({ values, table }) => {
+    const newValidationErrors = validateEntity(values);
     if (Object.values(newValidationErrors).some((error) => error)) {
       setValidationErrors(newValidationErrors);
       return;
     }
     setValidationErrors({});
-    await updateUser.mutateAsync(values);
+    await updateEntity.mutateAsync(values);
     table.setEditingRow(null);
   };
 
   const openDeleteConfirmModal = (row) => {
-    if (window.confirm('Are you sure you want to delete this user?')) {
-      deleteUser.mutateAsync(row.original.id);
+    if (window.confirm(`Are you sure you want to delete this ${entityType}?`)) {
+      deleteEntity.mutateAsync(row.original.id);
     }
   };
 
@@ -121,12 +121,12 @@ const CrudTable = ({ columns, data }) => {
     enableEditing: true,
     getRowId: (row) => row.id,
     onCreatingRowCancel: () => setValidationErrors({}),
-    onCreatingRowSave: handleCreateUser,
+    onCreatingRowSave: handleCreateEntity,
     onEditingRowCancel: () => setValidationErrors({}),
-    onEditingRowSave: handleSaveUser,
+    onEditingRowSave: handleSaveEntity,
     renderCreateRowDialogContent: ({ table, row, internalEditComponents }) => (
       <>
-        <DialogTitle variant="h3">Create New User</DialogTitle>
+        <DialogTitle variant="h3">Create New {entityType}</DialogTitle>
         <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {internalEditComponents}
         </DialogContent>
@@ -137,7 +137,7 @@ const CrudTable = ({ columns, data }) => {
     ),
     renderEditRowDialogContent: ({ table, row, internalEditComponents }) => (
       <>
-        <DialogTitle variant="h3">Edit User</DialogTitle>
+        <DialogTitle variant="h3">Edit {entityType}</DialogTitle>
         <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           {internalEditComponents}
         </DialogContent>
@@ -167,7 +167,7 @@ const CrudTable = ({ columns, data }) => {
           table.setCreatingRow(true);
         }}
       >
-        Create New User
+        Create New {entityType}
       </Button>
     ),
   });
@@ -175,18 +175,4 @@ const CrudTable = ({ columns, data }) => {
   return <MaterialReactTable table={table} />;
 };
 
-const validateRequired = (value) => !!value.length;
-const validateEmail = (email) =>
-  !!email.length &&
-  email.toLowerCase().match(
-    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-  );
-
-function validateUser(user) {
-  return {
-    name: !validateRequired(user.name) ? 'Name is Required' : '',
-    email: !validateEmail(user.email) ? 'Incorrect Email Format' : '',
-  };
-}
-
-export default CrudTable;
+export default Table;

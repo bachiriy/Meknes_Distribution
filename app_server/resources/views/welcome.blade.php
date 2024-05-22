@@ -44,7 +44,6 @@
             </ul>
         </div>
     </div>
-
     <!-- register endpoint -->
     <div class="bg-white rounded-lg shadow-md p-6 mb-4">
         <h2 class="text-xl font-semibold mb-2"><span class="text-yellow-500">POST</span> /api/register</h2>
@@ -85,7 +84,6 @@
             </ul>
         </div>
     </div>
-
     <div class="bg-white rounded-lg shadow-md p-6 mb-4">
         <h2 class="text-xl font-semibold mb-2"><span class="text-yellow-500">POST</span> /api/users/picture</h2>
         <p class="text-gray-700 mb-2">Upload User Picture</p>
@@ -111,6 +109,7 @@
             <button>click</button>
         </form>
     </div>
+</div>
 
 
     {{--Client File--}}

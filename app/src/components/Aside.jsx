@@ -58,7 +58,7 @@ const Aside = ({ page, setPage, setIsConnected }) => {
     {
       pageValue: 2,
       pageLink: "/products",
-      tooltip: "Products",
+      tooltip: "Prodiuts",
       icon: (
         <>
           <circle cx="7" cy="15" r="4" />
@@ -95,7 +95,7 @@ const Aside = ({ page, setPage, setIsConnected }) => {
     {
       pageValue: 5,
       pageLink: "Users",
-      tooltip: "Users",
+      tooltip: "Utilisateurs",
       icon: (
         <path
           stroke-linecap="round"
@@ -107,6 +107,21 @@ const Aside = ({ page, setPage, setIsConnected }) => {
     },
     {
       pageValue: 6,
+      pageLink: "",
+      tooltip: "Categories",
+      icon: (
+        <>
+          <path stroke="none" d="M0 0h24v24H0z" />{" "}
+          <rect x="4" y="4" width="6" height="6" rx="1" />{" "}
+          <rect x="4" y="14" width="6" height="6" rx="1" />{" "}
+          <rect x="14" y="14" width="6" height="6" rx="1" />{" "}
+          <line x1="14" y1="7" x2="20" y2="7" />{" "}
+          <line x1="17" y1="4" x2="17" y2="10" />
+        </>
+      ),
+    },
+    {
+      pageValue: 7,
       pageLink: "",
       tooltip: "Parametres",
       icon: (
@@ -154,7 +169,7 @@ const Aside = ({ page, setPage, setIsConnected }) => {
       {loading ? (
         <Spinner />
       ) : (
-        <aside className="h-full w-12 py-4 flex flex-col space-y-8 items-center fixed bg-[#0a0a0a] text-white">
+        <aside className="h-[calc(100vh-30px)] w-12 py-4 flex fixed z-50 flex-col space-y-8 items-center bg-[#0a0a0a] text-white">
           {menuItems.map((item, index) => (
             <MenuItem key={index} {...item} />
           ))}

@@ -1,15 +1,15 @@
 import React from 'react'
-import Profile from '../../components/Sitting/Profile'
+import Profile from '../../components/Setting/Profile'
 
-function Sitting() {
+function Setting() {
   return (
     <>
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
-      <p className='text-center'>Sitting</p>
+      <p className='text-center'>Setting</p>
       <Profile />
 
     </>
   )
 }
 
-export default Sitting
+export default Setting
