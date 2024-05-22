@@ -5,6 +5,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClientFileController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\StatsController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
 use App\Models\Client;
@@ -75,6 +76,10 @@ Route::middleware('auth:api')->group(function () {
         Route::post('', [CategoryController::class, 'store']);
         Route::put('/{id}', [CategoryController::class, 'update']);
         Route::delete('/{id}', [CategoryController::class, 'destroy']);
+    });
+
+    Route::prefix('stats')->group(function () {
+        Route::get('', [StatsController::class, 'index']);
     });
 });
 
