@@ -14,7 +14,9 @@ return new class extends Migration
         Schema::create('client_files', function (Blueprint $table) {
             $table->id();
             $table->foreignId('commune_id')->constrained()->cascadeOnDelete();
-            $table->string('exploitation_surface');
+            $table->float('exploitation_surface');
+            $table->text('more_detail')->nullable();
+            $table->enum('status', ['in progress', 'completed', 'archived'])->default('in progress');
             $table->timestamps();
         });
     }
