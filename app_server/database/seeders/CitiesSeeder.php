@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\ClientFileAddress;
 use App\Models\PrefProv;
 use App\Models\Region;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -40,18 +41,19 @@ class CitiesSeeder extends Seeder
             DB::transaction(function () use ($regionName, $prefProvName, $cercleName, $caidatName, $communeName) {
                 // Check if the region exists, if not, create it
                 $region = Region::firstOrCreate(['name' => $regionName]);
-
-                // Check if the PrefProv exists under this region, if not, create it
                 $prefProv = $region->provinces()->firstOrCreate(['name' => $prefProvName]);
-
-                // Check if the Cercle exists under this PrefProv, if not, create it
                 $cercle = $prefProv->cercles()->firstOrCreate(['name' => $cercleName]);
-
-                // Check if the Caidat exists under this Cercle, if not, create it
                 $caidat = $cercle->caidats()->firstOrCreate(['name' => $caidatName]);
-
-                // Check if the Commune exists under this Caidat, if not, create it
                 $commune = $caidat->communes()->firstOrCreate(['name' => $communeName]);
+
+                $addressParts = [$regionName, $prefProvName, $cercleName, $communeName];
+                $uniqueAddressParts = array_unique($addressParts);
+                $fullAddress = implode(', ', $uniqueAddressParts);
+
+                ClientFileAddress::create([
+                    'full_address' => $fullAddress,
+                    'commune_id' => $commune->id
+                ]);
             });
         }
     }
