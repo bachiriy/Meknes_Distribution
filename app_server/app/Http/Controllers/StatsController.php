@@ -20,13 +20,16 @@ class StatsController extends Controller
             ->get();
 
         $communeIds = $topCommunes->pluck('id')->toArray();
-        $fullAddresses = ClientFileAddress::whereIn('commune_id', $communeIds)
+        $trendingCommune = ClientFileAddress::whereIn('commune_id', $communeIds)
             ->with('commune.clientFiles')
             ->get();
 
+        $fullAddresses = ClientFileAddress::all();
+
         $response = [
             'message' => 'success',
-            'trendingCommune' => $fullAddresses
+            'trendingCommune' => $trendingCommune,
+            'fullAddresses' => $fullAddresses
         ];
         return response()->json($response, 200);
     }
