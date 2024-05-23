@@ -13,7 +13,7 @@ class SupplierController extends Controller
      */
     public function index()
     {
-        $suppliers = Supplier::all();
+        $suppliers = Supplier::where('is_deleted', 'no')->get();
         $response = [
             'message' => 'success',
             'suppliers' => $suppliers
@@ -59,7 +59,8 @@ class SupplierController extends Controller
         $supplier->is_deleted = 'yes';
         $supplier->save();
         return response()->json([
-            'status' => 'Supplier Moved to the Archive Successfully'
+            'status' => 'success',
+            'message' => 'Product Moved to the Archive Successfully',
         ]);
     }
 

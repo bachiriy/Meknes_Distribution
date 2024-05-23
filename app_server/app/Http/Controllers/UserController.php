@@ -15,7 +15,9 @@ class UserController extends Controller
 
     function index(): \Illuminate\Http\JsonResponse
     {
-        $users = User::with('roles')->get();
+        $users = User::where('is_deleted', 'no')
+            ->with('roles')
+            ->get();
         $response = [
             'status' => 'success',
             'users' => $users
@@ -108,6 +110,24 @@ class UserController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'User has been deleted successfully'
+        ]);
+    }
+
+    function softDelete($id): \Illuminate\Http\JsonResponse
+    {
+        $validator = validator(['id' => $id], [
+            'id' => 'required|numeric|exists:users,id'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+        $user = User::find($id);
+        $user->is_deleted = 'yes';
+        $user->save();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'User Moved to the Archive Successfully',
         ]);
     }
 

@@ -13,7 +13,8 @@ class ProductController extends Controller
     {
         $products = Cache::get('products');
         if (!$products) {
-            $products = Product::with(['group.category', 'supplier'])
+            $products = Product::where('is_deleted', 'no')
+                ->with(['group.category', 'supplier'])
                 ->get();
             Cache::put('products', $products, 1440);
         }
@@ -29,7 +30,6 @@ class ProductController extends Controller
         $validator = Validator::make($request->all(), [
             'reference' => 'required|string',
             'designation' => 'required|string',
-            'image' => 'required|string',
             'prix_tarif' => 'required|numeric',
             'prix_achat' => 'required|numeric',
             'prix_vente' => 'required|numeric',
@@ -43,6 +43,15 @@ class ProductController extends Controller
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        if (isset($request->image)) {
+            $validator = Validator::make($request->all(), [
+                'image' => 'required|file|mimes:jpg,png,jpeg'
+            ]);
+            if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], 422);
+            }
         }
 
         $data = $request->only(
@@ -61,8 +70,17 @@ class ProductController extends Controller
             'supplier_id'
         );
 
+        $path = $request->file('image')->store('products/picture', 'public');
         $product = Product::create($data);
+        $product->addMedia(storage_path('app/public/' . $path))->toMediaCollection('product_picture');
+        $mediaItems = $product->getMedia('user_picture');
+        $publicUrl = $mediaItems[0]->getUrl();
+        $product->image = $publicUrl;
+        $product->save();
         Cache::forget('products');
+        $products = Product::with(['group.category', 'supplier'])
+            ->get();
+        Cache::put('products', $products, 1440);
         $response = [
             'status' => 'success',
             'message' => 'Product is created successfully.',
@@ -76,12 +94,31 @@ class ProductController extends Controller
 
     }
 
+    function softDelete($id): \Illuminate\Http\JsonResponse
+    {
+        $validator = validator(['id' => $id], [
+            'id' => 'required|numeric|exists:products,id'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+        $product = Product::find($id);
+        $product->is_deleted = 'yes';
+        $product->save();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Product Moved to the Archive Successfully',
+        ]);
+    }
+
     function destroy($id): \Illuminate\Http\JsonResponse
     {
         $product = Product::find($id);
         $product->delete();
         return response()->json([
-            'status' => 'Product Deleted Successfully'
+            'status' => 'Success',
+            'message' => 'Product Deleted Successfully',
         ]);
     }
 

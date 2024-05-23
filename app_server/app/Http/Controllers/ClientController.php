@@ -10,7 +10,7 @@ class ClientController extends Controller
 {
     function index(): \Illuminate\Http\JsonResponse
     {
-        $clients = Client::all();
+        $clients = Client::where('is_deleted', 'no')->get();
         $response = [
             'message' => 'success',
             'clients' => $clients
@@ -35,7 +35,7 @@ class ClientController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-/*        $path = $request->CIN_file->store('cartes_national', 'public');*/
+        /*        $path = $request->CIN_file->store('cartes_national', 'public');*/
 
         $data = $request->only(
             'CIN_ICE',
@@ -52,8 +52,8 @@ class ClientController extends Controller
         );
 
         $client = Client::create($data);
-/*        $client->addMedia($path)
-            ->toMediaCollection();*/
+        /*        $client->addMedia($path)
+                    ->toMediaCollection();*/
         $response = [
             'status' => 'success',
             'message' => 'Client is created successfully.',
@@ -65,6 +65,24 @@ class ClientController extends Controller
     function update()
     {
 
+    }
+
+    function softDelete($id): \Illuminate\Http\JsonResponse
+    {
+        $validator = validator(['id' => $id], [
+            'id' => 'required|numeric|exists:clients,id'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+        $client = Client::find($id);
+        $client->is_deleted = 'yes';
+        $client->save();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Client Moved to the Archive Successfully',
+        ]);
     }
 
     function destroy($id): \Illuminate\Http\JsonResponse
