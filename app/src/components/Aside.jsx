@@ -53,13 +53,26 @@ const Aside = ({ page, setPage, setIsConnected }) => {
     {
       pageValue: 1,
       pageLink: "/",
+      tooltip: "Accueil",
+      icon: (
+        <>
+          <path stroke="none" d="M0 0h24v24H0z" />{" "}
+          <polyline points="5 12 3 12 12 3 21 12 19 12" />{" "}
+          <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />{" "}
+          <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+        </>
+      ),
+    },
+    {
+      pageValue: 2,
+      pageLink: "/",
       tooltip: "Dossiers Client",
       icon: (
         <path d="M16 5v4a1 1 0 0 0 1 1h4 M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2 -2v-7l-5 -5h-11a2 2 0 0 0 -2 2z" />
       ),
     },
     {
-      pageValue: 2,
+      pageValue: 3,
       pageLink: "/products",
       tooltip: "Prodiuts",
       icon: (
@@ -72,7 +85,7 @@ const Aside = ({ page, setPage, setIsConnected }) => {
       ),
     },
     {
-      pageValue: 3,
+      pageValue: 4,
       pageLink: "/clients",
       tooltip: "Clients",
       icon: (
@@ -84,9 +97,9 @@ const Aside = ({ page, setPage, setIsConnected }) => {
       ),
     },
     {
-      pageValue: 4,
+      pageValue: 5,
       pageLink: "/suppliers",
-      tooltip: "Suppliers",
+      tooltip: "Fourniseurs",
       icon: (
         <>
           <circle cx="7" cy="17" r="2" />
@@ -96,7 +109,7 @@ const Aside = ({ page, setPage, setIsConnected }) => {
       ),
     },
     {
-      pageValue: 5,
+      pageValue: 6,
       pageLink: "Users",
       tooltip: "Utilisateurs",
       icon: (
@@ -109,7 +122,7 @@ const Aside = ({ page, setPage, setIsConnected }) => {
       ),
     },
     {
-      pageValue: 6,
+      pageValue: 7,
       pageLink: "",
       tooltip: "Categories",
       icon: (
@@ -124,7 +137,7 @@ const Aside = ({ page, setPage, setIsConnected }) => {
       ),
     },
     {
-      pageValue: 7,
+      pageValue: 8,
       pageLink: "",
       tooltip: "Statistiques",
       icon: (
@@ -136,7 +149,7 @@ const Aside = ({ page, setPage, setIsConnected }) => {
       ),
     },
     {
-      pageValue: 8,
+      pageValue: 9,
       pageLink: "",
       tooltip: "Parametres",
       icon: (
