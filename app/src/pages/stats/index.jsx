@@ -17,6 +17,8 @@ const Stats = () => {
   const [stats, setStats] = useState([]);
   const [statsLoading, setStatsLoading] = useState(false);
   const [addresses, setAddresses] = useState([]);
+  const [val, setVal] = React.useState();
+  const [filter, setFilter] = React.useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -24,7 +26,7 @@ const Stats = () => {
 
       const fetchAdresses = async () => {
         const adrs = await GET('stats/communes');
-        setAddresses(adrs.communes.map(i => ({ label: i.full_address, id: i.id })));
+        setAddresses(adrs.communes.map(i => ({ label: i.full_address, id: i.commune_id })));
       };
 
       let statsSession = JSON.parse(sessionStorage.getItem('stats'));
@@ -44,12 +46,21 @@ const Stats = () => {
     fetchData();
   }, []);
 
+
+  const onFilter = async (e, v) => {
+    setVal(addresses.includes(v) ? v : null);    
+    const id = v ? v.id : null;
+
+    setFilter(v ? await GET('stats/search/' + v.id, false) : null);
+  }
   return (
     <div className='flex flex-col ml-16 mr-4'>
       <div className='flex justify-center items-center mt-4'>
-        <SearchInput options={addresses} />
+        <SearchInput onFilter={onFilter} options={addresses} />
       </div>
-      <div className='w-full grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4 mt-6'>
+      {filter === null ? (
+        <>
+        <div className='w-full grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4 mt-6'>
         {statsLoading ? (
           <div className='flex justify-center items-center w-screen h-44'>
             <Spinner />
@@ -60,7 +71,6 @@ const Stats = () => {
             <LittNumStat htmlIcon={icons.client} color='green' txt="Client Count" count={stats.clientsCount} />
             <LittNumStat htmlIcon={icons.product} color='blue' txt="Products Count" count={stats.productsCount} />
             <LittNumStat htmlIcon={icons.supplier} color='red' txt="Suppliers Count" count={stats.suppliersCount} />
-
           </>
         )
 
@@ -74,6 +84,15 @@ const Stats = () => {
           <CircleGraph />
         </div>
       </div>
+      </>
+      ) : (
+        <div className='w-full grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4 mt-6'>
+          <LittNumStat desc={val.label} txt="Client File  Count" color='yellow' htmlIcon={icons.clientFile} count={filter.clientFilesCount} />
+          <LittNumStat desc={val.label} txt="Client Count" color='green' htmlIcon={icons.client} count={filter.clientsCount} />
+          <LittNumStat desc={val.label} txt="Products Count" color='blue' htmlIcon={icons.product} count={filter.productsCount} />
+        </div>
+      )}
+      
     </div>
   );
 };
