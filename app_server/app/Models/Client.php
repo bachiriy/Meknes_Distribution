@@ -24,6 +24,7 @@ class Client extends Model implements HasMedia
         'suite_address_exploitation',
         'address_facturation',
         'suite_address_facturation',
+        'is_deleted'
     ];
 
 

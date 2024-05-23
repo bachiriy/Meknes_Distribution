@@ -13,7 +13,7 @@ class SupplierController extends Controller
      */
     public function index()
     {
-        $suppliers = Supplier::all();
+        $suppliers = Supplier::where('is_deleted', 'no')->get();
         $response = [
             'message' => 'success',
             'suppliers' => $suppliers
@@ -43,6 +43,25 @@ class SupplierController extends Controller
     public function update(Request $request, string $id)
     {
         //
+    }
+
+
+    function softDelete($id): \Illuminate\Http\JsonResponse
+    {
+        $validator = validator(['id' => $id], [
+            'id' => 'required|numeric|exists:suppliers,id'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+        $supplier = Supplier::find($id);
+        $supplier->is_deleted = 'yes';
+        $supplier->save();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Product Moved to the Archive Successfully',
+        ]);
     }
 
     /**

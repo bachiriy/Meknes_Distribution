@@ -25,6 +25,7 @@ class User extends Authenticatable implements HasMedia
         'email',
         'picture',
         'password',
+        'is_deleted'
     ];
 
     /**

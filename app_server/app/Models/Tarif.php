@@ -17,7 +17,8 @@ class Tarif extends Model
         'designation',
         'composition_remise',
         'taux_subvention',
-        'plafond_subvention'
+        'plafond_subvention',
+        'is_deleted'
     ];
 
     function category(): \Illuminate\Database\Eloquent\Relations\BelongsTo

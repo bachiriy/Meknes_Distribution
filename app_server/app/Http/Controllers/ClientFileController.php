@@ -12,7 +12,8 @@ class ClientFileController extends Controller
 {
     function index(): \Illuminate\Http\JsonResponse
     {
-        $clientFiles = ClientFile::with('invoices')
+        $clientFiles = ClientFile::where('is_deleted', 'no')
+            ->with('invoices')
             ->with('deliveryNotes')
             ->with('commune.caidat.cercle.province.region')
             ->with('products.group.category')
@@ -82,6 +83,24 @@ class ClientFileController extends Controller
     function update()
     {
 
+    }
+
+    function softDelete($id): \Illuminate\Http\JsonResponse
+    {
+        $validator = validator(['id' => $id], [
+            'id' => 'required|numeric|exists:clientFiles,id'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+        $clientFile = ClientFile::find($id);
+        $clientFile->is_deleted = 'yes';
+        $clientFile->save();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Client File Moved to the Archive Successfully',
+        ]);
     }
 
     function destroy($id): \Illuminate\Http\JsonResponse
