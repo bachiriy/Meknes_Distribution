@@ -14,7 +14,8 @@ import Setting from "../pages/setting";
 import "mdb-react-ui-kit/dist/css/mdb.min.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import Stats from "../pages/stats";
-import { invoke } from '@tauri-apps/api/tauri'
+import { invoke } from "@tauri-apps/api/tauri";
+import ClientFile from "../pages/clientFile";
 
 export const Router = (props) => {
   const [isConnected, setIsConnected] = useState(true);
@@ -27,7 +28,7 @@ export const Router = (props) => {
       setIsConnected(await authChecker());
     };
     waitForIt();
-    invoke('close_splashscreen');
+    invoke("close_splashscreen");
     setLoading(false);
     props.setLoading(false);
   }, []);
@@ -52,13 +53,14 @@ export const Router = (props) => {
           >
             {page === 0 && <Route path="/" />}
             {page === 1 && <Route path="/" element={<Home />} />}
-            {page === 2 && <Route path="/" element={<Product />} />}
-            {page === 3 && <Route path="/" element={<Client />} />}
-            {page === 4 && <Route path="/" element={<Supplier />} />}
-            {page === 5 && <Route path="/" element={<User />} />}
-            {page === 6 && <Route path="/" element={<Category />} />}
-            {page === 7 && <Route path="/" element={<Stats />} />}
-            {page === 8 && <Route path="/" element={<Setting />} />}
+            {page === 2 && <Route path="/" element={<ClientFile />} />}
+            {page === 3 && <Route path="/" element={<Product />} />}
+            {page === 4 && <Route path="/" element={<Client />} />}
+            {page === 5 && <Route path="/" element={<Supplier />} />}
+            {page === 6 && <Route path="/" element={<User />} />}
+            {page === 7 && <Route path="/" element={<Category />} />}
+            {page === 8 && <Route path="/" element={<Stats />} />}
+            {page === 9 && <Route path="/" element={<Setting />} />}
             {page === 10 && <Route path="/" element={<Spinner />} />}
           </Route>
         )}
