@@ -91,7 +91,7 @@ export default function Profile() {
   };
 
   return (
-    <section className="w-full ml-12" style={{ backgroundColor: "white" }}>
+    <section className="" style={{ backgroundColor: "white" }}>
       <ToastContainer className="mt-6" />
       <MDBContainer className="py-5">
         <MDBRow>
@@ -211,7 +211,7 @@ export default function Profile() {
                   updateUserInfo();
                 }}
               >
-                <MDBInputGroup textBefore="@" className="mb-3">
+                <MDBInputGroup textAfter="Name" className="mb-3">
                   <input
                     className="form-control"
                     onChange={(e) => setName(e.target.value)}
@@ -221,7 +221,7 @@ export default function Profile() {
                   />
                 </MDBInputGroup>
 
-                <MDBInputGroup className="mb-3" textAfter="@gmail.com">
+                <MDBInputGroup className="mb-3" textAfter="Email">
                   <input
                     className="form-control"
                     onChange={(e) => setEmail(e.target.value)}

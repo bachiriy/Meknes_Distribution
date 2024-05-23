@@ -4,7 +4,7 @@ import { Outlet } from "react-router-dom";
 
 export const Layout = (props) => {
   return (
-    <main className="flex overflow-hidden">
+    <main className="overflow-hidden">
       <Aside
         setIsConnected={props.setIsConnected}
         page={props.page}

@@ -10,7 +10,7 @@ class Commune extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name',
+        'name'
     ];
 
     function caidat(): \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -21,5 +21,10 @@ class Commune extends Model
     function clientFiles(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(ClientFile::class);
+    }
+
+    function clientFileAddresses(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(ClientFileAddress::class);
     }
 }
