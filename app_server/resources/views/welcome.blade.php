@@ -151,6 +151,23 @@
         </div>
     </div>
 
+    <div class="bg-white rounded-lg shadow-md p-6 mb-4">
+        <h2 class="text-xl font-semibold mb-2"><span class="text-green-500">Get</span> /api/Stats/trendingGroup</h2>
+        <p class="text-gray-700 mb-2">Retrieve Trending Product with its group and category</p>
+        <div class="mb-4">
+            <h3 class="font-medium">Headers</h3>
+            <ul class="list-disc list-inside ml-4">
+                <li>Authorization: Bearer &lt;token&gt;</li>
+                <li>Content-Type: application/json</li>
+            </ul>
+        </div>
+        <div class="mb-4">
+            <h3 class="font-medium">Parameters</h3>
+            <ul class="list-disc list-inside ml-4">
+            </ul>
+        </div>
+    </div>
+
 </div>
 
 

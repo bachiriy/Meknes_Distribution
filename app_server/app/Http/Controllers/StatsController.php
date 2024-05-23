@@ -45,7 +45,6 @@ class StatsController extends Controller
         $clientsCount = count(Client::all());
         $clientFilesCount = count(ClientFile::all());
         $suppliersCount = count(Supplier::all());
-
         $response = [
             'message' => 'success',
             'productsCount' => $productsCount,
@@ -55,7 +54,6 @@ class StatsController extends Controller
         ];
         return response()->json($response, 200);
     }
-
     function searchByCommune($input): \Illuminate\Http\JsonResponse
     {
         $searchPrompt = '%' . strtoupper($input) . '%';
@@ -80,4 +78,24 @@ class StatsController extends Controller
         ];
         return response()->json($response, 200);
     }
+
+    function trendingGroup(): \Illuminate\Http\JsonResponse
+    {
+        $groups = ClientFile::join('client_file_products', 'client_files.id', '=', 'client_file_products.client_file_id')
+            ->join('products', 'client_file_products.product_id', '=', 'products.id')
+            ->join('groups as g', 'products.group_id', '=', 'g.id')
+            ->join('categories as c', 'g.category_id', '=', 'c.id')
+            ->groupBy('products.id', 'g.name', 'c.name')
+            ->selectRaw('products.id, products.designation, COUNT(*) as total, g.name as group_name, c.name as category_name')
+            ->orderByDesc('total')
+            ->get();
+
+
+        $response = [
+            'message' => 'success',
+            'trendingGroups' => $groups
+        ];
+        return response()->json($response, 200);
+    }
+
 }
