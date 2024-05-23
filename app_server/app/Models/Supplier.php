@@ -15,7 +15,8 @@ class Supplier extends Model
         'remise_f_composition',
         'remise_f',
         'date_debut',
-        'date_fin'
+        'date_fin',
+        'is_deleted'
     ];
 
     public function products(): \Illuminate\Database\Eloquent\Relations\HasMany

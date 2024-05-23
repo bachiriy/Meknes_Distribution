@@ -9,7 +9,7 @@ class Category extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'is_deleted'];
 
     public function products(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
