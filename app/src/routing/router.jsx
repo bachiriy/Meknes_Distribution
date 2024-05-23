@@ -52,7 +52,7 @@ export const Router = (props) => {
             }
           >
             {page === 0 && <Route path="/" />}
-            {page === 1 && <Route path="/" element={<Home />} />}
+            {page === 1 && <Route path="/" element={<Home  setPage={setPage}/>} />}
             {page === 2 && <Route path="/" element={<ClientFile />} />}
             {page === 3 && <Route path="/" element={<Product />} />}
             {page === 4 && <Route path="/" element={<Client />} />}
