@@ -3,6 +3,8 @@ import { LittNumStat } from '../../components/Dashboard/LittNumStat';
 import CircleGraph from '../../components/Dashboard/CircleGraph';
 import BarGraph from '../../components/Dashboard/BarGraph';
 import GET from '../../utils/GET';
+import SearchInput from '../../components/Dashboard/SearchInput';
+import { Spinner } from 'flowbite-react';
 
 const icons = {
   clients: (
@@ -24,25 +26,43 @@ const icons = {
 
 const Stats = () => {
   const [stats, setStats] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [addresses, setAddresses] = useState([]);
 
   useEffect(() => {
+    setLoading(true);
+    const fetchAdresses = async () => {
+      const adrs =  await GET('stats/communes');
+      setAddresses(adrs.communes.map(i => ({ label: i.full_address, id: i.id })));
+    }
+    fetchAdresses();
+
     let statsSession = JSON.parse(sessionStorage.getItem('stats'));
-    console.log(statsSession);
-    const fetchData = async () => {
-      setLoading(true);
-      let response = await GET('stats');
-      if (response.message === 'success') setStats(response.trendingCommune.map((d, i) => ({...d, address: response.fullAddresses[i].full_address})));
-      setLoading(false);
-    };
-    fetchData();
+    if (statsSession) {
+      if (statsSession.message === 'success') {
+        setStats(statsSession.trendingCommune.map((d, i) => ({ ...d, address: statsSession.fullAddresses[i].full_address })));
+      }
+    } else {
+      const fetchData = async () => {
+        let response = await GET('stats');
+        if (response.message === 'success') {
+          setStats(response.trendingCommune.map((d, i) => ({ ...d, address: response.fullAddresses[i].full_address })));
+        }
+      };
+      fetchData();
+    }
+    setLoading(false);
   }, []);
 
-  if(loading) return <p>loading...</p>;
+  if (loading) return <p>loading...</p>;
 
   return (
     <div className='flex flex-col ml-16 mr-4'>
+      <div className='flex justify-center items-center mt-4'>
+        <SearchInput options={addresses} />
+      </div>
       <div className='w-full grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4 mt-6'>
+        {loading && (<Spinner />)}
         {stats.map(i => (
           <LittNumStat key={i.id} htmlIcon={icons.files} color='blue' txt={i.name} desc={i.address} count={i.client_files_count} />
         ))}
