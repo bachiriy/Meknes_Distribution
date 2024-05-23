@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('invoice_number');
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
+            $table->enum('is_deleted', ['no', 'yes'])->default('no');
             $table->timestamps();
         });
     }

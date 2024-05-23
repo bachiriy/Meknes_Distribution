@@ -21,7 +21,8 @@ class Product extends Model
         'TVA',
         'prix_vente_net',
         'group_id',
-        'supplier_id'
+        'supplier_id',
+        'is_deleted'
     ];
 
 

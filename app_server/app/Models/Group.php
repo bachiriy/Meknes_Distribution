@@ -9,7 +9,7 @@ class Group extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'category_id'];
+    protected $fillable = ['name', 'category_id', 'is_deleted'];
 
     public function products(): \Illuminate\Database\Eloquent\Relations\HasMany
     {

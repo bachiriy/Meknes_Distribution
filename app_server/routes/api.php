@@ -38,6 +38,7 @@ Route::middleware('auth:api')->group(function () {
         Route::get('', [SupplierController::class, 'index']);
         Route::post('', [SupplierController::class, 'store']);
         Route::put('/{id}', [SupplierController::class, 'update']);
+        Route::put('/softDelete/{id}', [SupplierController::class, 'softDelete']);
         Route::delete('/{id}', [SupplierController::class, 'destroy']);
     });
 
@@ -45,6 +46,7 @@ Route::middleware('auth:api')->group(function () {
         Route::get('', [ProductController::class, 'index']);
         Route::post('', [ProductController::class, 'store']);
         Route::put('/{id}', [ProductController::class, 'update']);
+        Route::put('/softDelete/{id}', [ProductController::class, 'softDelete']);
         Route::delete('/{id}', [ProductController::class, 'destroy']);
     });
 
@@ -52,6 +54,7 @@ Route::middleware('auth:api')->group(function () {
         Route::get('', [ClientController::class, 'index']);
         Route::post('', [ClientController::class, 'store']);
         Route::put('/{id}', [ClientController::class, 'update']);
+        Route::put('/softDelete/{id}', [ClientController::class, 'softDelete']);
         Route::delete('/{id}', [ClientController::class, 'destroy']);
     });
 
@@ -59,6 +62,7 @@ Route::middleware('auth:api')->group(function () {
         Route::get('', [ClientFileController::class, 'index']);
         Route::post('', [ClientFileController::class, 'store']);
         Route::put('/{id}', [ClientFileController::class, 'update']);
+        Route::put('/softDelete/{id}', [ClientFileController::class, 'softDelete']);
         Route::delete('/{id}', [ClientFileController::class, 'destroy']);
     });
 
@@ -67,6 +71,7 @@ Route::middleware('auth:api')->group(function () {
         Route::get('', [UserController::class, 'index']);
         Route::post('', [UserController::class, 'store']);
         Route::put('/{id}', [UserController::class, 'update']);
+        Route::put('/softDelete/{id}', [UserController::class, 'softDelete']);
         Route::delete('/{id}', [UserController::class, 'destroy']);
         Route::post('/picture', [UserController::class, 'createUserPicture']);
     });
@@ -75,12 +80,13 @@ Route::middleware('auth:api')->group(function () {
         Route::get('', [CategoryController::class, 'index']);
         Route::post('', [CategoryController::class, 'store']);
         Route::put('/{id}', [CategoryController::class, 'update']);
+        Route::put('/softDelete/{id}', [CategoryController::class, 'softDelete']);
         Route::delete('/{id}', [CategoryController::class, 'destroy']);
     });
 
     Route::prefix('stats')->group(function () {
         Route::get('', [StatsController::class, 'index']);
-        Route::get('/search/{input}', [StatsController::class, 'searchByCommune']);
+        Route::get('/search/{id}', [StatsController::class, 'searchStats']);
         Route::get('/communes', [StatsController::class, 'getCommunes']);
         Route::get('/groups', [StatsController::class, 'trendingGroup']);
     });

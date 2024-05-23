@@ -11,7 +11,8 @@ class DeliveryNote extends Model
 
     protected $fillable = [
         'delivery_note_number',
-        'product_id'
+        'product_id',
+        'is_deleted'
     ];
 
     function product(): \Illuminate\Database\Eloquent\Relations\BelongsToMany

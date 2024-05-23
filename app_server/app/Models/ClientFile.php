@@ -14,7 +14,8 @@ class ClientFile extends Model implements HasMedia
     protected $fillable = [
         'commune_id',
         'exploitation_surface',
-        'more_detail'
+        'more_detail',
+        'is_deleted'
     ];
 
     function clients(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
