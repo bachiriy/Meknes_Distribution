@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('taux_subvention')->nullable();
             $table->string('plafond_subvention')->nullable();
             $table->string('cout_revient')->nullable();
+            $table->enum('is_deleted', ['no', 'yes'])->default('no');
             $table->timestamps();
         });
     }
