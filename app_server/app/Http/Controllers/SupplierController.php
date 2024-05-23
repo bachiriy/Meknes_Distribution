@@ -45,6 +45,24 @@ class SupplierController extends Controller
         //
     }
 
+
+    function softDelete($id): \Illuminate\Http\JsonResponse
+    {
+        $validator = validator(['id' => $id], [
+            'id' => 'required|numeric|exists:suppliers,id'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+        $supplier = Supplier::find($id);
+        $supplier->is_deleted = 'yes';
+        $supplier->save();
+        return response()->json([
+            'status' => 'Supplier Moved to the Archive Successfully'
+        ]);
+    }
+
     /**
      * Remove the specified resource from storage.
      */
