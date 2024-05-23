@@ -26,35 +26,34 @@ const icons = {
 
 const Stats = () => {
   const [stats, setStats] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [statsLoading, setStatsLoading] = useState(false);
   const [addresses, setAddresses] = useState([]);
 
   useEffect(() => {
-    setLoading(true);
-    const fetchAdresses = async () => {
-      const adrs =  await GET('stats/communes');
-      setAddresses(adrs.communes.map(i => ({ label: i.full_address, id: i.id })));
-    }
-    fetchAdresses();
+    const fetchData = async () => {
+      setStatsLoading(true);
 
-    let statsSession = JSON.parse(sessionStorage.getItem('stats'));
-    if (statsSession) {
-      if (statsSession.message === 'success') {
+      const fetchAdresses = async () => {
+        const adrs = await GET('stats/communes');
+        setAddresses(adrs.communes.map(i => ({ label: i.full_address, id: i.id })));
+      };
+
+      let statsSession = JSON.parse(sessionStorage.getItem('stats'));
+      if (statsSession && statsSession.message === 'success') {
         setStats(statsSession.trendingCommune.map((d, i) => ({ ...d, address: statsSession.fullAddresses[i].full_address })));
-      }
-    } else {
-      const fetchData = async () => {
-        let response = await GET('stats');
+      } else {
+        const response = await GET('stats');
         if (response.message === 'success') {
           setStats(response.trendingCommune.map((d, i) => ({ ...d, address: response.fullAddresses[i].full_address })));
         }
-      };
-      fetchData();
-    }
-    setLoading(false);
-  }, []);
+      }
 
-  if (loading) return <p>loading...</p>;
+      await fetchAdresses();
+      setStatsLoading(false);
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <div className='flex flex-col ml-16 mr-4'>
@@ -62,10 +61,17 @@ const Stats = () => {
         <SearchInput options={addresses} />
       </div>
       <div className='w-full grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4 mt-6'>
-        {loading && (<Spinner />)}
-        {stats.map(i => (
-          <LittNumStat key={i.id} htmlIcon={icons.files} color='blue' txt={i.name} desc={i.address} count={i.client_files_count} />
-        ))}
+        {statsLoading ? (
+
+          <div className='flex justify-center items-center w-screen h-44'>
+            <Spinner />
+          </div>
+        ) :
+          stats.map(i => (
+            <LittNumStat key={i.id} htmlIcon={icons.files} color='blue' txt={i.name} desc={i.address} count={i.client_files_count} />
+          ))
+
+        }
       </div>
 
       <div>
