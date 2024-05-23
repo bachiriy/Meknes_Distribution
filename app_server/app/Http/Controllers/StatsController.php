@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Client;
+use App\Models\ClientFile;
 use App\Models\ClientFileAddress;
 use App\Models\Commune;
+use App\Models\Product;
+use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class StatsController extends Controller
 {
-    function index(): \Illuminate\Http\JsonResponse
+    /*function index(): \Illuminate\Http\JsonResponse
     {
         $topCommunes = Commune::select('communes.id', 'communes.name', DB::raw('COUNT(client_files.id) as client_files_count'))
         ->join('client_files', 'communes.id', '=', 'client_files.commune_id')
@@ -32,8 +36,25 @@ class StatsController extends Controller
             'fullAddresses' => $trendingCommune
         ];
         return response()->json($response, 200);
-    }
+    }*/
 
+
+    function index(): \Illuminate\Http\JsonResponse
+    {
+        $productsCount = count(Product::all());
+        $clientsCount = count(Client::all());
+        $clientFilesCount = count(ClientFile::all());
+        $suppliersCount = count(Supplier::all());
+
+        $response = [
+            'message' => 'success',
+            'productsCount' => $productsCount,
+            'clientFilesCount' => $clientFilesCount,
+            'clientsCount' => $clientsCount,
+            'suppliersCount' => $suppliersCount,
+        ];
+        return response()->json($response, 200);
+    }
 
     function searchByCommune($input): \Illuminate\Http\JsonResponse
     {
