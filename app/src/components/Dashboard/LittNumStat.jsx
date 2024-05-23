@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export const LittNumStat = ({ htmlIcon, count, txt, color = 'orange' }) => {
+export const LittNumStat = ({ htmlIcon, count, txt, desc, color = 'orange' }) => {
   const [icon, setIcon] = useState();
 
   React.useEffect(() => {
@@ -22,12 +22,9 @@ export const LittNumStat = ({ htmlIcon, count, txt, color = 'orange' }) => {
           <ReturnIcon />
         </div>
         <div>
-          <p className="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
-            {txt}
-          </p>
-          <p className="text-lg font-semibold text-gray-700 dark:text-gray-200">
-            {count}
-          </p>
+          <p className="text-xl font-semibold text-gray-700 dark:text-gray-200">{count}</p>
+          <p className="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">{txt}</p>
+          <p className='text-xs text-gray-400'>{desc}</p>
         </div>
       </div>
     </div>
