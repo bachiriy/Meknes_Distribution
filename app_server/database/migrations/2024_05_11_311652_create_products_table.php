@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('reference');
             $table->string('designation');
-            $table->string('image');
+            $table->string('image')->nullable();
             $table->float('prix_tarif');
             $table->float('prix_achat');
             $table->float('prix_vente');
