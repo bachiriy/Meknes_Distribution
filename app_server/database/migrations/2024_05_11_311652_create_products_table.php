@@ -25,6 +25,7 @@ return new class extends Migration
             $table->float('prix_vente_net');
             $table->foreignId('group_id')->constrained()->cascadeOnDelete();
             $table->foreignId('supplier_id')->constrained()->cascadeOnDelete();
+            $table->enum('is_deleted', ['no', 'yes'])->default('no');
             $table->timestamps();
         });
     }

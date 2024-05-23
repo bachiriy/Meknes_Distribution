@@ -16,7 +16,8 @@ return new class extends Migration
             $table->foreignId('commune_id')->constrained()->cascadeOnDelete();
             $table->float('exploitation_surface');
             $table->text('more_detail')->nullable();
-            $table->enum('status', ['in progress', 'completed', 'archived'])->default('in progress');
+            $table->enum('status', ['in progress', 'completed', 'closed'])->default('in progress');
+            $table->enum('is_deleted', ['no', 'yes'])->default('no');
             $table->timestamps();
         });
     }

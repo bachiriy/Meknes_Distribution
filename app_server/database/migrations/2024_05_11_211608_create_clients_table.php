@@ -25,6 +25,7 @@ return new class extends Migration {
             $table->string('suite_address_exploitation')->nullable();
             $table->string('address_facturation');
             $table->string('suite_address_facturation')->nullable();
+            $table->enum('is_deleted', ['no', 'yes'])->default('no');
             $table->timestamps();
         });
     }
