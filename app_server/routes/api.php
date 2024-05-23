@@ -86,7 +86,7 @@ Route::middleware('auth:api')->group(function () {
 
     Route::prefix('stats')->group(function () {
         Route::get('', [StatsController::class, 'index']);
-        Route::get('/search/{input}', [StatsController::class, 'searchByCommune']);
+        Route::get('/search/{id}', [StatsController::class, 'searchStats']);
         Route::get('/communes', [StatsController::class, 'getCommunes']);
         Route::get('/groups', [StatsController::class, 'trendingGroup']);
     });

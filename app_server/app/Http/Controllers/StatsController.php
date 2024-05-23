@@ -13,30 +13,42 @@ use Illuminate\Support\Facades\DB;
 
 class StatsController extends Controller
 {
-    /*function index(): \Illuminate\Http\JsonResponse
+    function searchStats($id): \Illuminate\Http\JsonResponse
     {
-        $topCommunes = Commune::select('communes.id', 'communes.name', DB::raw('COUNT(client_files.id) as client_files_count'))
-        ->join('client_files', 'communes.id', '=', 'client_files.commune_id')
-        ->groupBy('communes.id', 'communes.name')
-        ->havingRaw('COUNT(client_files.id) > 0')
-        ->orderBy('client_files_count', 'desc')
-        ->take(4)
-        ->get();
+        $commune = Commune::where('id', $id)
+            ->with('clientFiles.products', 'clientFiles.clients')
+            ->first();
 
-        $communeIds = $topCommunes->pluck('id')->toArray();
-        $trendingCommune = ClientFileAddress::whereIn('commune_id', $communeIds)
-            ->with('commune.clientFiles')
-            ->get();
+        if (!$commune) {
+            return response()->json(['message' => 'Commune not found'], 404);
+        }
 
-        $fullAddresses = ClientFileAddress::all();
+        $products = [];
+        $productIds = [];
+        $totalClients = 0;
+        $clientFilesCount = count($commune->clientFiles);
+
+        foreach ($commune->clientFiles as $clientFile) {
+            $totalClients += count($clientFile->clients);
+            foreach ($clientFile->products as $product) {
+                if (!in_array($product->id, $productIds)) {
+                    $productIds[] = $product->id;
+                    $products[] = $product;
+                }
+            }
+        }
 
         $response = [
             'message' => 'success',
-            'trendingCommune' => $topCommunes,
-            'fullAddresses' => $trendingCommune
+            'productsCount' => count($products),
+            'products' => $products,
+            'clientsCount' => $totalClients,
+            'clientFilesCount' => $clientFilesCount,
+            'data' => $commune,
         ];
+
         return response()->json($response, 200);
-    }*/
+    }
 
 
     function index(): \Illuminate\Http\JsonResponse
@@ -54,6 +66,7 @@ class StatsController extends Controller
         ];
         return response()->json($response, 200);
     }
+
     function searchByCommune($input): \Illuminate\Http\JsonResponse
     {
         $searchPrompt = '%' . strtoupper($input) . '%';
