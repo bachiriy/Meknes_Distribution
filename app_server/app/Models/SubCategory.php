@@ -9,7 +9,7 @@ class SubCategory extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'category_id', 'is_deleted'];
+    protected $fillable = ['name', 'category_id'];
 
     public function products(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
