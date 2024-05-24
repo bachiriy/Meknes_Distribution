@@ -1,5 +1,5 @@
-import Table from "../../components/Table";
-import Spinner from "../../components/Spinner";
+import Table from "../../components/Other/Table";
+import Spinner from "../../components/Other/Spinner";
 import GET from "../../utils/GET";
 import { useEffect, useState } from "react";
 import { validateClient } from "../../utils/validationFunctions";
