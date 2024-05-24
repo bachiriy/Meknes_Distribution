@@ -8,7 +8,11 @@ use App\Models\ClientFileProduct;
 use App\Models\ClientPartner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Spatie\MediaLibrary\Support\MediaStream;
+use ZipArchive;
 
 class ClientFileController extends Controller
 {
@@ -34,33 +38,6 @@ class ClientFileController extends Controller
         return response()->json($response, 200);
     }
 
-    function read(Request $request): \Illuminate\Http\JsonResponse
-    {
-        // Fetch all client files that are not deleted and eager load necessary relationships
-        $clientFiles = ClientFile::where('is_deleted', 'no')
-            ->with(['media', 'subfolders', 'parentFolder'])
-            ->get();
-
-        // Map the client files to the structure expected by Syncfusion File Manager
-        $response = $clientFiles->map(function ($file) {
-            // Determine if the entry is a folder or a file
-            $isFolder = $file->subfolders->isNotEmpty() || $file->media->isEmpty();
-
-            return [
-                'id' => $file->id,
-                'name' => $file->file_name,
-                'size' => $isFolder ? 0 : $file->media->first()->size ?? 0,
-                'date' => $file->created_at->format('Y-m-d H:i:s'),
-                'type' => $isFolder ? 'folder' : 'file',
-                'isFile' => !$isFolder,
-                'url' => $isFolder ? null : $file->media->first()->getUrl() ?? null,
-            ];
-        });
-
-        return response()->json($response);
-    }
-
-
     function store(Request $request): \Illuminate\Http\JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -71,7 +48,7 @@ class ClientFileController extends Controller
             'product_ids' => 'required|array',
             'product_ids.*' => 'required|numeric|exists:products,id',
             'exploitation_surface' => 'required|numeric',
-            'uploadFiles' => 'nullable|file', // Add file validation
+            'files' => 'nullable|file',
         ]);
 
         if ($validator->fails()) {
@@ -106,7 +83,7 @@ class ClientFileController extends Controller
         }
 
         // Handle file upload with Media Library
-        if ($request->hasFile('uploadFiles')) {
+        if ($request->hasFile('files')) {
             $clientFile->addMedia($request->file('uploadFiles'))->toMediaCollection('client_files');
         }
 
@@ -131,17 +108,16 @@ class ClientFileController extends Controller
         return response()->json($response);
     }
 
-
     function update()
     {
 
     }
 
-    function download($id)
+    function download($id): \Symfony\Component\HttpFoundation\BinaryFileResponse|\Illuminate\Http\JsonResponse
     {
         // Validate the provided ID
         $validator = Validator::make(['id' => $id], [
-            'id' => 'required|numeric|exists:client_files,id',
+            'id' => 'required|numeric|exists:client_files,id'
         ]);
 
         if ($validator->fails()) {
@@ -151,15 +127,75 @@ class ClientFileController extends Controller
         // Find the ClientFile by ID
         $clientFile = ClientFile::find($id);
 
-        // Get the first media file associated with the ClientFile
-        $media = $clientFile->getFirstMedia('client_files');
+        // Get all the media files associated with the ClientFile
+        $medias = $clientFile->getMedia('*');
 
-        if (!$media) {
+        if (!$medias) {
             return response()->json(['message' => 'File not found.'], 404);
         }
 
-        // Return the file as a download response
+        // Create a temporary directory
+        $tempFolderName = 'temp_' . Str::random(10);
+        Storage::disk('public')->makeDirectory($tempFolderName);
+
+        // Move media files into the temporary directory
+        foreach ($medias as $media) {
+            Storage::disk('public')->move($media->getPath(), $tempFolderName . '/' . $media->file_name);
+        }
+
+        // Zip the temporary directory
+        $zipFileName = $tempFolderName . '.zip';
+        $zipFilePath = storage_path('app/public/' . $zipFileName);
+        $zip = new ZipArchive;
+        $zip->open($zipFilePath, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+        $files = Storage::disk('public')->files($tempFolderName);
+        foreach ($files as $file) {
+            $zip->addFile(storage_path('app/public/' . $file), $file);
+        }
+        $zip->close();
+
+        // Delete the temporary directory
+        Storage::disk('public')->deleteDirectory($tempFolderName);
+
+        // Return the zip file as a download response
+        return response()->download($zipFilePath, $clientFile->file_name . '.zip')->deleteFileAfterSend(true);
+    }
+
+    function fileDownload($clientFileId, $fileId): \Symfony\Component\HttpFoundation\BinaryFileResponse|\Illuminate\Http\JsonResponse
+    {
+        $validator = Validator::make(['file_id' => $fileId, 'client_file_id' => $clientFileId], [
+            'file_id' => 'required|numeric|exists:medias,id',
+            'client_file_id' => 'required|numeric|exists:client_files,id'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $clientFile = ClientFile::find($clientFileId);
+
+        $medias = $clientFile->getMedia("*");
+        $media = $medias->where('id', $fileId)->first();
         return response()->download($media->getPath(), $media->file_name);
+    }
+
+    function filesDownload($clientFileId, $fileId): MediaStream|\Illuminate\Http\JsonResponse
+    {
+        $validator = Validator::make(['file_id' => $fileId, 'client_file_id' => $clientFileId], [
+            'file_id.*' => 'required|numeric|exists:medias,id',
+            'client_file_id' => 'required|numeric|exists:client_files,id'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $clientFile = ClientFile::find($clientFileId);
+
+        $medias = $clientFile->getMedia("*");
+        $media = $medias->where('id', $fileId)->get();
+        $zipName = $clientFile->file_name . '.zip';
+        return MediaStream::create($zipName)->addMedia($media);
     }
 
     function rename(Request $request): \Illuminate\Http\JsonResponse
