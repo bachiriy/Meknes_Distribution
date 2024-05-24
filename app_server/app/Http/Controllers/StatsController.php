@@ -16,7 +16,7 @@ class StatsController extends Controller
     function searchStats($id): \Illuminate\Http\JsonResponse
     {
         $commune = Commune::where('id', $id)
-            ->with('clientFiles.products', 'clientFiles.clients')
+            ->with('clientFiles.products.supplier', 'clientFiles.clients')
             ->first();
 
         if (!$commune) {
