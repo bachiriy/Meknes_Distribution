@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class CategoryController extends Controller
 {
     function index(): \Illuminate\Http\JsonResponse
     {
-        $categories = Category::with('sub_categories')->get();
+        $categories = Category::with('subCategories')->get();
         $response = [
             'message' => 'success',
             'categories' => $categories
@@ -19,14 +20,16 @@ class CategoryController extends Controller
 
     function store(Request $request): \Illuminate\Http\JsonResponse
     {
-        $validator = validator(['name' => $request['category_name']], [
-            'name' => 'required|string|unique:categories,id'
+        $validator = Validator::make(['name' => $request['name']], [
+            'name' => 'required|string|unique:categories'
         ]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
-        $categories = Category::with('sub_categories')->get();
+
+        Category::create(['name' => $request['name']]);
+        $categories = Category::with('subCategories')->get();
         $response = [
             'message' => 'success',
             'categories' => $categories
@@ -34,7 +37,34 @@ class CategoryController extends Controller
         return response()->json($response, 200);
     }
 
-    function softDelete($id): \Illuminate\Http\JsonResponse
+    function update(Request $request, $id): \Illuminate\Http\JsonResponse
+    {
+        $validator = validator([
+            'id' => $id,
+            'name' => $request->name
+        ], [
+            'id' => 'required|numeric|exists:categories,id',
+            'name' => 'required|string|unique:categories'
+
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $category = Category::find($id);
+        $category->name = $request->name;
+        $category->save();
+
+        $categories = Category::with('subCategories')->get();
+        $response = [
+            'message' => 'success',
+            'categories' => $categories
+        ];
+        return response()->json($response, 200);
+    }
+
+    function destroy($id): \Illuminate\Http\JsonResponse
     {
         $validator = validator(['id' => $id], [
             'id' => 'required|numeric|exists:categories,id'
@@ -44,11 +74,10 @@ class CategoryController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
         $category = Category::find($id);
-        $category->is_deleted = 'yes';
-        $category->save();
+        $category->delete();
         return response()->json([
             'status' => 'success',
-            'message' => 'Category Moved to the Archive Successfully',
+            'message' => 'Category Deleted Successfully',
         ]);
     }
 }
