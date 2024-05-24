@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
-use App\Models\Group;
+use App\Models\SubCategory;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -17,7 +17,7 @@ class CategorySeeder extends Seeder
         $categories = [
             [
                 'name' => 'EQUIPEMENT AGRICOLE',
-                'groups' => [
+                'sub_categories' => [
                     'TRACTEUR',
                     "MATERIEL TRACTE DE TRAVAIL ET D'ENTRETIEN DU SOL",
                     "MATERIEL DE TRAVAIL ET D'ENTRETIEN DU SOL ANIME PAR TRACTEUR",
@@ -33,20 +33,20 @@ class CategorySeeder extends Seeder
             ],
             [
                 'name' => 'POMPAGE ET IRRIGATION',
-                'groups' => []
+                'sub_categories' => []
             ],
             [
                 'name' => 'EQUIPEMENT INDUSTRIEL',
-                'groups' => []
+                'sub_categories' => []
             ],
         ];
 
         foreach ($categories as $category) {
             $category_id = Category::create(['name' => $category['name']]);
-            foreach ($category['groups'] as $group) {
-                Group::create(
+            foreach ($category['sub_categories'] as $subCategory) {
+                SubCategory::create(
                     [
-                        'name' => $group,
+                        'name' => $subCategory,
                         'category_id' => $category_id->id
                     ]);
             }
