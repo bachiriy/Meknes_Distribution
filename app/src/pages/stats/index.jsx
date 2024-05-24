@@ -5,6 +5,7 @@ import BarGraph from '../../components/Dashboard/BarGraph';
 import GET from '../../utils/GET';
 import SearchInput from '../../components/Dashboard/SearchInput';
 import { Spinner } from 'flowbite-react';
+import MainCard from '../../components/Dashboard/MainCard';
 
 const icons = {
   client: (<svg fill="currentColor" viewBox="0 0 20 20" className="w-5 h-5"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"></path></svg>),
@@ -19,6 +20,7 @@ const Stats = () => {
   const [addresses, setAddresses] = useState([]);
   const [val, setVal] = React.useState();
   const [filter, setFilter] = React.useState(null);
+  const [filterLoading, setFilterLoad] = React.useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,51 +50,58 @@ const Stats = () => {
 
 
   const onFilter = async (e, v) => {
-    setVal(addresses.includes(v) ? v : null);    
-    const id = v ? v.id : null;
-
+    setFilterLoad(true);
+    setVal(addresses.includes(v) ? v : null);
     setFilter(v ? await GET('stats/search/' + v.id, false) : null);
+    setFilterLoad(false);
   }
   return (
     <div className='flex flex-col ml-16 mr-4'>
       <div className='flex justify-center items-center mt-4'>
         <SearchInput onFilter={onFilter} options={addresses} />
       </div>
-      {filter === null ? (
+      {filterLoading ? (<div className='top-1/2 lg:right-1/2 right-[45%] absolute overflow-hidden'><Spinner /></div>) : 
+      (filter === null) ? (
         <>
-        <div className='w-full grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4 mt-6'>
-        {statsLoading ? (
-          <div className='flex justify-center items-center w-screen h-44'>
-            <Spinner />
+          <div className='w-full grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4 mt-6'>
+            {statsLoading ? (
+              <div className='flex justify-center items-center w-screen h-44'>
+                <Spinner />
+              </div>
+            ) : (
+              <>
+                <LittNumStat htmlIcon={icons.clientFile} color='yellow' txt="Client Files Count" count={stats.clientFilesCount} />
+                <LittNumStat htmlIcon={icons.client} color='green' txt="Client Count" count={stats.clientsCount} />
+                <LittNumStat htmlIcon={icons.product} color='blue' txt="Products Count" count={stats.productsCount} />
+                <LittNumStat htmlIcon={icons.supplier} color='red' txt="Suppliers Count" count={stats.suppliersCount} />
+              </>
+            )
+
+            }
           </div>
-        ) : (
-          <>
-            <LittNumStat htmlIcon={icons.clientFile} color='yellow' txt="Client Files Count" count={stats.clientFilesCount} />
-            <LittNumStat htmlIcon={icons.client} color='green' txt="Client Count" count={stats.clientsCount} />
-            <LittNumStat htmlIcon={icons.product} color='blue' txt="Products Count" count={stats.productsCount} />
-            <LittNumStat htmlIcon={icons.supplier} color='red' txt="Suppliers Count" count={stats.suppliersCount} />
-          </>
-        )
 
-        }
-      </div>
-
-      <div>
-        <p>content</p>
-        <div className='flex'>
-          <BarGraph />
-          <CircleGraph />
-        </div>
-      </div>
-      </>
+          <div>
+            <div className='flex'>
+              <BarGraph />
+              <CircleGraph />
+            </div>
+          </div>
+        </>
       ) : (
-        <div className='w-full grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4 mt-6'>
-          <LittNumStat desc={val.label} txt="Client File  Count" color='yellow' htmlIcon={icons.clientFile} count={filter.clientFilesCount} />
-          <LittNumStat desc={val.label} txt="Client Count" color='green' htmlIcon={icons.client} count={filter.clientsCount} />
-          <LittNumStat desc={val.label} txt="Products Count" color='blue' htmlIcon={icons.product} count={filter.productsCount} />
-        </div>
+        <>
+          <div className='w-full grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-3 mt-6'>
+            <LittNumStat desc={val.label} txt="Client File  Count" color='yellow' htmlIcon={icons.clientFile} count={filter.clientFilesCount} />
+            <LittNumStat desc={val.label} txt="Client Count" color='green' htmlIcon={icons.client} count={filter.clientsCount} />
+            <LittNumStat desc={val.label} txt="Products Count" color='blue' htmlIcon={icons.product} count={filter.productsCount} />
+          </div>
+          <div className='w-full grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4 mt-6'>
+            {filter.products.map(v => (
+              <MainCard product={v} />
+            ))}
+          </div>
+        </>
       )}
-      
+
     </div>
   );
 };
