@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('clients', function (Blueprint $table) {
             $table->id();
-            $table->string('CIN_ICE');
+            $table->string('CIN_ICE')->unique();
             $table->string('CIN_file')->nullable();
             $table->enum('type', ['Entreprise', 'Particulier']);
             $table->string('role');
