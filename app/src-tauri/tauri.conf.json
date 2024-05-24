@@ -35,8 +35,7 @@
         "height": 600,
         "minWidth": 800,
         "minHeight": 600,
-        "decorations": false,
-        "fullscreen": true
+        "decorations": false
       },
       {
         "title": "Meknes Distribution Welcoming ",

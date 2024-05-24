@@ -2,7 +2,7 @@ import Cookies from "js-cookie";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
-async function GET(endpoint) {
+async function GET(endpoint, setCach = true) {
   let data = sessionStorage.getItem(endpoint);
   if (!data) {
     const token = Cookies.get("token");
@@ -15,7 +15,7 @@ async function GET(endpoint) {
 
     if (response.ok) {
       data = await response.json();
-      sessionStorage.setItem(endpoint, JSON.stringify(data));
+      setCach ? sessionStorage.setItem(endpoint, JSON.stringify(data)) : '';
       return data;
     } else {
       return "response not OK";

@@ -12,8 +12,8 @@ async function PUT(endpoint, body) { // body : Object
         method: "PUt",
         body: JSON.stringify(body)
     });
-
-   return await response.json();
+    if (response) sessionStorage.removeItem(endpoint);
+    return await response.json();
 }
 
 export default PUT;

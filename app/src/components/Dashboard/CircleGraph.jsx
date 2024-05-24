@@ -47,7 +47,7 @@ const CircleGraph = () => {
     ],
   };
 
-  return <div className="h-96"><Doughnut data={finalData} options={options} /></div>;
+  return <div className="w-[600px]"><Doughnut data={finalData} options={options} /></div>;
 }
 
 export default CircleGraph;
