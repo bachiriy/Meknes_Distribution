@@ -34,6 +34,33 @@ class ClientFileController extends Controller
         return response()->json($response, 200);
     }
 
+    function read(Request $request): \Illuminate\Http\JsonResponse
+    {
+        // Fetch all client files that are not deleted and eager load necessary relationships
+        $clientFiles = ClientFile::where('is_deleted', 'no')
+            ->with(['media', 'subfolders', 'parentFolder'])
+            ->get();
+
+        // Map the client files to the structure expected by Syncfusion File Manager
+        $response = $clientFiles->map(function ($file) {
+            // Determine if the entry is a folder or a file
+            $isFolder = $file->subfolders->isNotEmpty() || $file->media->isEmpty();
+
+            return [
+                'id' => $file->id,
+                'name' => $file->file_name,
+                'size' => $isFolder ? 0 : $file->media->first()->size ?? 0,
+                'date' => $file->created_at->format('Y-m-d H:i:s'),
+                'type' => $isFolder ? 'folder' : 'file',
+                'isFile' => !$isFolder,
+                'url' => $isFolder ? null : $file->media->first()->getUrl() ?? null,
+            ];
+        });
+
+        return response()->json($response);
+    }
+
+
     function store(Request $request): \Illuminate\Http\JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -44,6 +71,7 @@ class ClientFileController extends Controller
             'product_ids' => 'required|array',
             'product_ids.*' => 'required|numeric|exists:products,id',
             'exploitation_surface' => 'required|numeric',
+            'uploadFiles' => 'nullable|file', // Add file validation
         ]);
 
         if ($validator->fails()) {
@@ -62,6 +90,7 @@ class ClientFileController extends Controller
 
         $clientFile = ClientFile::create($data);
 
+        // Attach clients and products
         foreach ($request['client_ids'] as $id) {
             ClientPartner::create([
                 'client_file_id' => $clientFile->id,
@@ -76,6 +105,13 @@ class ClientFileController extends Controller
             ]);
         }
 
+        // Handle file upload with Media Library
+        if ($request->hasFile('uploadFiles')) {
+            $clientFile->addMedia($request->file('uploadFiles'))->toMediaCollection('client_files');
+        }
+
+        // Clear cache and return response
+        Cache::forget('client_files');
         $clientFiles = ClientFile::where('is_deleted', 'no')
             ->with('invoices')
             ->with('deliveryNotes')
@@ -83,21 +119,67 @@ class ClientFileController extends Controller
             ->with('products.subCategory.category')
             ->with('clients')
             ->get();
-
-        Cache::forget('client_files');
         Cache::put('client_files', $clientFiles, 1440);
+
         $response = [
             'status' => 'success',
             'message' => 'ClientFile is created successfully.',
             'clientFile' => $clientFile,
             'clientFiles' => $clientFiles,
         ];
+
         return response()->json($response);
     }
+
 
     function update()
     {
 
+    }
+
+    function download($id)
+    {
+        // Validate the provided ID
+        $validator = Validator::make(['id' => $id], [
+            'id' => 'required|numeric|exists:client_files,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        // Find the ClientFile by ID
+        $clientFile = ClientFile::find($id);
+
+        // Get the first media file associated with the ClientFile
+        $media = $clientFile->getFirstMedia('client_files');
+
+        if (!$media) {
+            return response()->json(['message' => 'File not found.'], 404);
+        }
+
+        // Return the file as a download response
+        return response()->download($media->getPath(), $media->file_name);
+    }
+
+    function rename(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'fileId' => 'required|numeric|exists:client_files,id',
+            'newName' => 'required|string|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $clientFile = ClientFile::find($request->input('fileId'));
+        if ($clientFile) {
+            $clientFile->file_name = $request->input('newName');
+            $clientFile->save();
+        }
+
+        return response()->json(['success' => true]);
     }
 
     function softDelete($id): \Illuminate\Http\JsonResponse
@@ -118,12 +200,78 @@ class ClientFileController extends Controller
         ]);
     }
 
-    function destroy($id): \Illuminate\Http\JsonResponse
+    function delete($id): \Illuminate\Http\JsonResponse
     {
-        $clientFile = ClientFile::find($id);
-        $clientFile->delete();
-        return response()->json([
-            'status' => 'Client File Deleted Successfully'
+        $validator = Validator::make(['id' => $id], [
+            'fileId' => 'required|numeric|exists:client_files,id'
         ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $clientFile = ClientFile::find($request->input('fileId'));
+        if ($clientFile) {
+            $clientFile->delete();
+        }
+
+        return response()->json(['success' => true]);
+    }
+
+    function upload(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'client_file_id' => 'required|numeric|exists:client_files,id',
+            'uploadFiles' => 'required|array', // Require files to be uploaded
+            'uploadFiles.*' => 'file', // Each item should be a file
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        // Start a database transaction
+        DB::beginTransaction();
+
+        try {
+            $clientFileId = $request->input('client_file_id');
+            $clientFile = ClientFile::findOrFail($clientFileId);
+
+            // Handle multiple file uploads
+            if ($request->hasFile('uploadFiles')) {
+                foreach ($request->file('uploadFiles') as $file) {
+                    $clientFile->addMedia($file)->toMediaCollection('client_files');
+                }
+            }
+
+            // Commit the transaction
+            DB::commit();
+
+            // Clear cache and return response
+            Cache::forget('client_files');
+            $clientFiles = ClientFile::where('is_deleted', 'no')
+                ->with('invoices')
+                ->with('deliveryNotes')
+                ->with('commune.caidat.cercle.province.region')
+                ->with('products.subCategory.category')
+                ->with('clients')
+                ->get();
+            Cache::put('client_files', $clientFiles, 1440);
+
+            $response = [
+                'status' => 'success',
+                'message' => 'Files attached to ClientFile successfully.',
+                'clientFile' => $clientFile,
+                'clientFiles' => $clientFiles,
+            ];
+
+            return response()->json($response);
+        } catch (\Exception $e) {
+            // Rollback the transaction in case of an error
+            DB::rollBack();
+
+            // Log the error or handle it appropriately
+            return response()->json(['message' => 'Error occurred while attaching files to client file.'], 500);
+        }
     }
 }
