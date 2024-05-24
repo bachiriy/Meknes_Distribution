@@ -7,10 +7,26 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    function index()
+    function index(): \Illuminate\Http\JsonResponse
     {
-        $categories = Category::where('is_deleted', 'no')
-            ->with('groups')->get();
+        $categories = Category::with('sub_categories')->get();
+        $response = [
+            'message' => 'success',
+            'categories' => $categories
+        ];
+        return response()->json($response, 200);
+    }
+
+    function store(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $validator = validator(['name' => $request['category_name']], [
+            'name' => 'required|string|unique:categories,id'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+        $categories = Category::with('sub_categories')->get();
         $response = [
             'message' => 'success',
             'categories' => $categories

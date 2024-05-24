@@ -96,7 +96,7 @@ class StatsController extends Controller
     {
         $groups = ClientFile::join('client_file_products', 'client_files.id', '=', 'client_file_products.client_file_id')
             ->join('products', 'client_file_products.product_id', '=', 'products.id')
-            ->join('groups as g', 'products.group_id', '=', 'g.id')
+            ->join('sub_categories as g', 'products.sub_category_id', '=', 'g.id')
             ->join('categories as c', 'g.category_id', '=', 'c.id')
             ->groupBy('products.id', 'g.name', 'c.name')
             ->selectRaw('products.id, products.designation, COUNT(*) as total, g.name as group_name, c.name as category_name')

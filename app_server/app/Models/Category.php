@@ -23,6 +23,6 @@ class Category extends Model
 
     public function groups(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasMany(Group::class);
+        return $this->hasMany(SubCategory::class);
     }
 }

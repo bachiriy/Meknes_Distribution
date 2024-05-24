@@ -20,7 +20,7 @@ class Product extends Model
         'remise',
         'TVA',
         'prix_vente_net',
-        'group_id',
+        'sub_category_id',
         'supplier_id',
         'is_deleted'
     ];
@@ -36,9 +36,9 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
-    function group(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    function subCategory(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(Group::class);
+        return $this->belongsTo(SubCategory::class);
     }
 
     function supplier(): \Illuminate\Database\Eloquent\Relations\BelongsTo
