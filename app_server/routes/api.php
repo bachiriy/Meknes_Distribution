@@ -61,7 +61,11 @@ Route::middleware('auth:api')->group(function () {
         Route::post('', [ClientFileController::class, 'store']);
         Route::put('/{id}', [ClientFileController::class, 'update']);
         Route::put('/softDelete/{id}', [ClientFileController::class, 'softDelete']);
-        Route::delete('/{id}', [ClientFileController::class, 'destroy']);
+        Route::delete('/{id}', [ClientFileController::class, 'delete']);
+        Route::get('/download/{id}', [ClientFileController::class, 'download']);
+        Route::get('/read', [ClientFileController::class, 'read']);
+        Route::post('/upload', [ClientFileController::class, 'upload']);
+        Route::post('/rename', [ClientFileController::class, 'rename']);
     });
 
 
