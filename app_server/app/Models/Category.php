@@ -21,8 +21,8 @@ class Category extends Model
         return $this->hasMany(Tarif::class);
     }
 
-    public function groups(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function subCategories(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasMany(Group::class);
+        return $this->hasMany(SubCategory::class);
     }
 }

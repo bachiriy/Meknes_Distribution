@@ -10,8 +10,7 @@ class Tarif extends Model
     use HasFactory;
 
     protected $fillable = [
-        'category_id',
-        'group_id',
+        'sub_category_id',
         'marque',
         'modele',
         'designation',
@@ -26,8 +25,8 @@ class Tarif extends Model
         return $this->belongsTo(Category::class);
     }
 
-    function group(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    function subCategory(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(Group::class);
+        return $this->belongsTo(SubCategory::class);
     }
 }

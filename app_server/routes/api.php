@@ -6,11 +6,9 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClientFileController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StatsController;
+use App\Http\Controllers\SubCategoryController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
-use App\Models\Client;
-use App\Models\ClientFile;
-use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -80,8 +78,14 @@ Route::middleware('auth:api')->group(function () {
         Route::get('', [CategoryController::class, 'index']);
         Route::post('', [CategoryController::class, 'store']);
         Route::put('/{id}', [CategoryController::class, 'update']);
-        Route::put('/softDelete/{id}', [CategoryController::class, 'softDelete']);
         Route::delete('/{id}', [CategoryController::class, 'destroy']);
+    });
+
+    Route::prefix('subCategories')->group(function () {
+        Route::get('', [SubCategoryController::class, 'index']);
+        Route::post('', [SubCategoryController::class, 'store']);
+        Route::put('/{id}', [SubCategoryController::class, 'update']);
+        Route::delete('/{id}', [SubCategoryController::class, 'destroy']);
     });
 
     Route::prefix('stats')->group(function () {

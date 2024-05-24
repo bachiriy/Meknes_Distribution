@@ -12,9 +12,11 @@ class ClientFile extends Model implements HasMedia
     use HasFactory, InteractsWithMedia;
 
     protected $fillable = [
+        'file_name',
         'commune_id',
         'exploitation_surface',
         'more_detail',
+        'full_address',
         'is_deleted'
     ];
 

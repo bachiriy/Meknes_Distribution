@@ -3,22 +3,29 @@
 namespace App\Http\Controllers;
 
 use App\Models\ClientFile;
+use App\Models\ClientFileAddress;
 use App\Models\ClientFileProduct;
 use App\Models\ClientPartner;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 
 class ClientFileController extends Controller
 {
     function index(): \Illuminate\Http\JsonResponse
     {
-        $clientFiles = ClientFile::where('is_deleted', 'no')
-            ->with('invoices')
-            ->with('deliveryNotes')
-            ->with('commune.caidat.cercle.province.region')
-            ->with('products.group.category')
-            ->with('clients')
-            ->get();
+        $clientFiles = Cache::get('client_files');
+
+        if (!$clientFiles) {
+            $clientFiles = ClientFile::where('is_deleted', 'no')
+                ->with('invoices')
+                ->with('deliveryNotes')
+                ->with('commune.caidat.cercle.province.region')
+                ->with('products.subCategory.category')
+                ->with('clients')
+                ->get();
+            Cache::put('client_files', $clientFiles, 1440);
+        }
 
         $response = [
             'message' => 'success',
@@ -30,12 +37,13 @@ class ClientFileController extends Controller
     function store(Request $request): \Illuminate\Http\JsonResponse
     {
         $validator = Validator::make($request->all(), [
+            'file_name' => 'required|string|max:255',
             'client_ids' => 'required|array',
             'client_ids.*' => 'required|numeric|exists:clients,id',
             'commune_id' => 'required|numeric|exists:communes,id',
             'product_ids' => 'required|array',
             'product_ids.*' => 'required|numeric|exists:products,id',
-            'exploitation_surface' => 'required|string',
+            'exploitation_surface' => 'required|numeric',
         ]);
 
         if ($validator->fails()) {
@@ -43,10 +51,14 @@ class ClientFileController extends Controller
         }
 
         $data = $request->only(
+            'file_name',
             'commune_id',
             'more_detail',
             'exploitation_surface'
         );
+
+        $fullAddress = ClientFileAddress::where('commune_id', $data['commune_id'])->first();
+        $data['full_address'] = $fullAddress['full_address'];
 
         $clientFile = ClientFile::create($data);
 
@@ -64,18 +76,21 @@ class ClientFileController extends Controller
             ]);
         }
 
-        $clientFile = ClientFile::with('invoices')
+        $clientFiles = ClientFile::where('is_deleted', 'no')
+            ->with('invoices')
             ->with('deliveryNotes')
             ->with('commune.caidat.cercle.province.region')
-            ->with('products')
+            ->with('products.subCategory.category')
             ->with('clients')
-            ->where('id', $clientFile->id)
-            ->first();
+            ->get();
 
+        Cache::forget('client_files');
+        Cache::put('client_files', $clientFiles, 1440);
         $response = [
             'status' => 'success',
             'message' => 'ClientFile is created successfully.',
             'clientFile' => $clientFile,
+            'clientFiles' => $clientFiles,
         ];
         return response()->json($response);
     }

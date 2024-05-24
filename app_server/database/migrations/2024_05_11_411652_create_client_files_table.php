@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -13,10 +12,12 @@ return new class extends Migration
     {
         Schema::create('client_files', function (Blueprint $table) {
             $table->id();
+            $table->string('file_name')->unique();
             $table->foreignId('commune_id')->constrained()->cascadeOnDelete();
             $table->float('exploitation_surface');
             $table->text('more_detail')->nullable();
             $table->enum('status', ['in progress', 'completed', 'closed'])->default('in progress');
+            $table->string('full_address');
             $table->enum('is_deleted', ['no', 'yes'])->default('no');
             $table->timestamps();
         });

@@ -14,7 +14,7 @@ class ProductController extends Controller
         $products = Cache::get('products');
         if (!$products) {
             $products = Product::where('is_deleted', 'no')
-                ->with(['group.category', 'supplier'])
+                ->with(['sub_category.category', 'supplier'])
                 ->get();
             Cache::put('products', $products, 1440);
         }
@@ -37,8 +37,7 @@ class ProductController extends Controller
             'remise' => 'required|numeric',
             'TVA' => 'required|numeric',
             'prix_vente_net' => 'required|numeric',
-            'category_id' => 'required|numeric|exists:categories,id',
-            'group_id' => 'required|numeric|exists:groups,id'
+            'sub_category_id' => 'required|numeric|exists:sub_categories,id'
         ]);
 
         if ($validator->fails()) {
@@ -65,8 +64,7 @@ class ProductController extends Controller
             'remise',
             'TVA',
             'prix_vente_net',
-            'category_id',
-            'group_id',
+            'sub_category_id',
             'supplier_id'
         );
 
@@ -78,13 +76,14 @@ class ProductController extends Controller
         $product->image = $publicUrl;
         $product->save();
         Cache::forget('products');
-        $products = Product::with(['group.category', 'supplier'])
+        $products = Product::with(['sub_category.category', 'supplier'])
             ->get();
         Cache::put('products', $products, 1440);
         $response = [
             'status' => 'success',
             'message' => 'Product is created successfully.',
             'product' => $product,
+            'products' => $products,
         ];
         return response()->json($response);
     }

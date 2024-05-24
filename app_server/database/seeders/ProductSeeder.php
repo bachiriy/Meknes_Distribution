@@ -26,7 +26,7 @@ class ProductSeeder extends Seeder
                 'remise' => 0.3,
                 'TVA' => 0.3,
                 'prix_vente_net' => 3434,
-                'group_id' => 4,
+                'sub_category_id' => 4,
                 'supplier_id' => 1
             ],
             [
@@ -40,7 +40,7 @@ class ProductSeeder extends Seeder
                 'remise' => 0.3,
                 'TVA' => 0.3,
                 'prix_vente_net' => 3434,
-                'group_id' => 4,
+                'sub_category_id' => 4,
                 'supplier_id' => 1
             ],
             [
@@ -54,7 +54,7 @@ class ProductSeeder extends Seeder
                 'remise' => 0.3,
                 'TVA' => 0.3,
                 'prix_vente_net' => 3434,
-                'group_id' => 4,
+                'sub_category_id' => 4,
                 'supplier_id' => 1
             ]
         ];
