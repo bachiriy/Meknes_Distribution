@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class ClientFile extends Model implements HasMedia
 {
@@ -43,5 +44,22 @@ class ClientFile extends Model implements HasMedia
     function invoices(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(Invoice::class, 'client_file_invoice');
+    }
+    // Define relationship for subfolders
+    public function subfolders()
+    {
+        return $this->hasMany(ClientFile::class, 'parent_id');
+    }
+
+    // Define relationship for parent folder
+    public function parentFolder()
+    {
+        return $this->belongsTo(ClientFile::class, 'parent_id');
+    }
+
+    // Define a scope for non-deleted files
+    public function scopeActive($query)
+    {
+        return $query->where('is_deleted', 'no');
     }
 }
