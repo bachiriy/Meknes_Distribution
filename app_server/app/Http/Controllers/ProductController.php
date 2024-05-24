@@ -14,7 +14,7 @@ class ProductController extends Controller
         $products = Cache::get('products');
         if (!$products) {
             $products = Product::where('is_deleted', 'no')
-                ->with(['sub_category.category', 'supplier'])
+                ->with(['subCategory.category', 'supplier'])
                 ->get();
             Cache::put('products', $products, 1440);
         }
@@ -76,7 +76,7 @@ class ProductController extends Controller
         $product->image = $publicUrl;
         $product->save();
         Cache::forget('products');
-        $products = Product::with(['sub_category.category', 'supplier'])
+        $products = Product::with(['subCategory.category', 'supplier'])
             ->get();
         Cache::put('products', $products, 1440);
         $response = [
