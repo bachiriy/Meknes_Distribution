@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClientFileController;
+use App\Http\Controllers\EmailController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StatsController;
 use App\Http\Controllers\SubCategoryController;
@@ -98,6 +99,13 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/communes', [StatsController::class, 'getCommunes']);
         Route::get('/groups', [StatsController::class, 'trendingGroup']);
     });
+
+    Route::prefix('mails')->group(function () {
+        Route::get('/', [EmailController::class, 'index']);
+        Route::post('/', [EmailController::class, 'sendMail']);
+        Route::post('/delete', [EmailController::class, 'destroy']);
+    });
+
 });
 
 
