@@ -18,9 +18,12 @@ class Authenticate extends Middleware
 
     /**
      * Handle an unauthenticated user response.
+     * @throws \Illuminate\Auth\AuthenticationException
      */
     protected function unauthenticated($request, array $guards)
     {
-        return response()->json(['error' => 'Unauthorized access'], 401);
+        throw new \Illuminate\Auth\AuthenticationException(
+            'Unauthenticated.', $guards, $this->redirectTo($request)
+        );
     }
 }
