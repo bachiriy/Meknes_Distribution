@@ -17,18 +17,18 @@ import Stats from "../pages/Stats";
 import { invoke } from "@tauri-apps/api/tauri";
 import ClientFile from "../pages/ClientFile";
 
+
 export const Router = (props) => {
-  const [isConnected, setIsConnected] = useState(true);
+  const [isConnected, setIsConnected] = useState(false);
   const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useLayoutEffect(() => {
-    setLoading(true);
     const waitForIt = async () => {
       setIsConnected(await authChecker());
     };
     waitForIt();
-    invoke("close_splashscreen");
+    // invoke("close_splashscreen");
     setLoading(false);
     props.setLoading(false);
   }, []);
