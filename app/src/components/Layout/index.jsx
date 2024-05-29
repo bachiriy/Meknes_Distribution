@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Aside from "../../components/Other/Aside";
+import Aside from "../Aside";
 import { Outlet } from "react-router-dom";
 
 export const Layout = (props) => {
