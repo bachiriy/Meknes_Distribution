@@ -26,7 +26,7 @@ import DefaultAvatar from "../../assets/default_avatar.png";
 import PUT from "../../utils/PUT";
 import { json } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
-import POST from "../../utils/POSTPIC";
+import POST from "../../utils/POSTFILE";
 import { dark } from "@mui/material/styles/createPalette";
 
 export default function Profile() {
@@ -34,21 +34,26 @@ export default function Profile() {
   const [name, setName] = useState(user.name);
   const [picture, setPicture] = useState(user.picture);
   const [email, setEmail] = useState(user.email);
-  const [password, setPassword] = useState('')
+  const [password, setPassword] = useState("");
   const [fetch, setFetch] = useState(false);
   const [picFetch, setPicFetch] = useState(false);
   const [CanChangePw, setChangePwAbility] = useState(false);
+  const [CanChangeInfo, setChangeInfoAbility] = useState(false);
   const [pwFetch, setPwFetch] = useState(false);
 
   const changePw = async () => {
-    if(!password) return toast.error('Mot de passe requis!');
+    if (!password) return toast.error("Mot de passe requis!");
     setPwFetch(true);
-    const response = await PUT('users/' + user.id, {email: user.email, name: user.name, role_id: user.roles[0].id, password});
-    if(response.errors) toast.error(response.errors.password[0]);
-    if(response.status === 'success') toast.success(response.message)
+    const response = await PUT("users/" + user.id, {
+      email: user.email,
+      name: user.name,
+      role_id: user.roles[0].id,
+      password,
+    });
+    if (response.errors) toast.error(response.errors.password[0]);
+    if (response.status === "success") toast.success(response.message);
     setPwFetch(false);
-  }
-
+  };
 
   const updateUserInfo = async () => {
     setFetch(true);
@@ -62,9 +67,11 @@ export default function Profile() {
       toast.success(respone.message);
       Cookies.remove("user");
       Cookies.set("user", JSON.stringify(respone.data.user), { expires: 3 });
-    };
-    if(respone.errors && respone.errors.name) toast.error(respone.errors.name[0]);
-    if(respone.errors && respone.errors.email) toast.error(respone.errors.email[0]);
+    }
+    if (respone.errors && respone.errors.name)
+      toast.error(respone.errors.name[0]);
+    if (respone.errors && respone.errors.email)
+      toast.error(respone.errors.email[0]);
     setFetch(false);
   };
 
@@ -82,7 +89,7 @@ export default function Profile() {
       const response = await POST("users/picture", formData);
       Cookies.set("user", JSON.stringify(response.data.user), { expires: 3 });
       setPicture(response.data.user.picture);
-      if (response.status === 'success') toast.success(response.message);
+      if (response.status === "success") toast.success(response.message);
       setPicFetch(false);
     } catch (error) {
       console.error("Error updating picture:", error);
@@ -205,76 +212,85 @@ export default function Profile() {
           </MDBCol>
           <MDBCol lg="8">
             <MDBCard className="p-4 mb-4">
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  updateUserInfo();
-                }}
-              >
-                <MDBInputGroup textAfter="Name" className="mb-3">
-                  <input
-                    className="form-control"
-                    onChange={(e) => setName(e.target.value)}
-                    value={name}
-                    type="text"
-                    placeholder="Username"
-                  />
-                </MDBInputGroup>
-
-                <MDBInputGroup className="mb-3" textAfter="Email">
-                  <input
-                    className="form-control"
-                    onChange={(e) => setEmail(e.target.value)}
-                    value={email}
-                    type="text"
-                    placeholder="Email"
-                  />
-                </MDBInputGroup>
-
-                <MDBInputGroup
-                  className="mb-3 cursor-not-allowed bg-gray-200"
-                  disabled
-                  textAfter="Role"
+              <div className="my-6">
+                <MDBSwitch
+                  id="flexSwitchCheckDefault"
+                  label="Changer les données de l'utilisateur"
+                  checked={CanChangeInfo}
+                  onChange={(e) => setChangeInfoAbility(e.target.checked)}
+                />
+              </div>
+              {CanChangeInfo && (
+                <form
+                  className="w-[98%]"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    updateUserInfo();
+                  }}
                 >
-                  <input
+                  <MDBInputGroup textAfter="Name" className="mb-3">
+                    <input
+                      className="form-control"
+                      onChange={(e) => setName(e.target.value)}
+                      value={name}
+                      type="text"
+                      placeholder="Username"
+                    />
+                  </MDBInputGroup>
+
+                  <MDBInputGroup className="mb-3" textAfter="Email">
+                    <input
+                      className="form-control"
+                      onChange={(e) => setEmail(e.target.value)}
+                      value={email}
+                      type="text"
+                      placeholder="Email"
+                    />
+                  </MDBInputGroup>
+
+                  <MDBInputGroup
+                    className="mb-3 cursor-not-allowed bg-gray-200"
                     disabled
-                    className="form-control cursor-not-allowed"
-                    value={user.roles[0].name.toUpperCase()}
-                    type="text"
-                    placeholder="Role"
-                  />
-                </MDBInputGroup>
-                <div className="flex justify-end">
-                  {fetch ? (
-                    <MDBBtn disabled color="dark">
-                      <MDBSpinner
-                        size="sm"
-                        role="status"
-                        tag="span"
-                        className="me-2"
-                      />
-                      Loading...
-                    </MDBBtn>
-                  ) : (
-                    <MDBBtn className="w-20" color="dark">
-                      Save
-                    </MDBBtn>
-                  )}
-                </div>
-              </form>
+                    textAfter="Role"
+                  >
+                    <input
+                      disabled
+                      className="form-control cursor-not-allowed"
+                      value={user.roles[0].name.toUpperCase()}
+                      type="text"
+                      placeholder="Role"
+                    />
+                  </MDBInputGroup>
+                  <div className="flex justify-end">
+                    {fetch ? (
+                      <MDBBtn disabled color="dark">
+                        <MDBSpinner
+                          size="sm"
+                          role="status"
+                          tag="span"
+                          className="me-2"
+                        />
+                        Loading...
+                      </MDBBtn>
+                    ) : (
+                      <MDBBtn className="w-20" color="dark">
+                        Save
+                      </MDBBtn>
+                    )}
+                  </div>
+                </form>
+              )}
             </MDBCard>
             <MDBCard className="p-4 mb-4">
-              <div className="my-4">
+              <div className="my-6">
                 <MDBSwitch
                   id="flexSwitchCheckDefault"
                   label="Changer le mot de passe"
                   checked={CanChangePw}
                   onChange={(e) => setChangePwAbility(e.target.checked)}
                 />
-
               </div>
               {CanChangePw && (
-
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();
@@ -311,7 +327,7 @@ export default function Profile() {
               )}
             </MDBCard>
 
-            <MDBRow>
+            {/* <MDBRow>
               <MDBCol md="6">
                 <MDBCard className="p-4 mb-md-0">
                   <MDBSwitch
@@ -401,7 +417,7 @@ export default function Profile() {
                   </MDBCardBody>
                 </MDBCard>
               </MDBCol>
-            </MDBRow>
+            </MDBRow> */}
           </MDBCol>
         </MDBRow>
       </MDBContainer>
