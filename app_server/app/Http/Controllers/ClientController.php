@@ -12,7 +12,7 @@ class ClientController extends Controller
     {
         $clients = Client::where('is_deleted', 'no')->get();
         $response = [
-            'message' => 'success',
+            'status' => 'success',
             'clients' => $clients
         ];
         return response()->json($response, 200);

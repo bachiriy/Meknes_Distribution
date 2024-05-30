@@ -32,4 +32,9 @@ class Client extends Model implements HasMedia
     {
         return $this->belongsToMany(ClientFile::class, 'client_partners');
     }
+
+    function emails(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Email::class);
+    }
 }

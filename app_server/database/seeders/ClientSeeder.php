@@ -39,7 +39,7 @@ class ClientSeeder extends Seeder
                 'address_facturation' => 'hda dik lblassa 3qlti',
             ],
             [
-                'CIN_ICE' => 'AE232445',
+                'CIN_ICE' => 'AC232445',
                 'CIN_file' => 'cin.png',
                 'type' => 'Entreprise',
                 'role' => 'gerant',

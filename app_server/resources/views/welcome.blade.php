@@ -13,7 +13,9 @@
     <!-- Endpoint Card -->
 
 
-    <!-- Add more endpoint cards as needed -->
+    <!-- AUTH -->
+    <h1 class="text-xl font-bold mb-2 text-center">AUTH</h1>
+
     <div class="bg-white rounded-lg shadow-md p-6 mb-4">
         <h2 class="text-xl font-semibold mb-2"><span class="text-yellow-500">POST</span> /api/isConnected</h2>
         <p class="text-gray-700 mb-2">Check user authentication (check if token is valid)</p>
@@ -66,6 +68,8 @@
 
 
     <!-- Users -->
+    <h1 class="text-xl font-bold mb-2 text-center">Users</h1>
+
     <div class="bg-white rounded-lg shadow-md p-6 mb-4">
         <h2 class="text-xl font-semibold mb-2"><span class="text-green-500">GET</span> /api/users</h2>
         <p class="text-gray-700 mb-2">Retrieve a list of users</p>
@@ -109,9 +113,29 @@
             <button>click</button>
         </form>
     </div>
+
     {{--Client File--}}
+    <h1 class="text-xl font-bold mb-2 text-center">Client Files</h1>
     <div class="bg-white rounded-lg shadow-md p-6 mb-4">
-        <h2 class="text-xl font-semibold mb-2"><span class="text-green-500">POST</span> /api/clientFiles</h2>
+        <h2 class="text-xl font-semibold mb-2"><span class="text-green-500">GET</span> /api/clientFiles</h2>
+        <p class="text-gray-700 mb-2">Retrieve a list of Client Files</p>
+        <div class="mb-4">
+            <h3 class="font-medium">Headers</h3>
+            <ul class="list-disc list-inside ml-4">
+                <li>Authorization: Bearer &lt;token&gt;</li>
+                <li>Content-Type: application/json</li>
+            </ul>
+        </div>
+        <div class="mb-4">
+            <h3 class="font-medium">Parameters</h3>
+            <ul class="list-disc list-inside ml-4">
+                <li>page: integer (optional)</li>
+                <li>limit: integer (optional)</li>
+            </ul>
+        </div>
+    </div>
+    <div class="bg-white rounded-lg shadow-md p-6 mb-4">
+        <h2 class="text-xl font-semibold mb-2"><span class="text-yellow-500">POST</span> /api/clientFiles</h2>
         <p class="text-gray-700 mb-2">Store client File</p>
         <div class="mb-4">
             <h3 class="font-medium">Headers</h3>
@@ -134,6 +158,7 @@
     </div>
 
     {{--Stats--}}
+    <h1 class="text-xl font-bold mb-2 text-center">Stats</h1>
     <div class="bg-white rounded-lg shadow-md p-6 mb-4">
         <h2 class="text-xl font-semibold mb-2"><span class="text-green-500">Get</span> /api/Stats</h2>
         <p class="text-gray-700 mb-2">Retrieve Trending Commune</p>
@@ -168,6 +193,64 @@
         </div>
     </div>
 
+    {{--Mails--}}
+    <h1 class="text-xl font-bold mb-2 text-center">Mails</h1>
+    <div class="bg-white rounded-lg shadow-md p-6 mb-4">
+        <h2 class="text-xl font-semibold mb-2"><span class="text-green-500">Get</span> /api/mails</h2>
+        <p class="text-gray-700 mb-2">Retrieve Mails Were Sent</p>
+        <div class="mb-4">
+            <h3 class="font-medium">Headers</h3>
+            <ul class="list-disc list-inside ml-4">
+                <li>Authorization: Bearer &lt;token&gt;</li>
+                <li>Content-Type: application/json</li>
+            </ul>
+        </div>
+        <div class="mb-4">
+            <h3 class="font-medium">Parameters</h3>
+            <ul class="list-disc list-inside ml-4">
+            </ul>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6 mb-4">
+        <h2 class="text-xl font-semibold mb-2"><span class="text-yellow-500">Post</span> /api/mails</h2>
+        <p class="text-gray-700 mb-2">Send New Mails</p>
+        <div class="mb-4">
+            <h3 class="font-medium">Headers</h3>
+            <ul class="list-disc list-inside ml-4">
+                <li>Authorization: Bearer &lt;token&gt;</li>
+                <li>Content-Type: application/json</li>
+            </ul>
+        </div>
+        <div class="mb-4">
+            <h3 class="font-medium">Parameters</h3>
+            <ul class="list-disc list-inside ml-4">
+                <li>client_ids: array of integers (required)</li>
+                <li>title: string (required)</li>
+                <li>body: text (required)</li>
+                <li>file: file (png, jpeg, jpg, gif, pdf) (optional)</li>
+
+            </ul>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6 mb-4">
+        <h2 class="text-xl font-semibold mb-2"><span class="text-yellow-500">Post</span> /api/mails/delete</h2>
+        <p class="text-gray-700 mb-2">Delete Mails From List</p>
+        <div class="mb-4">
+            <h3 class="font-medium">Headers</h3>
+            <ul class="list-disc list-inside ml-4">
+                <li>Authorization: Bearer &lt;token&gt;</li>
+                <li>Content-Type: application/json</li>
+            </ul>
+        </div>
+        <div class="mb-4">
+            <h3 class="font-medium">Parameters</h3>
+            <ul class="list-disc list-inside ml-4">
+                <li>client_ids: array of integers (required)</li>
+            </ul>
+        </div>
+    </div>
 </div>
 
 
