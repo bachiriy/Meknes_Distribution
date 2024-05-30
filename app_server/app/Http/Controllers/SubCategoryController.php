@@ -4,13 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\SubCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 
 class SubCategoryController extends Controller
 {
     function index(): \Illuminate\Http\JsonResponse
     {
-        $subCategories = SubCategory::with('category')->get();
+        $subCategories = Cache::get('subCategories');
+        if (!$subCategories) {
+            $subCategories = SubCategory::with('category')->get();
+            Cache::put('subCategories', $subCategories, 1440);
+        }
         $response = [
             'message' => 'success',
             'categories' => $subCategories
@@ -35,6 +40,9 @@ class SubCategoryController extends Controller
                 'category_id' => $request['category_id']
             ]);
         $subCategories = SubCategory::with('category')->get();
+        Cache::forget('subCategories');
+        Cache::forget('categories');
+        Cache::put('subCategories', $subCategories, 1440);
         $response = [
             'message' => 'success',
             'categories' => $subCategories
@@ -64,6 +72,9 @@ class SubCategoryController extends Controller
         $subCategory->save();
 
         $subCategories = SubCategory::with('category')->get();
+        Cache::forget('subCategories');
+        Cache::forget('categories');
+        Cache::put('subCategories', $subCategories, 1440);
         $response = [
             'message' => 'success',
             'categories' => $subCategories
@@ -82,6 +93,8 @@ class SubCategoryController extends Controller
         }
         $subCategory = SubCategory::find($id);
         $subCategory->delete();
+        Cache::forget('subCategories');
+        Cache::forget('categories');
         return response()->json([
             'status' => 'success',
             'message' => 'SubCategory Deleted Successfully',
