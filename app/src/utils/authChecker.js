@@ -2,8 +2,9 @@ import Cookies from "js-cookie";
 
 export default async function authChecker() {
   const token = Cookies.get("token");
-  if (!token) return false;
-return true;
+  const user = Cookies.get("user");
+  if (!token || !user) return false;
+  return true;
   // try {
   //    const response = await fetch("http://127.0.0.1:8000/api/isConnected", {
   //     method: "POST",
@@ -13,7 +14,7 @@ return true;
   //     },
   //     body: JSON.stringify({ ok: "ok" }),
   //   });
-   
+
   //   const data = await response.json();
 
   //   console.log(data);

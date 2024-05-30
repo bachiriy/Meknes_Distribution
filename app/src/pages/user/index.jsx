@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import Spinner from "../../components/Spinner";
+import Spinner from "../../components/Other/Spinner";
 import GET from "../../utils/GET";
-import Table from "../../components/Table";
+import Table from "../../components/Other/Table";
 import { validateUser } from "../../utils/validationFunctions";
 
 const columns = [

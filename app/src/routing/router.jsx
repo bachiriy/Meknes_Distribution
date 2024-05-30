@@ -1,34 +1,34 @@
 import { HashRouter, Route, Routes } from "react-router-dom";
-import Login from "../pages/login";
+import Login from "../pages/Login";
 import { useLayoutEffect, useState } from "react";
 import authChecker from "../utils/authChecker";
-import { Home } from "../pages/home";
+import { Home } from "../pages/Home";
 import { Layout } from "../components/Layout";
-import { Product } from "../pages/product";
-import Client from "../pages/client";
-import Spinner from "../components/Spinner";
-import Supplier from "../pages/supplier";
-import { User } from "../pages/user";
+import { Product } from "../pages/Product";
+import Client from "../pages/Client";
+import Spinner from "../components/Other/Spinner";
+import Supplier from "../pages/Supplier";
+import { User } from "../pages/User";
 import Category from "../pages/Category";
-import Setting from "../pages/setting";
+import Setting from "../pages/Setting";
 import "mdb-react-ui-kit/dist/css/mdb.min.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import Stats from "../pages/stats";
+import Stats from "../pages/Stats";
 import { invoke } from "@tauri-apps/api/tauri";
-import ClientFile from "../pages/clientFile";
+import ClientFile from "../pages/ClientFile";
+
 
 export const Router = (props) => {
-  const [isConnected, setIsConnected] = useState(true);
+  const [isConnected, setIsConnected] = useState(false);
   const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useLayoutEffect(() => {
-    setLoading(true);
     const waitForIt = async () => {
       setIsConnected(await authChecker());
     };
     waitForIt();
-    invoke("close_splashscreen");
+    // invoke("close_splashscreen");
     setLoading(false);
     props.setLoading(false);
   }, []);
