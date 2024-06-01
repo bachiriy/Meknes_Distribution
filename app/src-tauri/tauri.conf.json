@@ -17,34 +17,32 @@
         "open": true
       },
       "window": {
-        "all": false,
-        "close": true,
-        "hide": true,
-        "show": true,
-        "maximize": true,
-        "minimize": true,
-        "unmaximize": true,
-        "unminimize": true,
-        "startDragging": true
+        "all": true
       }
     },
     "windows": [
       {
         "title": "Meknes Distribution",
+        "label": "main",
         "width": 800,
         "height": 600,
         "minWidth": 800,
         "minHeight": 600,
-        "decorations": false
+        "decorations": false,
+        "visible": false,
+        "center": true
       },
       {
-        "title": "Meknes Distribution Welcoming ",
-        "width": 400,
-        "height": 200,
+        "title": "Meknes Distribution Welcoming You",
+        "label": "splashscreen",
+        "width": 244,
+        "height": 101,
         "decorations": false,
         "url": "splashscreen.html",
-        "label": "splashscreen",
-        "visible": false
+        "visible": true,
+        "resizable": false,
+        "center": true,
+        "transparent": true
       }
     ],
     "security": {

@@ -28,7 +28,7 @@ export const Router = (props) => {
       setIsConnected(await authChecker());
     };
     waitForIt();
-    // invoke("close_splashscreen");
+    invoke("close_splashscreen");
     setLoading(false);
     props.setLoading(false);
   }, []);
