@@ -4,13 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 
 class ClientController extends Controller
 {
     function index(): \Illuminate\Http\JsonResponse
     {
-        $clients = Client::where('is_deleted', 'no')->get();
+        $clients = Cache::get('clients');
+        if (!$clients) {
+            $clients = Client::where('is_deleted', 'no')->get();
+            Cache::put('clients', $clients, 1440);
+        }
         $response = [
             'status' => 'success',
             'clients' => $clients
@@ -52,6 +57,8 @@ class ClientController extends Controller
         );
 
         $client = Client::create($data);
+        Cache::forget('clients');
+
         /*        $client->addMedia($path)
                     ->toMediaCollection();*/
         $response = [
@@ -79,6 +86,8 @@ class ClientController extends Controller
         $client = Client::find($id);
         $client->is_deleted = 'yes';
         $client->save();
+        Cache::forget('clients');
+        Cache::forget('client_files');
         return response()->json([
             'status' => 'success',
             'message' => 'Client Moved to the Archive Successfully',
@@ -89,6 +98,8 @@ class ClientController extends Controller
     {
         $client = Client::find($id);
         $client->delete();
+        Cache::forget('clients');
+        Cache::forget('client_files');
         return response()->json([
             'status' => 'Client Deleted Successfully'
         ]);

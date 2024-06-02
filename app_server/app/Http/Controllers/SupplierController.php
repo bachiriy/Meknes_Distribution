@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class SupplierController extends Controller
 {
@@ -13,7 +14,11 @@ class SupplierController extends Controller
      */
     public function index()
     {
-        $suppliers = Supplier::where('is_deleted', 'no')->get();
+        $suppliers = Cache::get('suppliers');
+        if (!$suppliers) {
+            $suppliers = Supplier::where('is_deleted', 'no')->get();
+            Cache::put('suppliers', $suppliers, 1440);
+        }
         $response = [
             'message' => 'success',
             'suppliers' => $suppliers
@@ -58,6 +63,7 @@ class SupplierController extends Controller
         $supplier = Supplier::find($id);
         $supplier->is_deleted = 'yes';
         $supplier->save();
+        Cache::forget('suppliers');
         return response()->json([
             'status' => 'success',
             'message' => 'Product Moved to the Archive Successfully',

@@ -75,9 +75,10 @@ class ProductController extends Controller
         $publicUrl = $mediaItems[0]->getUrl();
         $product->image = $publicUrl;
         $product->save();
-        Cache::forget('products');
-        $products = Product::with(['subCategory.category', 'supplier'])
+        $products = Product::where('is_deleted', 'no')
+            ->with(['subCategory.category', 'supplier'])
             ->get();
+        Cache::forget('products');
         Cache::put('products', $products, 1440);
         $response = [
             'status' => 'success',
@@ -105,6 +106,8 @@ class ProductController extends Controller
         $product = Product::find($id);
         $product->is_deleted = 'yes';
         $product->save();
+        Cache::forget('products');
+        Cache::forget('client_files');
         return response()->json([
             'status' => 'success',
             'message' => 'Product Moved to the Archive Successfully',
@@ -115,6 +118,8 @@ class ProductController extends Controller
     {
         $product = Product::find($id);
         $product->delete();
+        Cache::forget('products');
+        Cache::forget('client_files');
         return response()->json([
             'status' => 'Success',
             'message' => 'Product Deleted Successfully',

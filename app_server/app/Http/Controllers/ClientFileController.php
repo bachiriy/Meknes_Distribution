@@ -89,6 +89,8 @@ class ClientFileController extends Controller
 
         // Clear cache and return response
         Cache::forget('client_files');
+        Cache::forget('clients');
+        Cache::forget('products');
         $clientFiles = ClientFile::where('is_deleted', 'no')
             ->with('invoices')
             ->with('deliveryNotes')
@@ -213,6 +215,7 @@ class ClientFileController extends Controller
         if ($clientFile) {
             $clientFile->file_name = $request->input('newName');
             $clientFile->save();
+            Cache::forget('client_files');
         }
 
         return response()->json(['success' => true]);
@@ -230,6 +233,7 @@ class ClientFileController extends Controller
         $clientFile = ClientFile::find($id);
         $clientFile->is_deleted = 'yes';
         $clientFile->save();
+        Cache::forget('client_files');
         return response()->json([
             'status' => 'success',
             'message' => 'Client File Moved to the Archive Successfully',
@@ -249,6 +253,7 @@ class ClientFileController extends Controller
         $clientFile = ClientFile::find($request->input('fileId'));
         if ($clientFile) {
             $clientFile->delete();
+            Cache::forget('client_files');
         }
 
         return response()->json(['success' => true]);

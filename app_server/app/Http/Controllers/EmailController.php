@@ -6,6 +6,7 @@ use App\Mail\MarketingMail;
 use App\Models\Client;
 use App\Models\Email;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
@@ -13,7 +14,11 @@ class EmailController extends Controller
 {
     function index(): \Illuminate\Http\JsonResponse
     {
-        $mails = Email::with('client')->get();
+        $mails = Cache::get('mails');
+        if (!$mails) {
+            $mails = Email::with('client')->get();
+            Cache::put('mails', $mails, 1440);
+        }
         $response = [
             'status' => 'success',
             'mails' => $mails
@@ -46,7 +51,7 @@ class EmailController extends Controller
         }
 
         Mail::to($emails)->send(new MarketingMail($title, $body));
-
+        Cache::forget('mails');
         $response = [
             'status' => 'success',
             'message' => 'Emails Sent Successfully'
@@ -69,6 +74,7 @@ class EmailController extends Controller
             $email = Email::find($id);
             $email->delete();
         }
+        Cache::forget('mails');
         $response = [
             'status' => 'success',
             'message' => 'Emails Deleted Successfully'
