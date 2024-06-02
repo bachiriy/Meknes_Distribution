@@ -33,7 +33,7 @@ export const User = () => {
   return loading ? (
     <Spinner />
   ) : (
-    <div className="overflow-auto w-full h-full p-6 m-20">
+    <div className="overflow-auto ml-12 px-2 mt-2">
       {data ? (
         <Table
           data={data}

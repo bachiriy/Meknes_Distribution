@@ -35,7 +35,7 @@ const Client = () => {
   return loading ? (
     <Spinner />
   ) : (
-    <div className="overflow-auto">
+    <div className="overflow-auto ml-12 px-2 mt-4">
       {data ? (
         <Table
           data={data}

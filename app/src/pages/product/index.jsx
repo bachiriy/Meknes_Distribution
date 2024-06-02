@@ -72,7 +72,7 @@ export const Product = () => {
   return loading ? (
     <Spinner />
   ) : (
-    <div className="overflow-auto">
+    <div className="overflow-auto ml-12 px-2">
       <h1 className="pb-12 text-center">Products Table</h1>
       {data && (
         <Table
