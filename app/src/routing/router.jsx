@@ -15,7 +15,10 @@ import "mdb-react-ui-kit/dist/css/mdb.min.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import Stats from "../pages/Stats";
 import { invoke } from "@tauri-apps/api/tauri";
-import ClientFile from "../pages/ClientFile";
+
+import ClientFile from "../pages/clientFile";
+import Ditails from "../components/Client-File/Details";
+import Create from "../components/Client-File/Create";
 
 
 export const Router = (props) => {
@@ -54,6 +57,8 @@ export const Router = (props) => {
             {page === 0 && <Route path="/" />}
             {page === 1 && <Route path="/" element={<Home  setPage={setPage}/>} />}
             {page === 2 && <Route path="/" element={<ClientFile />} />}
+            {page === 2 && <Route path="/client-file/:id" element={<Ditails />} />}
+            {page === 2 && <Route path="/client-file/create" element={<Create />} />}
             {page === 3 && <Route path="/" element={<Product />} />}
             {page === 4 && <Route path="/" element={<Client />} />}
             {page === 5 && <Route path="/" element={<Supplier />} />}
