@@ -31,11 +31,11 @@ function Category() {
       const processedData = d.categories.map((category) => ({
         ...category,
         groups:
-          category.groups
-            .slice(0, 3)
+          category.groups?.slice(0, 3)
             .map((group) => group.name)
             .join(", ") + "...",
       }));
+      
       setData(processedData);
       setLoading(false);
     };
