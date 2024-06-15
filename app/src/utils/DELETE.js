@@ -1,0 +1,24 @@
+import Cookies from "js-cookie";
+import GET from "./GET";
+import { toast } from "react-toastify";
+
+const API_URL = "http://127.0.0.1:8000/api/";
+
+async function DELETE(endpoint, id) {
+    const token = Cookies.get("token");
+    const response = await fetch(API_URL + endpoint + '/' + id, {
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+        },
+        method: "DELETE",
+    });
+    if (response) {
+        toast.success(endpoint.slice(0, -1) + ' deleted succussfully.')
+        sessionStorage.removeItem(endpoint);
+        GET(endpoint, true);
+    }
+    return await response.json();
+}
+
+export default DELETE;

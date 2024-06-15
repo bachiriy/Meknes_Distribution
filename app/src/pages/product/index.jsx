@@ -3,6 +3,7 @@ import Table from "../../components/Other/Table";
 import Spinner from "../../components/Other/Spinner";
 import GET from "../../utils/GET";
 import { validateProduct } from "../../utils/validationFunctions";
+import { ToastContainer } from "react-toastify";
 
 const columns = [
   {
@@ -57,13 +58,14 @@ const columns = [
 ];
 export const Product = () => {
   const [loading, setLoading] = useState(true);
-  const [data, setData] = useState(null);
+  const [data, setData] = useState([]);
 
   useEffect(() => {
     let recieve = async () => {
       setLoading(true);
       const d = await GET("products");
       setData(d.products);
+      console.log(d);
       setLoading(false);
     };
     recieve();
@@ -72,16 +74,17 @@ export const Product = () => {
   return loading ? (
     <Spinner />
   ) : (
-    <div className="overflow-auto ml-12 px-2">
-      <h1 className="pb-12 text-center">Products Table</h1>
-      {data && (
+    <div className="overflow-auto ml-12 px-2 mt-10">
+      <ToastContainer className="mt-20 pt-20"/>
+      <h1 className="py-10 text-center">Products Table</h1>
+      {data ? (
         <Table
           data={data}
           columns={columns}
           entityType="Product"
           validateEntity={validateProduct}
         />
-      )}
+      ):(<p>no records.</p>)}
     </div>
   );
 };

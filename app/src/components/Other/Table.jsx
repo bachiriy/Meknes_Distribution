@@ -15,102 +15,80 @@ import {
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+import GET from '../../utils/GET';
+import POST from '../../utils/POST';
+import PUT from '../../utils/PUT';
+import DELETE_API from '../../utils/DELETE';
+import ConfirmAlert from '../Alerts/ConfirmAlert';
 
 const Table = ({ columns, data, entityType, validateEntity }) => {
   const [validationErrors, setValidationErrors] = useState({});
+  const [deleteAlertOpen, setDeleteAlertOpen] = useState(false);
+  const [currentRow, setCurrentRow] = useState(null);
+  const [alertLoad, setAlertLoad] = useState(false);
 
   const memoizedColumns = useMemo(() => {
-    return columns.map((col) => {
-      if (col.required) {
-        return {
-          ...col,
-          muiEditTextFieldProps: {
-            required: true,
-            error: !!validationErrors?.[col.accessorKey],
-            helperText: validationErrors?.[col.accessorKey],
-            onFocus: () =>
-              setValidationErrors({
-                ...validationErrors,
-                [col.accessorKey]: undefined,
-              }),
-          },
-        };
-      }
-      return col;
-    });
+    return columns.map((col) => ({
+      ...col,
+      muiEditTextFieldProps: col.required
+        ? {
+          required: true,
+          error: !!validationErrors[col.accessorKey],
+          helperText: validationErrors[col.accessorKey],
+          onFocus: () => setValidationErrors({
+            ...validationErrors,
+            [col.accessorKey]: undefined,
+          }),
+        }
+        : undefined,
+    }));
   }, [columns, validationErrors]);
 
   const queryClient = useQueryClient();
 
-  const createEntity = useMutation({
-    mutationFn: async (entity) => {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      return Promise.resolve();
-    },
-    onMutate: (newEntityInfo) => {
-      queryClient.setQueryData([entityType], (prevEntities) => [
-        ...prevEntities,
-        {
-          ...newEntityInfo,
-          id: (Math.random() + 1).toString(36).substring(7),
-        },
-      ]);
-    },
-  });
-
-  const updateEntity = useMutation({
-    mutationFn: async (entity) => {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      return Promise.resolve();
-    },
-    onMutate: (newEntityInfo) => {
-      queryClient.setQueryData([entityType], (prevEntities) =>
-        prevEntities?.map((prevEntity) =>
-          prevEntity.id === newEntityInfo.id ? newEntityInfo : prevEntity
-        )
-      );
-    },
-  });
-
-  const deleteEntity = useMutation({
-    mutationFn: async (entityId) => {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      return Promise.resolve();
-    },
-    onMutate: (entityId) => {
-      queryClient.setQueryData([entityType], (prevEntities) =>
-        prevEntities?.filter((entity) => entity.id !== entityId)
-      );
-    },
-  });
-
-  const handleCreateEntity = async ({ values, table }) => {
+  const handleCreateEntity = async (values) => {
     const newValidationErrors = validateEntity(values);
-    if (Object.values(newValidationErrors).some((error) => error)) {
+    if (Object.values(newValidationErrors).some(Boolean)) {
       setValidationErrors(newValidationErrors);
       return;
     }
-    setValidationErrors({});
-    await createEntity.mutateAsync(values);
-    table.setCreatingRow(null);
+    await POST(`${entityType}`, values);
+    queryClient.invalidateQueries([entityType]);
   };
 
-  const handleSaveEntity = async ({ values, table }) => {
+  const handleSaveEntity = async (values) => {
     const newValidationErrors = validateEntity(values);
-    if (Object.values(newValidationErrors).some((error) => error)) {
+    if (Object.values(newValidationErrors).some(Boolean)) {
       setValidationErrors(newValidationErrors);
       return;
     }
-    setValidationErrors({});
-    await updateEntity.mutateAsync(values);
-    table.setEditingRow(null);
+    await PUT(`${entityType}/${values.id}`, values);
+    queryClient.invalidateQueries([entityType]);
+  };
+
+  const handleDeleteEntity = async (id) => {
+    await DELETE_API(`${entityType.toLowerCase() + 's'}`, id);
+    queryClient.invalidateQueries([entityType]);
+    toast.success('Item deleted successfully');
   };
 
   const openDeleteConfirmModal = (row) => {
-    if (window.confirm(`Are you sure you want to delete this ${entityType}?`)) {
-      deleteEntity.mutateAsync(row.original.id);
+    setCurrentRow(row);
+    setDeleteAlertOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    setAlertLoad(true);
+    if (currentRow) {
+      await handleDeleteEntity(currentRow.original.id);
     }
+    setAlertLoad(false);
+    setDeleteAlertOpen(false);
+    setCurrentRow(null);
   };
 
   const table = useMaterialReactTable({
@@ -124,25 +102,21 @@ const Table = ({ columns, data, entityType, validateEntity }) => {
     onCreatingRowSave: handleCreateEntity,
     onEditingRowCancel: () => setValidationErrors({}),
     onEditingRowSave: handleSaveEntity,
-    renderCreateRowDialogContent: ({ table, row, internalEditComponents }) => (
+    renderCreateRowDialogContent: ({ table, internalEditComponents }) => (
       <>
-        <DialogTitle variant="h3">Create New {entityType}</DialogTitle>
-        <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          {internalEditComponents}
-        </DialogContent>
+        <DialogTitle>Create New {entityType}</DialogTitle>
+        <DialogContent>{internalEditComponents}</DialogContent>
         <DialogActions>
-          <MRT_EditActionButtons variant="text" table={table} row={row} />
+          <MRT_EditActionButtons variant="text" table={table} />
         </DialogActions>
       </>
     ),
-    renderEditRowDialogContent: ({ table, row, internalEditComponents }) => (
+    renderEditRowDialogContent: ({ table, internalEditComponents }) => (
       <>
-        <DialogTitle variant="h3">Edit {entityType}</DialogTitle>
-        <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          {internalEditComponents}
-        </DialogContent>
+        <DialogTitle>Edit {entityType}</DialogTitle>
+        <DialogContent>{internalEditComponents}</DialogContent>
         <DialogActions>
-          <MRT_EditActionButtons variant="text" table={table} row={row} />
+          <MRT_EditActionButtons variant="text" table={table} />
         </DialogActions>
       </>
     ),
@@ -161,18 +135,29 @@ const Table = ({ columns, data, entityType, validateEntity }) => {
       </Box>
     ),
     renderTopToolbarCustomActions: ({ table }) => (
-      <Button
-        variant="contained"
-        onClick={() => {
-          table.setCreatingRow(true);
-        }}
-      >
+      <Button variant="contained" onClick={() => table.setCreatingRow(true)}>
         Create New {entityType}
       </Button>
     ),
   });
 
-  return <MaterialReactTable table={table} />;
+  return (
+    <>
+      <MaterialReactTable table={table} />
+      <ConfirmAlert
+        loading={alertLoad}
+        msg="Voulez-vous supprimer cet élément ?"
+        open={deleteAlertOpen}
+        handleClose={() => setDeleteAlertOpen(false)}
+        cancel={() => {
+          setDeleteAlertOpen(false);
+          setCurrentRow(null);
+        }}
+        confirm={confirmDelete}
+      />
+      <ToastContainer />
+    </>
+  );
 };
 
 export default Table;
