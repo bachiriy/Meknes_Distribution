@@ -1,6 +1,5 @@
 import Cookies from "js-cookie";
 import GET from "./GET";
-import { toast } from "react-toastify";
 
 const API_URL = "http://127.0.0.1:8000/api/";
 
@@ -14,7 +13,6 @@ async function DELETE(endpoint, id) {
         method: "DELETE",
     });
     if (response) {
-        toast.success(endpoint.slice(0, -1) + ' deleted succussfully.')
         sessionStorage.removeItem(endpoint);
         GET(endpoint, true);
     }

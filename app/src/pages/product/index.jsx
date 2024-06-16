@@ -56,35 +56,39 @@ const columns = [
     header: "Reference",
   },
 ];
+
 export const Product = () => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
 
+  const fetchData = async () => {
+    setLoading(true);
+    const d = await GET("products");
+    setData(d.products);
+    setLoading(false);
+  };
+
   useEffect(() => {
-    let recieve = async () => {
-      setLoading(true);
-      const d = await GET("products");
-      setData(d.products);
-      console.log(d);
-      setLoading(false);
-    };
-    recieve();
+    fetchData();
   }, []);
 
   return loading ? (
-    <Spinner />
+    <Spinner /> 
   ) : (
     <div className="overflow-auto ml-12 px-2 mt-10">
       <ToastContainer className="mt-20 pt-20"/>
       <h1 className="py-10 text-center">Products Table</h1>
-      {data ? (
+      {data.length > 0 ? (
         <Table
+          updatedData={(updatedData) => setData(updatedData.products)}
           data={data}
           columns={columns}
           entityType="Product"
           validateEntity={validateProduct}
         />
-      ):(<p>no records.</p>)}
+      ) : (
+        <p>No records.</p>
+      )}
     </div>
   );
 };

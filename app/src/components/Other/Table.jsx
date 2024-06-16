@@ -24,12 +24,18 @@ import POST from '../../utils/POST';
 import PUT from '../../utils/PUT';
 import DELETE_API from '../../utils/DELETE';
 import ConfirmAlert from '../Alerts/ConfirmAlert';
+import { Spinner } from 'flowbite-react';
 
-const Table = ({ columns, data, entityType, validateEntity }) => {
+const Table = ({ columns, data, entityType, validateEntity, updatedData }) => {
   const [validationErrors, setValidationErrors] = useState({});
   const [deleteAlertOpen, setDeleteAlertOpen] = useState(false);
   const [currentRow, setCurrentRow] = useState(null);
   const [alertLoad, setAlertLoad] = useState(false);
+
+  const [loading, setLoading] = useState(false);
+
+  const endpoint = entityType.toLowerCase() === 'category' ? 'categories' : (entityType.toLowerCase() + 's');
+
 
   const memoizedColumns = useMemo(() => {
     return columns.map((col) => ({
@@ -71,7 +77,8 @@ const Table = ({ columns, data, entityType, validateEntity }) => {
   };
 
   const handleDeleteEntity = async (id) => {
-    await DELETE_API(`${entityType.toLowerCase() + 's'}`, id);
+    
+    await DELETE_API(endpoint, id);
     queryClient.invalidateQueries([entityType]);
     toast.success('Item deleted successfully');
   };
@@ -89,6 +96,9 @@ const Table = ({ columns, data, entityType, validateEntity }) => {
     setAlertLoad(false);
     setDeleteAlertOpen(false);
     setCurrentRow(null);
+    setLoading(true);
+    updatedData(await GET(endpoint, true));
+    setLoading(false);
   };
 
   const table = useMaterialReactTable({
@@ -121,17 +131,25 @@ const Table = ({ columns, data, entityType, validateEntity }) => {
       </>
     ),
     renderRowActions: ({ row, table }) => (
+
       <Box sx={{ display: 'flex', gap: '1rem' }}>
-        <Tooltip title="Edit">
-          <IconButton onClick={() => table.setEditingRow(row)}>
-            <EditIcon />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Delete">
-          <IconButton color="error" onClick={() => openDeleteConfirmModal(row)}>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
+        {loading ? (
+          <Spinner />
+        ) : (
+          <>
+            <Tooltip title="Edit">
+              <IconButton onClick={() => table.setEditingRow(row)}>
+                <EditIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Delete">
+              <IconButton color="error" onClick={() => openDeleteConfirmModal(row)}>
+                <DeleteIcon />
+              </IconButton>
+            </Tooltip>
+          </>
+        )}
+
       </Box>
     ),
     renderTopToolbarCustomActions: ({ table }) => (

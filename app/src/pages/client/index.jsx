@@ -38,6 +38,7 @@ const Client = () => {
     <div className="overflow-auto ml-12 px-2 mt-4">
       {data ? (
         <Table
+          updatedData={(updatedData) => setData(updatedData.clients)}
           data={data}
           columns={columns}
           entityType="Client"

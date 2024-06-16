@@ -45,8 +45,8 @@ export default function ConfirmAlert({ loading, open, handleClose, confirm, canc
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    {loading ? (
                     <Button autoFocus onClick={cancel}>Annuler</Button>
+                    {loading ? (
                         <Button disabled onClick={confirm}>Loading... </Button>
                     ) : (
                         <Button onClick={confirm}>Confirmer</Button>
