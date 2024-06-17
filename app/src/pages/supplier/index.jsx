@@ -54,7 +54,7 @@ const Supplier = () => {
       <h1 className="pb-12 text-center">Suppliers Table</h1>
       {data ? (
         <Table
-        updatedData={(updatedData) => setData(updatedData.suppliers)}
+          updatedData={(updatedData) => setData(updatedData.suppliers)}
           data={data}
           columns={columns}
           entityType="Supplier"

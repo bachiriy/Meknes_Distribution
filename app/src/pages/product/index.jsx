@@ -3,7 +3,6 @@ import Table from "../../components/Other/Table";
 import Spinner from "../../components/Other/Spinner";
 import GET from "../../utils/GET";
 import { validateProduct } from "../../utils/validationFunctions";
-import { ToastContainer } from "react-toastify";
 
 const columns = [
   {
@@ -76,9 +75,8 @@ export const Product = () => {
     <Spinner /> 
   ) : (
     <div className="overflow-auto ml-12 px-2 mt-10">
-      <ToastContainer className="mt-20 pt-20"/>
       <h1 className="py-10 text-center">Products Table</h1>
-      {data.length > 0 ? (
+      {data ? (
         <Table
           updatedData={(updatedData) => setData(updatedData.products)}
           data={data}

@@ -14,7 +14,7 @@ async function DELETE(endpoint, id) {
     });
     if (response) {
         sessionStorage.removeItem(endpoint);
-        GET(endpoint, true);
+        await GET(endpoint, true);
     }
     return await response.json();
 }

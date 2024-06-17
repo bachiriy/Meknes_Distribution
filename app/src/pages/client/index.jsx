@@ -5,18 +5,19 @@ import { useEffect, useState } from "react";
 import { validateClient } from "../../utils/validationFunctions";
 
 const columns = [
-  { accessorKey: "id", header: "Id", enableEditing: false },
-  { accessorKey: "first_name", header: "Prénom" },
-  { accessorKey: "last_name", header: "Nom" },
-  { accessorKey: "email", header: "Email" },
-  { accessorKey: "phone", header: "Tel" },
-  { accessorKey: "raison_sociale", header: "Raison Sociale" },
-  { accessorKey: "CIN_ICE", header: "CIN ou ICE" },
-  { accessorKey: "type", header: "Type Du Client" },
-  { accessorKey: "role", header: "Role Du Client" },
-  { accessorKey: "address_exploitation", header: "Address D'exploitation" },
-  { accessorKey: "address_facturation", header: "Address De Facturation" },
+  { accessorKey: 'id', header: 'Id', enableEditing: false },
+  { accessorKey: 'first_name', header: 'Prénom' },
+  { accessorKey: 'last_name', header: 'Nom' },
+  { accessorKey: 'email', header: 'Email' },
+  { accessorKey: 'phone', header: 'Tel' },
+  { accessorKey: 'raison_sociale', header: 'Raison Sociale' },
+  { accessorKey: 'CIN_ICE', header: 'CIN ou ICE' },
+  { accessorKey: 'type', header: 'Type Du Client' },
+  { accessorKey: 'role', header: 'Role Du Client' },
+  { accessorKey: 'address_exploitation', header: "Address D'exploitation" },
+  { accessorKey: 'address_facturation', header: 'Address De Facturation' },
 ];
+
 
 const Client = () => {
   const [loading, setLoading] = useState(false);
