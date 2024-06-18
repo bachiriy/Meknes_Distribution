@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Input, Button, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import { Input, Button, Select, MenuItem, FormControl, InputLabel, TextField } from '@mui/material';
 import GET from '../../utils/GET';
 import POST from '../../utils/POST';
 
@@ -8,25 +8,29 @@ function Create() {
     // State variables to store form data and loading state
     const [products, setProducts] = useState([]);
     const [clients, setClients] = useState([]);
+    const [communes, setCommunes] = useState([]);
     const [selectedProducts, setSelectedProducts] = useState([]);
     const [selectedClients, setSelectedClients] = useState([]);
-    const [communId, setCommunId] = useState('');
+    const [fileName, setFileName] = useState('');
+    const [communeId, setCommuneId] = useState('');
     const [exploitationSurface, setExploitationSurface] = useState('');
     const [moreDetail, setMoreDetail] = useState('');
     const [status, setStatus] = useState('');
     const [loading, setLoading] = useState(true);
 
-    // Fetch clients and products from API
-    // Fetch clients and products from API
+    // Fetch clients, products, and communes from API
     useEffect(() => {
         const fetchInitialData = async () => {
             try {
-                const clientsData = await GET('clients');
-                const productsData = await GET('products');
+                const clientsData = await GET('clients', true);
+                const productsData = await GET('products', true);
+                const communesData = await GET('stats/communes', true);
                 console.log("Clients Data:", clientsData);
                 console.log("Products Data:", productsData);
+                console.log("Communes Data:", communesData);
                 setClients(clientsData.clients);
                 setProducts(productsData.products);
+                setCommunes(communesData.communes);
                 setLoading(false); // Update loading state when data fetching is completed
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -37,16 +41,16 @@ function Create() {
         fetchInitialData();
     }, []);
 
-
     // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
         // Construct payload object with form data
         const payload = {
+            file_name: fileName,
             product_ids: selectedProducts,
             client_ids: selectedClients,
-            commun_id: communId,
-            exploitation_surface: exploitationSurface,
+            commune_id: communeId,
+            exploitation_surface: parseFloat(exploitationSurface),
             more_detail: moreDetail,
             status: status
         };
@@ -73,6 +77,15 @@ function Create() {
             </div>
 
             <form onSubmit={handleSubmit}>
+                <TextField
+                    fullWidth
+                    value={fileName}
+                    onChange={(e) => setFileName(e.target.value)}
+                    label="Nom du fichier"
+                    variant="outlined"
+                    sx={{ my: 1 }}
+                    required
+                />
                 <FormControl fullWidth sx={{ my: 1 }}>
                     <InputLabel id="product-select-label">Produits</InputLabel>
                     <Select
@@ -82,6 +95,7 @@ function Create() {
                         value={selectedProducts}
                         onChange={(e) => setSelectedProducts(e.target.value)}
                         label="Produits"
+                        required
                     >
                         {products.map((product) => (
                             <MenuItem key={product.id} value={product.id}>
@@ -99,33 +113,48 @@ function Create() {
                         value={selectedClients}
                         onChange={(e) => setSelectedClients(e.target.value)}
                         label="Clients"
+                        required
                     >
                         {clients.map((client) => (
                             <MenuItem key={client.id} value={client.id}>
-                                {client.CIN_ICE}
+                                {`${client.first_name} ${client.last_name} - ${client.phone} - ${client.email}`}
                             </MenuItem>
                         ))}
                     </Select>
                 </FormControl>
-                <Input
-                    fullWidth
-                    value={communId}
-                    onChange={(e) => setCommunId(e.target.value)}
-                    placeholder="ID Commun"
-                    sx={{ my: 1 }}
-                />
-                <Input
+                <FormControl fullWidth sx={{ my: 1 }}>
+                    <InputLabel id="commune-select-label">Commune</InputLabel>
+                    <Select
+                        labelId="commune-select-label"
+                        id="commune-select"
+                        value={communeId}
+                        onChange={(e) => setCommuneId(e.target.value)}
+                        label="Commune"
+                        required
+                    >
+                        {communes.map((commune) => (
+                            <MenuItem key={commune.id} value={commune.id}>
+                                {commune.full_address}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+                <TextField
                     fullWidth
                     value={exploitationSurface}
                     onChange={(e) => setExploitationSurface(e.target.value)}
-                    placeholder="Surface d'exploitation"
+                    label="Surface d'exploitation"
+                    variant="outlined"
+                    type="number"
                     sx={{ my: 1 }}
+                    required
                 />
-                <Input
+                <TextField
                     fullWidth
                     value={moreDetail}
                     onChange={(e) => setMoreDetail(e.target.value)}
-                    placeholder="Plus de détails"
+                    label="Plus de détails"
+                    variant="outlined"
                     sx={{ my: 1 }}
                 />
                 <FormControl fullWidth sx={{ my: 1 }}>
@@ -136,6 +165,7 @@ function Create() {
                         value={status}
                         onChange={(e) => setStatus(e.target.value)}
                         label="Statut"
+                        required
                     >
                         <MenuItem value="in progress">En cours</MenuItem>
                         <MenuItem value="completed">Terminé</MenuItem>

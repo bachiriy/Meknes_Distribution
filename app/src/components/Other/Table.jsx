@@ -14,8 +14,6 @@ import {
   Tooltip,
 } from '@mui/material';
 
-import { MenuItem, Select, TextField } from '@mui/material';
-
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -44,28 +42,24 @@ const Table = ({ columns, data, entityType, validateEntity, updatedData }) => {
       ...col,
       muiEditTextFieldProps: col.required
         ? {
-          required: true,
-          error: !!validationErrors[col.accessorKey],
-          helperText: validationErrors[col.accessorKey],
-          onFocus: () =>
-            setValidationErrors((prev) => ({
-              ...prev,
-              [col.accessorKey]: undefined,
-            })),
-        }
-        : col.accessorKey === 'type'
-          ? {
-            select: true,
-            SelectProps: {
-              displayEmpty: true,
-              renderValue: (value) => (value ? value : 'Select Role'),
-            },
-            children: [
-              <MenuItem key="Particulier" value="Particulier">Particulier</MenuItem>,
-              <MenuItem key="Entreprise" value="Entreprise">Entreprise</MenuItem>,
-            ],
+            required: true,
+            error: !!validationErrors[col.accessorKey],
+            helperText: validationErrors[col.accessorKey],
+            onFocus: () =>
+              setValidationErrors((prev) => ({
+                ...prev,
+                [col.accessorKey]: undefined,
+              })),
           }
-          : undefined,
+        : col.accessorKey === 'password'
+        ? {
+            type: 'password',
+          }
+        : col.accessorKey === 'roleName'
+        ? {
+            readOnly: true,
+          }
+        : undefined,
     }));
   }, [columns, validationErrors]);
 
@@ -75,10 +69,10 @@ const Table = ({ columns, data, entityType, validateEntity, updatedData }) => {
     mutationFn: async (values) => await POST(ENDPOINT, values),
     onSuccess: async () => {
       queryClient.invalidateQueries(queryKey);
-      toast.success('Item created successfully');
-      setLoading(true)
+      toast.success('User created successfully');
+      setLoading(true);
       updatedData(JSON.parse(sessionStorage.getItem(ENDPOINT)));
-      setLoading(false)
+      setLoading(false);
     },
   });
 
@@ -104,8 +98,12 @@ const Table = ({ columns, data, entityType, validateEntity, updatedData }) => {
       setValidationErrors(newValidationErrors);
       return;
     }
-    await createEntity.mutateAsync(values);
-    table.setCreatingRow(null);
+    try {
+      await createEntity.mutateAsync(values);
+      table.setCreatingRow(null);
+    } catch (error) {
+      console.error('Error creating user:', error);
+    }
   };
 
   const handleSaveEntity = async ({ values, table }) => {
@@ -195,7 +193,7 @@ const Table = ({ columns, data, entityType, validateEntity, updatedData }) => {
         loading={alertLoad}
         msg="Do you want to delete this item?"
         open={deleteAlertOpen}
-        handleClose={() => setDeleteAlertOpen(false)}
+        handleClose={() => alertLoad ? setDeleteAlertOpen(true) : setDeleteAlertOpen(false)}
         cancel={() => {
           setDeleteAlertOpen(false);
           setCurrentRow(null);

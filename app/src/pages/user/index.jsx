@@ -17,7 +17,7 @@ export const User = () => {
   const [data, setData] = useState(null);
 
   useEffect(() => {
-    let recieve = async () => {
+    let receive = async () => {
       setLoading(true);
       const d = await GET("users");
       const processedData = d.users.map((user) => ({
@@ -28,7 +28,7 @@ export const User = () => {
       setData(processedData);
       setLoading(false);
     };
-    recieve();
+    receive();
   }, []);
 
   return loading ? (
@@ -37,7 +37,7 @@ export const User = () => {
     <div className="overflow-auto ml-12 px-2">
       {data ? (
         <>
-          <ToastContainer className="mt-10"/>
+          <ToastContainer className="mt-10" />
           <Table
             data={data}
             columns={columns}
