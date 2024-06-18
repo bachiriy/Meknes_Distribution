@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Storage;
 
 class CitiesSeeder extends Seeder
 {
-
     /**
      * Run the database seeds.
      */
@@ -45,12 +44,17 @@ class CitiesSeeder extends Seeder
                 $caidat = $cercle->caidats()->firstOrCreate(['name' => $caidatName]);
                 $commune = $caidat->communes()->firstOrCreate(['name' => $communeName]);
 
-                $addressParts = [$regionName, $prefProvName, $cercleName, $communeName];
+                $addressParts = [$regionName, $prefProvName, $cercleName, $caidatName, $communeName];
+
+                // Remove modifiers like (M)
                 $normalizedAddressParts = array_map(function ($name) {
                     return preg_replace('/\s*\(.*?\)$/', '', $name);
                 }, $addressParts);
-                $uniqueNormalizedAddressParts = array_unique($normalizedAddressParts);
-                $fullAddress = implode(', ', array_intersect_key($addressParts, $uniqueNormalizedAddressParts));
+
+                // Remove duplicates and unnecessary repeated parts
+                $uniqueNormalizedAddressParts = array_values(array_unique(array_reverse($normalizedAddressParts)));
+
+                $fullAddress = implode(', ', array_reverse($uniqueNormalizedAddressParts));
 
                 ClientFileAddress::create([
                     'full_address' => $fullAddress,
