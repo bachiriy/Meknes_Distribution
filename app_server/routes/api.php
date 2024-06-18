@@ -59,8 +59,7 @@ Route::middleware('auth:api')->group(function () {
 
     Route::prefix('clientFiles')->group(function () {
         Route::get('', [ClientFileController::class, 'index']);
-        Route::post('', [ClientFileController::class, 'st
-        ore']);
+        Route::post('', [ClientFileController::class, 'store']);
         Route::put('/{id}', [ClientFileController::class, 'update']);
         Route::put('/softDelete/{id}', [ClientFileController::class, 'softDelete']);
         Route::delete('/{id}', [ClientFileController::class, 'delete']);
