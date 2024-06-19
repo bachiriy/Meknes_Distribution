@@ -42,7 +42,7 @@ const Details = () => {
                     <span>{clientFile.exploitation_surface} m²</span>
                 </div>
                 <div className="mb-4">
-                    <strong className="block text-gray-700">Status:</strong>
+                      <strong className="block text-gray-700">Status:</strong>
                     <span>{clientFile.status}</span>
                 </div>
                 <div className="mb-4">
