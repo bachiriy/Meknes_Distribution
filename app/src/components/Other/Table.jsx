@@ -12,6 +12,9 @@ import {
   DialogTitle,
   IconButton,
   Tooltip,
+  MenuItem,
+  Select,
+  TextField,
 } from '@mui/material';
 
 import EditIcon from '@mui/icons-material/Edit';
@@ -51,13 +54,17 @@ const Table = ({ columns, data, entityType, validateEntity, updatedData }) => {
                 [col.accessorKey]: undefined,
               })),
           }
-        : col.accessorKey === 'password'
+        : col.accessorKey === 'type'
         ? {
-            type: 'password',
-          }
-        : col.accessorKey === 'roleName'
-        ? {
-            readOnly: true,
+            select: true,
+            SelectProps: {
+              displayEmpty: true,
+              renderValue: (value) => (value ? value : 'Select Type'),
+            },
+            children: [
+              <MenuItem key="Particulier" value="Particulier">Particulier</MenuItem>,
+              <MenuItem key="Entreprise" value="Entreprise">Entreprise</MenuItem>,
+            ],
           }
         : undefined,
     }));
@@ -69,7 +76,7 @@ const Table = ({ columns, data, entityType, validateEntity, updatedData }) => {
     mutationFn: async (values) => await POST(ENDPOINT, values),
     onSuccess: async () => {
       queryClient.invalidateQueries(queryKey);
-      toast.success('User created successfully');
+      toast.success('Item created successfully');
       setLoading(true);
       updatedData(JSON.parse(sessionStorage.getItem(ENDPOINT)));
       setLoading(false);
@@ -98,12 +105,8 @@ const Table = ({ columns, data, entityType, validateEntity, updatedData }) => {
       setValidationErrors(newValidationErrors);
       return;
     }
-    try {
-      await createEntity.mutateAsync(values);
-      table.setCreatingRow(null);
-    } catch (error) {
-      console.error('Error creating user:', error);
-    }
+    await createEntity.mutateAsync(values);
+    table.setCreatingRow(null);
   };
 
   const handleSaveEntity = async ({ values, table }) => {
@@ -149,7 +152,18 @@ const Table = ({ columns, data, entityType, validateEntity, updatedData }) => {
     renderCreateRowDialogContent: ({ table, row, internalEditComponents }) => (
       <>
         <DialogTitle>Create New {entityType}</DialogTitle>
-        <DialogContent>{internalEditComponents}</DialogContent>
+        <DialogContent>
+          {internalEditComponents}
+          {entityType === 'User' && (
+            <TextField
+              label="Password"
+              type="password"
+              fullWidth
+              margin="normal"
+              onChange={(e) => table.setValueForField('password', e.target.value)}
+            />
+          )}
+        </DialogContent>
         <DialogActions>
           <MRT_EditActionButtons variant="text" table={table} row={row} />
         </DialogActions>
@@ -191,9 +205,9 @@ const Table = ({ columns, data, entityType, validateEntity, updatedData }) => {
       <MaterialReactTable table={table} />
       <ConfirmAlert
         loading={alertLoad}
-        msg="voulez-vous supprimer cet élément ?"
+        msg="Do you want to delete this item?"
         open={deleteAlertOpen}
-        handleClose={() => alertLoad ? setDeleteAlertOpen(true) : setDeleteAlertOpen(false)}
+        handleClose={() => setDeleteAlertOpen(false)}
         cancel={() => {
           setDeleteAlertOpen(false);
           setCurrentRow(null);
