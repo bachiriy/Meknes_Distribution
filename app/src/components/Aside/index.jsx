@@ -16,7 +16,7 @@ const Aside = ({ page, setPage, setIsConnected }) => {
     setLoading(true);
     setPage(0);
     try {
-      const response = await POST("logout");
+      const response = await POST("logout"); 
 
       if (response) {
         Cookies.remove("token");

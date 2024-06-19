@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('client_file_address', function (Blueprint $table) {
             $table->id();
             $table->foreignId('commune_id')->constrained()->cascadeOnDelete();
-            $table->string('full_address');
+                    $table->string('full_address');
             $table->timestamps();
         });
     }
