@@ -4,9 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Supplier;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Validation\Validator;
+use Illuminate\Support\Facades\Validator;
 
 class SupplierController extends Controller
 {
@@ -36,8 +37,16 @@ class SupplierController extends Controller
             'name' => 'required|string',
             'remise_f_composition' => 'required|string',
             'remise_f' => 'required|numeric',
-            'date_debut' => 'required|date|after_or_equal:now',
-            'date_fin' => 'nullable|date|after_or_equal:now',
+            'date_debut' => ['required', 'date', function ($attribute, $value, $fail) {
+                if (Carbon::parse($value)->isBefore(Carbon::today())) {
+                    $fail('The ' . $attribute . ' must be a date after or equal to today.');
+                }
+            }],
+            'date_fin' => ['nullable', 'date', function ($attribute, $value, $fail) {
+                if (Carbon::parse($value)->isBefore(Carbon::today())) {
+                    $fail('The ' . $attribute . ' must be a date after or equal to today.');
+                }
+            }],
         ]);
 
         if ($validator->fails()) {
@@ -81,8 +90,16 @@ class SupplierController extends Controller
             'name' => 'required|string',
             'remise_f_composition' => 'required|string',
             'remise_f' => 'required|numeric',
-            'date_debut' => 'required|date|after_or_equal:now',
-            'date_fin' => 'nullable|date|after_or_equal:now',
+            'date_debut' => ['required', 'date', function ($attribute, $value, $fail) {
+                if (Carbon::parse($value)->isBefore(Carbon::today())) {
+                    $fail('The ' . $attribute . ' must be a date after or equal to today.');
+                }
+            }],
+            'date_fin' => ['required', 'date', function ($attribute, $value, $fail) {
+                if (Carbon::parse($value)->isBefore(Carbon::today())) {
+                    $fail('The ' . $attribute . ' must be a date after or equal to today.');
+                }
+            }],
         ]);
 
         if ($validator->fails()) {
