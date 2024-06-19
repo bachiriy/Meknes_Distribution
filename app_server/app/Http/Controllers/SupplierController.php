@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Validation\Validator;
 
 class SupplierController extends Controller
 {
@@ -29,17 +30,36 @@ class SupplierController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    function store(Request $request)
     {
-        //
-    }
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string',
+            'remise_f_composition' => 'required|string',
+            'remise_f' => 'required|numeric',
+            'date_debut' => 'required|date|after_or_equal:now',
+            'date_fin' => 'nullable|date|after_or_equal:now',
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $data = $request->only(
+            'name',
+            'remise_f_composition',
+            'remise_f',
+            'date_debut',
+            'date_fin',
+        );
+
+        $client = Supplier::create($data);
+        Cache::forget('suppliers');
+        $response = [
+            'status' => 'success',
+            'message' => 'Supplier is created successfully.',
+            'supplier' => $client,
+        ];
+        return response()->json($response);
     }
 
     /**
@@ -73,8 +93,15 @@ class SupplierController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    function destroy(string $id)
     {
-        //
+        $supplier = Supplier::find($id);
+        $supplier->delete();
+        Cache::forget('suppliers');
+        Cache::forget('products');
+        return response()->json([
+            'status' => 'Success',
+            'message' => 'Supplier Deleted Successfully'
+        ]);
     }
 }
