@@ -53,7 +53,7 @@ class UserController extends Controller
         return response()->json($response);
     }
 
-    function update(Request $request, $id)
+    function update(Request $request, $id): \Illuminate\Http\JsonResponse
     {
         $data = $request->only('name', 'email', 'password', 'role_id');
         $data['id'] = $id;

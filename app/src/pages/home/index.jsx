@@ -2,12 +2,19 @@ import { Button } from "flowbite-react";
 import "./style.css";
 import { ToastContainer, toast } from "react-toastify";
 import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 export const Home = (props) => {
   const user = JSON.parse(Cookies.get('user'));
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+      props.setPage(8);
+    navigate('stats');
+  };
   
   return (
     <div className="hero">
@@ -21,9 +28,7 @@ export const Home = (props) => {
       <div className="flex justify-center items-center flex-col">
         <img className="h-1/2 w-1/2" src="./sapiens (1).png" alt="" />
         <Button
-          onClick={() => {
-            props.setPage(8);
-          }}
+          onClick={handleClick}
           color="dark"
         >
           {" "}

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
@@ -94,9 +95,52 @@ class ProductController extends Controller
         return response()->json($response);
     }
 
-    function update()
+    function update(Request $request, string $id): \Illuminate\Http\JsonResponse
     {
+        $data = $request->only(
+            'reference',
+            'designation',
+            'image',
+            'prix_tarif',
+            'prix_achat',
+            'prix_vente',
+            'marge_brut',
+            'remise',
+            'TVA',
+            'prix_vente_net',
+            'sub_category_id',
+            'supplier_id'
+        );
+        $data['id'] = $id;
 
+        $validator = Validator::make($data, [
+            'reference' => 'required|string',
+            'designation' => 'required|string',
+            'prix_tarif' => 'required|numeric',
+            'prix_achat' => 'required|numeric',
+            'prix_vente' => 'required|numeric',
+            'marge_brut' => 'required|numeric',
+            'remise' => 'required|numeric',
+            'TVA' => 'required|numeric',
+            'prix_vente_net' => 'required|numeric',
+            'sub_category_id' => 'required|numeric|exists:sub_categories,id'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $product = Product::findOrFail($id);
+        $product->update($data);
+        Cache::forget('products');
+        Cache::forget('client_files');
+
+        return response()->json([
+            'message' => 'Product updated successfully!',
+            'product' => $product
+        ]);
     }
 
     function softDelete($id): \Illuminate\Http\JsonResponse

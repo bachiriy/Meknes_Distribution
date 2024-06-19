@@ -74,7 +74,7 @@ class SupplierController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id): \Illuminate\Http\JsonResponse
+    function update(Request $request, string $id): \Illuminate\Http\JsonResponse
     {
         $data = $request->only(
             'name',

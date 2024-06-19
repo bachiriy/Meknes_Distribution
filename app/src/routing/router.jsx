@@ -16,10 +16,9 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import Stats from "../pages/Stats";
 import { invoke } from "@tauri-apps/api/tauri";
 
-import ClientFile from "../pages/clientFile";
-import Ditails from "../components/Client-File/Details";
+import ClientFile from "../pages/ClientFile";
+import Details from "../components/Client-File/Details";
 import Create from "../components/Client-File/Create";
-
 
 export const Router = (props) => {
   const [isConnected, setIsConnected] = useState(false);
@@ -35,6 +34,7 @@ export const Router = (props) => {
     setLoading(false);
     props.setLoading(false);
   }, []);
+
   return loading ? (
     <Spinner />
   ) : (
@@ -43,7 +43,6 @@ export const Router = (props) => {
         {!isConnected && (
           <Route path="/" element={<Login setIsConnected={setIsConnected} />} />
         )}
-
         {isConnected && (
           <Route
             element={
@@ -54,19 +53,18 @@ export const Router = (props) => {
               />
             }
           >
-            {page === 0 && <Route path="/" />}
-            {page === 1 && <Route path="/" element={<Home  setPage={setPage}/>} />}
-            {page === 2 && <Route path="/" element={<ClientFile />} />}
-            {page === 2 && <Route path="/client-file/:id" element={<Ditails />} />}
-            {page === 2 && <Route path="/client-file/create" element={<Create />} />}
-            {page === 3 && <Route path="/" element={<Product />} />}
-            {page === 4 && <Route path="/" element={<Client />} />}
-            {page === 5 && <Route path="/" element={<Supplier />} />}
-            {page === 6 && <Route path="/" element={<User />} />}
-            {page === 7 && <Route path="/" element={<Category />} />}
-            {page === 8 && <Route path="/" element={<Stats />} />}
-            {page === 9 && <Route path="/" element={<Setting />} />}
-            {page === 10 && <Route path="/" element={<Spinner />} />}
+            <Route path="/" element={<Home setPage={setPage} />} />
+            <Route path="/client-file" element={<ClientFile />} />
+            <Route path="/client-file/:id" element={<Details />} />
+            <Route path="/client-file/create" element={<Create />} />
+            <Route path="/products" element={<Product />} />
+            <Route path="/clients" element={<Client />} />
+            <Route path="/suppliers" element={<Supplier />} />
+            <Route path="/users" element={<User />} />
+            <Route path="/categories" element={<Category />} />
+            <Route path="/stats" element={<Stats />} />
+            <Route path="/settings" element={<Setting />} />
+            <Route path="/spinner" element={<Spinner />} />
           </Route>
         )}
       </Routes>
