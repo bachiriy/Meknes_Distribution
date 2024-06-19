@@ -30,7 +30,7 @@ class SupplierController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    function store(Request $request)
+    function store(Request $request): \Illuminate\Http\JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string',
@@ -65,9 +65,40 @@ class SupplierController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id): \Illuminate\Http\JsonResponse
     {
-        //
+        $data = $request->only(
+            'name',
+            'remise_f_composition',
+            'remise_f',
+            'date_debut',
+            'date_fin'
+        );
+        $data['id'] = $id;
+
+        $validator = Validator::make($data, [
+            'id' => 'required|numeric|exists:suppliers,id',
+            'name' => 'required|string',
+            'remise_f_composition' => 'required|string',
+            'remise_f' => 'required|numeric',
+            'date_debut' => 'required|date|after_or_equal:now',
+            'date_fin' => 'nullable|date|after_or_equal:now',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $supplier = Supplier::findOrFail($id);
+        $supplier->update($data);
+        Cache::forget('suppliers');
+
+        return response()->json([
+            'message' => 'Supplier updated successfully!',
+            'supplier' => $supplier
+        ]);
     }
 
 
@@ -93,7 +124,7 @@ class SupplierController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    function destroy(string $id)
+    function destroy(string $id): \Illuminate\Http\JsonResponse
     {
         $supplier = Supplier::find($id);
         $supplier->delete();
