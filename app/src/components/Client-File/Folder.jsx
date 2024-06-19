@@ -1,14 +1,19 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import ThreePointMenu from './ThreePointMenu';
+
 
 const Folder = ({ clientFile }) => {
   return (
-    <div className="p-2 hover:opacity-80">
+    <div className="p-3 hover:opacity-80 border border-black hover:shadow-lg transition-all rounded-lg">
+      <div className='flex justify-end'>
+        <ThreePointMenu id={clientFile.id} />
+      </div>
       <Link to={`/client-file/${clientFile.id}`}>
         <div className="w-full text-center">
           <svg
             fill="currentColor"
-            className="text-green-400 w-full h-auto"
+            className="text-yellow-400 w-full h-auto"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
           >
