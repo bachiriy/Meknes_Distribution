@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             PermissionsSeeder::class,
             AdminSeeder::class,
             CitiesSeeder::class,
+            FullAddressSeeder::class,
             CategorySeeder::class,
             SupplierSeeder::class,
             ClientSeeder::class,

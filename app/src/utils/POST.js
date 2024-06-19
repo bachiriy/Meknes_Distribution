@@ -1,4 +1,5 @@
 import Cookies from "js-cookie";
+import GET from "./GET";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
@@ -14,10 +15,12 @@ async function POST(endpoint, body) {
     body: JSON.stringify(body),
   });
 
-  if (response.ok) {
+  if (response) {
+    sessionStorage.removeItem(endpoint);
+    await GET(endpoint, true);
     return await response.json();
   } else {
-    return null;
+    return response;
   }
 }
 
