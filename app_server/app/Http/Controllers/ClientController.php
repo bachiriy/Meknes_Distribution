@@ -101,7 +101,8 @@ class ClientController extends Controller
         Cache::forget('clients');
         Cache::forget('client_files');
         return response()->json([
-            'status' => 'Client Deleted Successfully'
+            'status' => 'Success',
+            'message' => 'Client Deleted Successfully'
         ]);
     }
 }
