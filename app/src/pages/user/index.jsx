@@ -3,6 +3,7 @@ import Spinner from "../../components/Other/Spinner";
 import GET from "../../utils/GET";
 import Table from "../../components/Other/Table";
 import { validateUser } from "../../utils/validationFunctions";
+import { ToastContainer } from "react-toastify";
 
 const columns = [
   { accessorKey: "id", header: "Id", enableEditing: false },
@@ -16,7 +17,7 @@ export const User = () => {
   const [data, setData] = useState(null);
 
   useEffect(() => {
-    let recieve = async () => {
+    let receive = async () => {
       setLoading(true);
       const d = await GET("users");
       const processedData = d.users.map((user) => ({
@@ -27,20 +28,23 @@ export const User = () => {
       setData(processedData);
       setLoading(false);
     };
-    recieve();
+    receive();
   }, []);
 
   return loading ? (
     <Spinner />
   ) : (
-    <div className="overflow-auto ml-12 px-2 mt-2">
+    <div className="overflow-auto ml-12 px-2">
       {data ? (
-        <Table
-          data={data}
-          columns={columns}
-          entityType="User"
-          validateEntity={validateUser}
-        />
+        <>
+          <ToastContainer className="mt-10" />
+          <Table
+            data={data}
+            columns={columns}
+            entityType="User"
+            validateEntity={validateUser}
+          />
+        </>
       ) : (
         <p>No Data.</p>
       )}

@@ -13,104 +13,126 @@ import {
   IconButton,
   Tooltip,
 } from '@mui/material';
+
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import GET from '../../utils/GET';
+import POST from '../../utils/POST';
+import PUT from '../../utils/PUT';
+import DELETE_API from '../../utils/DELETE';
+import ConfirmAlert from '../Alerts/ConfirmAlert';
+import { Spinner } from 'flowbite-react';
 
-const Table = ({ columns, data, entityType, validateEntity }) => {
+const Table = ({ columns, data, entityType, validateEntity, updatedData }) => {
   const [validationErrors, setValidationErrors] = useState({});
+  const [deleteAlertOpen, setDeleteAlertOpen] = useState(false);
+  const [currentRow, setCurrentRow] = useState(null);
+  const [alertLoad, setAlertLoad] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const memoizedColumns = useMemo(() => {
-    return columns.map((col) => {
-      if (col.required) {
-        return {
-          ...col,
-          muiEditTextFieldProps: {
-            required: true,
-            error: !!validationErrors?.[col.accessorKey],
-            helperText: validationErrors?.[col.accessorKey],
-            onFocus: () =>
-              setValidationErrors({
-                ...validationErrors,
-                [col.accessorKey]: undefined,
-              }),
-          },
-        };
-      }
-      return col;
-    });
-  }, [columns, validationErrors]);
+  const ENDPOINT = entityType.toLowerCase() === 'category' ? 'categories' : `${entityType.toLowerCase()}s`;
 
   const queryClient = useQueryClient();
 
+  const memoizedColumns = useMemo(() => {
+    return columns.map((col) => ({
+      ...col,
+      muiEditTextFieldProps: col.required
+        ? {
+            required: true,
+            error: !!validationErrors[col.accessorKey],
+            helperText: validationErrors[col.accessorKey],
+            onFocus: () =>
+              setValidationErrors((prev) => ({
+                ...prev,
+                [col.accessorKey]: undefined,
+              })),
+          }
+        : col.accessorKey === 'password'
+        ? {
+            type: 'password',
+          }
+        : col.accessorKey === 'roleName'
+        ? {
+            readOnly: true,
+          }
+        : undefined,
+    }));
+  }, [columns, validationErrors]);
+
+  const queryKey = `${entityType.toLowerCase()}s`;
+
   const createEntity = useMutation({
-    mutationFn: async (entity) => {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      return Promise.resolve();
-    },
-    onMutate: (newEntityInfo) => {
-      queryClient.setQueryData([entityType], (prevEntities) => [
-        ...prevEntities,
-        {
-          ...newEntityInfo,
-          id: (Math.random() + 1).toString(36).substring(7),
-        },
-      ]);
+    mutationFn: async (values) => await POST(ENDPOINT, values),
+    onSuccess: async () => {
+      queryClient.invalidateQueries(queryKey);
+      toast.success('User created successfully');
+      setLoading(true);
+      updatedData(JSON.parse(sessionStorage.getItem(ENDPOINT)));
+      setLoading(false);
     },
   });
 
   const updateEntity = useMutation({
-    mutationFn: async (entity) => {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      return Promise.resolve();
-    },
-    onMutate: (newEntityInfo) => {
-      queryClient.setQueryData([entityType], (prevEntities) =>
-        prevEntities?.map((prevEntity) =>
-          prevEntity.id === newEntityInfo.id ? newEntityInfo : prevEntity
-        )
-      );
+    mutationFn: async (values) => await PUT(ENDPOINT, values.id, values),
+    onSuccess: async () => {
+      queryClient.invalidateQueries(ENDPOINT);
+      toast.success('Item updated successfully');
     },
   });
 
   const deleteEntity = useMutation({
-    mutationFn: async (entityId) => {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      return Promise.resolve();
-    },
-    onMutate: (entityId) => {
-      queryClient.setQueryData([entityType], (prevEntities) =>
-        prevEntities?.filter((entity) => entity.id !== entityId)
-      );
+    mutationFn: async (id) => await DELETE_API(ENDPOINT, id),
+    onSuccess: async () => {
+      queryClient.invalidateQueries(ENDPOINT);
+      toast.success('Item deleted successfully');
     },
   });
 
   const handleCreateEntity = async ({ values, table }) => {
     const newValidationErrors = validateEntity(values);
-    if (Object.values(newValidationErrors).some((error) => error)) {
+    if (Object.values(newValidationErrors).some(Boolean)) {
       setValidationErrors(newValidationErrors);
       return;
     }
-    setValidationErrors({});
-    await createEntity.mutateAsync(values);
-    table.setCreatingRow(null);
+    try {
+      await createEntity.mutateAsync(values);
+      table.setCreatingRow(null);
+    } catch (error) {
+      console.error('Error creating user:', error);
+    }
   };
 
   const handleSaveEntity = async ({ values, table }) => {
     const newValidationErrors = validateEntity(values);
-    if (Object.values(newValidationErrors).some((error) => error)) {
+    if (Object.values(newValidationErrors).some(Boolean)) {
       setValidationErrors(newValidationErrors);
       return;
     }
-    setValidationErrors({});
     await updateEntity.mutateAsync(values);
     table.setEditingRow(null);
   };
 
   const openDeleteConfirmModal = (row) => {
-    if (window.confirm(`Are you sure you want to delete this ${entityType}?`)) {
-      deleteEntity.mutateAsync(row.original.id);
+    setCurrentRow(row);
+    setDeleteAlertOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    setAlertLoad(true);
+    if (currentRow) {
+      await deleteEntity.mutateAsync(currentRow.original.id);
     }
+    setAlertLoad(false);
+    setDeleteAlertOpen(false);
+    setCurrentRow(null);
+
+    setLoading(true);
+    updatedData(JSON.parse(sessionStorage.getItem(ENDPOINT)));
+    setLoading(false);
   };
 
   const table = useMaterialReactTable({
@@ -126,10 +148,8 @@ const Table = ({ columns, data, entityType, validateEntity }) => {
     onEditingRowSave: handleSaveEntity,
     renderCreateRowDialogContent: ({ table, row, internalEditComponents }) => (
       <>
-        <DialogTitle variant="h3">Create New {entityType}</DialogTitle>
-        <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          {internalEditComponents}
-        </DialogContent>
+        <DialogTitle>Create New {entityType}</DialogTitle>
+        <DialogContent>{internalEditComponents}</DialogContent>
         <DialogActions>
           <MRT_EditActionButtons variant="text" table={table} row={row} />
         </DialogActions>
@@ -137,10 +157,8 @@ const Table = ({ columns, data, entityType, validateEntity }) => {
     ),
     renderEditRowDialogContent: ({ table, row, internalEditComponents }) => (
       <>
-        <DialogTitle variant="h3">Edit {entityType}</DialogTitle>
-        <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          {internalEditComponents}
-        </DialogContent>
+        <DialogTitle>Edit {entityType}</DialogTitle>
+        <DialogContent>{internalEditComponents}</DialogContent>
         <DialogActions>
           <MRT_EditActionButtons variant="text" table={table} row={row} />
         </DialogActions>
@@ -148,6 +166,7 @@ const Table = ({ columns, data, entityType, validateEntity }) => {
     ),
     renderRowActions: ({ row, table }) => (
       <Box sx={{ display: 'flex', gap: '1rem' }}>
+        {loading && <Spinner />}
         <Tooltip title="Edit">
           <IconButton onClick={() => table.setEditingRow(row)}>
             <EditIcon />
@@ -161,18 +180,29 @@ const Table = ({ columns, data, entityType, validateEntity }) => {
       </Box>
     ),
     renderTopToolbarCustomActions: ({ table }) => (
-      <Button
-        variant="contained"
-        onClick={() => {
-          table.setCreatingRow(true);
-        }}
-      >
+      <Button variant="contained" onClick={() => table.setCreatingRow(true)}>
         Create New {entityType}
       </Button>
     ),
   });
 
-  return <MaterialReactTable table={table} />;
+  return (
+    <>
+      <MaterialReactTable table={table} />
+      <ConfirmAlert
+        loading={alertLoad}
+        msg="voulez-vous supprimer cet élément ?"
+        open={deleteAlertOpen}
+        handleClose={() => alertLoad ? setDeleteAlertOpen(true) : setDeleteAlertOpen(false)}
+        cancel={() => {
+          setDeleteAlertOpen(false);
+          setCurrentRow(null);
+        }}
+        confirm={confirmDelete}
+      />
+      <ToastContainer />
+    </>
+  );
 };
 
 export default Table;

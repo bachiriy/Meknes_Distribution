@@ -23,7 +23,7 @@ class ClientController extends Controller
         return response()->json($response, 200);
     }
 
-    function store(Request $request)
+    function store(Request $request): \Illuminate\Http\JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'CIN_ICE' => 'required|string',
@@ -69,9 +69,48 @@ class ClientController extends Controller
         return response()->json($response);
     }
 
-    function update()
+    function update(Request $request, string $id): \Illuminate\Http\JsonResponse
     {
+        $data = $request->only(
+            'CIN_ICE',
+            'type',
+            'first_name',
+            'last_name',
+            'email',
+            'phone',
+            'address_exploitation',
+            'suite_address_exploitation',
+            'address_facturation',
+            'suite_address_facturation',
+            'role'
+        );
+        $data['id'] = $id;
 
+        $validator = Validator::make($data, [
+            'CIN_ICE' => 'required|string',
+            'type' => 'required|string',
+            'email' => 'required|email',
+            'phone' => 'required|string',
+            'address_exploitation' => 'required|string',
+            'address_facturation' => 'required|string',
+            'first_name' => 'required|string',
+            'last_name' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $client = Client::findOrFail($id);
+        $client->update($data);
+        Cache::forget('clients');
+
+        return response()->json([
+            'message' => 'Client updated successfully!',
+            'client' => $client
+        ]);
     }
 
     function softDelete($id): \Illuminate\Http\JsonResponse
@@ -101,7 +140,8 @@ class ClientController extends Controller
         Cache::forget('clients');
         Cache::forget('client_files');
         return response()->json([
-            'status' => 'Client Deleted Successfully'
+            'status' => 'Success',
+            'message' => 'Client Deleted Successfully'
         ]);
     }
 }

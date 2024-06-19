@@ -1,66 +1,65 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Input, Button, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import { Input, Button, Select, MenuItem, FormControl, InputLabel, TextField } from '@mui/material';
 import GET from '../../utils/GET';
 import POST from '../../utils/POST';
+import Spinner from '../Other/Spinner';
+import { toast } from 'react-toastify';
 
 function Create() {
-    // State variables to store form data and loading state
     const [products, setProducts] = useState([]);
     const [clients, setClients] = useState([]);
+    const [communes, setCommunes] = useState([]);
     const [selectedProducts, setSelectedProducts] = useState([]);
     const [selectedClients, setSelectedClients] = useState([]);
-    const [communId, setCommunId] = useState('');
+    const [fileName, setFileName] = useState('');
+    const [communeId, setCommuneId] = useState('');
     const [exploitationSurface, setExploitationSurface] = useState('');
     const [moreDetail, setMoreDetail] = useState('');
     const [status, setStatus] = useState('');
     const [loading, setLoading] = useState(true);
 
-    // Fetch clients and products from API
-    // Fetch clients and products from API
+    const [formLoading, setFormLoad] = useState(false);
+
     useEffect(() => {
         const fetchInitialData = async () => {
             try {
-                const clientsData = await GET('clients');
-                const productsData = await GET('products');
-                console.log("Clients Data:", clientsData);
-                console.log("Products Data:", productsData);
+                const clientsData = await GET('clients', true);
+                const productsData = await GET('products', true);
+                const communesData = await GET('stats/communes', true);
                 setClients(clientsData.clients);
                 setProducts(productsData.products);
-                setLoading(false); // Update loading state when data fetching is completed
+                setCommunes(communesData.communes);
+                setLoading(false);
             } catch (error) {
                 console.error("Error fetching data:", error);
-                // Handle error, e.g., display an error message
             }
         };
 
         fetchInitialData();
     }, []);
 
-
-    // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // Construct payload object with form data
+        setFormLoad(true);
         const payload = {
+            file_name: fileName,
             product_ids: selectedProducts,
             client_ids: selectedClients,
-            commun_id: communId,
-            exploitation_surface: exploitationSurface,
+            commune_id: communeId,
+            exploitation_surface: parseFloat(exploitationSurface),
             more_detail: moreDetail,
             status: status
         };
-        // Submit payload to API endpoint
-        await POST('clientFiles', payload);
-        // Optionally, perform any actions after submission (e.g., redirecting)
+        let r = await POST('clientFiles', payload);
+        if(r.status === 'success') toast.success(r.message);
+        setFormLoad(false);
     };
 
-    // Render loading indicator if data is still loading
     if (loading) {
-        return <div>Loading...</div>;
+        return <Spinner />;
     }
 
-    // Render form when data fetching is completed
     return (
         <div className="p-6 bg-gray-100 min-h-screen ml-12">
             <div className="flex items-center mb-6">
@@ -73,6 +72,15 @@ function Create() {
             </div>
 
             <form onSubmit={handleSubmit}>
+                <TextField
+                    fullWidth
+                    value={fileName}
+                    onChange={(e) => setFileName(e.target.value)}
+                    label="Nom du fichier"
+                    variant="outlined"
+                    sx={{ my: 1 }}
+                    required
+                />
                 <FormControl fullWidth sx={{ my: 1 }}>
                     <InputLabel id="product-select-label">Produits</InputLabel>
                     <Select
@@ -82,6 +90,7 @@ function Create() {
                         value={selectedProducts}
                         onChange={(e) => setSelectedProducts(e.target.value)}
                         label="Produits"
+                        required
                     >
                         {products.map((product) => (
                             <MenuItem key={product.id} value={product.id}>
@@ -99,33 +108,48 @@ function Create() {
                         value={selectedClients}
                         onChange={(e) => setSelectedClients(e.target.value)}
                         label="Clients"
+                        required
                     >
                         {clients.map((client) => (
                             <MenuItem key={client.id} value={client.id}>
-                                {client.CIN_ICE}
+                                {`${client.first_name} ${client.last_name} - ${client.phone} - ${client.email}`}
                             </MenuItem>
                         ))}
                     </Select>
                 </FormControl>
-                <Input
-                    fullWidth
-                    value={communId}
-                    onChange={(e) => setCommunId(e.target.value)}
-                    placeholder="ID Commun"
-                    sx={{ my: 1 }}
-                />
-                <Input
+                <FormControl fullWidth sx={{ my: 1 }}>
+                    <InputLabel id="commune-select-label">Commune</InputLabel>
+                    <Select
+                        labelId="commune-select-label"
+                        id="commune-select"
+                        value={communeId}
+                        onChange={(e) => setCommuneId(e.target.value)}
+                        label="Commune"
+                        required
+                    >
+                        {communes.map((commune) => (
+                            <MenuItem key={commune.id} value={commune.id}>
+                                {commune.full_address}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+                <TextField
                     fullWidth
                     value={exploitationSurface}
                     onChange={(e) => setExploitationSurface(e.target.value)}
-                    placeholder="Surface d'exploitation"
+                    label="Surface d'exploitation"
+                    variant="outlined"
+                    type="number"
                     sx={{ my: 1 }}
+                    required
                 />
-                <Input
+                <TextField
                     fullWidth
                     value={moreDetail}
                     onChange={(e) => setMoreDetail(e.target.value)}
-                    placeholder="Plus de détails"
+                    label="Plus de détails"
+                    variant="outlined"
                     sx={{ my: 1 }}
                 />
                 <FormControl fullWidth sx={{ my: 1 }}>
@@ -136,15 +160,22 @@ function Create() {
                         value={status}
                         onChange={(e) => setStatus(e.target.value)}
                         label="Statut"
+                        required
                     >
                         <MenuItem value="in progress">En cours</MenuItem>
                         <MenuItem value="completed">Terminé</MenuItem>
                         <MenuItem value="archived">Archivé</MenuItem>
                     </Select>
                 </FormControl>
-                <Button type="submit" variant="contained" color="primary" sx={{ mt: 2 }}>
-                    Enregistrer
-                </Button>
+                {formLoading ? (
+                    <Button disabled type="submit" variant="contained" color="primary" sx={{ mt: 2 }}>
+                        Loading...
+                    </Button>
+                ) : (
+                    <Button type="submit" variant="contained" color="primary" sx={{ mt: 2 }}>
+                        Enregistrer
+                    </Button>
+                )}
             </form>
         </div>
     );

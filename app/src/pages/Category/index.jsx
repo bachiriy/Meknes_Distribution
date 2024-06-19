@@ -49,6 +49,7 @@ function Category() {
       <h1 className="pb-12 text-center">Categories Table</h1>
       {data ? (
         <Table
+          updatedData={(ud) => setData(ud.categories)}
           data={data}
           columns={columns}
           entityType="Category"

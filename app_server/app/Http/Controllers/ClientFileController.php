@@ -110,10 +110,70 @@ class ClientFileController extends Controller
         return response()->json($response);
     }
 
-    function update()
+    function update(Request $request, string $id): \Illuminate\Http\JsonResponse
     {
+        $data = $request->only(
+            'file_name',
+            'commune_id',
+            'more_detail',
+            'exploitation_surface'
+        );
+        $data['id'] = $id;
 
+        $validator = Validator::make($data, [
+            'file_name' => 'required|string|max:255',
+            'commune_id' => 'required|numeric|exists:communes,id',
+            'more_detail' => 'sometimes|string',
+            'exploitation_surface' => 'required|numeric',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $clientFile = ClientFile::findOrFail($id);
+        $clientFile->update($data);
+
+        // Attach clients and products
+        if ($request->has('client_ids')) {
+            $clientFile->clients()->sync($request->input('client_ids'));
+        }
+
+        if ($request->has('product_ids')) {
+            $clientFile->products()->sync($request->input('product_ids'));
+        }
+
+        // Handle file upload with Media Library
+        if ($request->hasFile('files')) {
+            $clientFile->clearMediaCollection('client_files');
+            $clientFile->addMedia($request->file('files'))->toMediaCollection('client_files');
+        }
+
+        // Clear cache and return response
+        Cache::forget('client_files');
+        Cache::forget('clients');
+        Cache::forget('products');
+        $clientFiles = ClientFile::where('is_deleted', 'no')
+            ->with('invoices')
+            ->with('deliveryNotes')
+            ->with('commune.caidat.cercle.province.region')
+            ->with('products.subCategory.category')
+            ->with('clients')
+            ->get();
+        Cache::put('client_files', $clientFiles, 1440);
+
+        $response = [
+            'status' => 'success',
+            'message' => 'ClientFile is updated successfully.',
+            'clientFile' => $clientFile,
+            'clientFiles' => $clientFiles,
+        ];
+
+        return response()->json($response);
     }
+
 
     function download($id): \Symfony\Component\HttpFoundation\BinaryFileResponse|\Illuminate\Http\JsonResponse
     {
@@ -224,13 +284,13 @@ class ClientFileController extends Controller
     function softDelete($id): \Illuminate\Http\JsonResponse
     {
         $validator = validator(['id' => $id], [
-            'id' => 'required|numeric|exists:clientFiles,id'
+            'id' => 'required|numeric|exists:client_files,id'
         ]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
-        $clientFile = ClientFile::find($id);
+        $clientFile = ClientFile::findOrFail($id);
         $clientFile->is_deleted = 'yes';
         $clientFile->save();
         Cache::forget('client_files');
