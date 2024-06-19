@@ -3,6 +3,7 @@ import Table from "../../components/Other/Table";
 import Spinner from "../../components/Other/Spinner";
 import GET from "../../utils/GET";
 import { validateProduct } from "../../utils/validationFunctions";
+import SubSelect from "../../components/Client-File/SubSelect";
 
 const columns = [
   {
@@ -15,15 +16,11 @@ const columns = [
     header: "Designation",
   },
   {
-    accessorKey: "supplier.name",
+    accessorKey: "supplier_id",
     header: "Fournisseur",
   },
   {
-    accessorKey: "group.name",
-    header: "Group",
-  },
-  {
-    accessorKey: "group.category.name",
+    accessorKey: "sub_category_id",
     header: "Category",
   },
   {
@@ -54,6 +51,13 @@ const columns = [
     accessorKey: "reference",
     header: "Reference",
   },
+  {
+    accessorKey: "image",
+    header: "Image",
+    Cell: ({ cell }) => (
+      cell.value ? <img src={cell.value} alt="Product" style={{ width: '50px', height: '50px' }} /> : 'No Image'
+    ),
+  },
 ];
 
 export const Product = () => {
@@ -76,6 +80,7 @@ export const Product = () => {
   ) : (
     <div className="overflow-auto ml-12 px-2 mt-10">
       <h1 className="py-10 text-center">Products Table</h1>
+      <SubSelect />
       {data ? (
         <Table
           updatedData={(updatedData) => setData(updatedData.products)}
