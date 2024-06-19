@@ -224,13 +224,13 @@ class ClientFileController extends Controller
     function softDelete($id): \Illuminate\Http\JsonResponse
     {
         $validator = validator(['id' => $id], [
-            'id' => 'required|numeric|exists:clientFiles,id'
+            'id' => 'required|numeric|exists:client_files,id'
         ]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
-        $clientFile = ClientFile::find($id);
+        $clientFile = ClientFile::findOrFail($id);
         $clientFile->is_deleted = 'yes';
         $clientFile->save();
         Cache::forget('client_files');
