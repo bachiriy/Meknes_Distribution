@@ -16,7 +16,7 @@ async function DELETE(endpoint, id) {
         sessionStorage.removeItem(endpoint);
         await GET(endpoint, true);
     }
-    return await response.json();
+    return response;
 }
 
 export default DELETE;
