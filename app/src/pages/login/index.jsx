@@ -3,6 +3,7 @@ import { LoginForm } from "../../components/Auth/LoginForm";
 import { useState } from "react";
 import AuthBg from "../../assets/bg-1.png";
 import Spinner from "../../components/Other/Spinner";
+import './style.css'
 
 export default function Login(props) {
   const [loading, setLoading] = useState(false);
