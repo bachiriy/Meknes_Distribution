@@ -44,6 +44,7 @@ class ProductController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
+        $imageChecker = false;
         if (isset($request->image)) {
             $validator = Validator::make($request->all(), [
                 'image' => 'required|file|mimes:jpg,png,jpeg'
@@ -51,6 +52,8 @@ class ProductController extends Controller
             if ($validator->fails()) {
                 return response()->json(['errors' => $validator->errors()], 422);
             }
+            $path = $request->file('image')->store('products/picture', 'public');
+            $imageChecker = true;
         }
 
         $data = $request->only(
@@ -68,13 +71,15 @@ class ProductController extends Controller
             'supplier_id'
         );
 
-        $path = $request->file('image')->store('products/picture', 'public');
+
         $product = Product::create($data);
-        $product->addMedia(storage_path('app/public/' . $path))->toMediaCollection('product_picture');
-        $mediaItems = $product->getMedia('user_picture');
-        $publicUrl = $mediaItems[0]->getUrl();
-        $product->image = $publicUrl;
-        $product->save();
+        if ($imageChecker) {
+            $product->addMedia(storage_path('app/public/' . $path))->toMediaCollection('product_picture');
+            $mediaItems = $product->getMedia('user_picture');
+            $publicUrl = $mediaItems[0]->getUrl();
+            $product->image = $publicUrl;
+            $product->save();
+        }
         $products = Product::where('is_deleted', 'no')
             ->with(['subCategory.category', 'supplier'])
             ->get();

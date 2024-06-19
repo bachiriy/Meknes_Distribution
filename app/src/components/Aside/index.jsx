@@ -16,20 +16,16 @@ const Aside = ({ page, setPage, setIsConnected }) => {
     setLoading(true);
     setPage(0);
     try {
-      const response = await POST("logout"); 
-
+      const response = await POST("logout");
       if (response) {
         Cookies.remove("token");
         Cookies.remove("user");
         setPage(1);
         setIsConnected(false);
       } else {
-        const errors = response.error;
-        console.log("Error logging out: " + errors);
         toast.error("Failed to log out. Please try again.");
       }
     } catch (error) {
-      console.error("An error occurred:", error);
       toast.error("An unexpected error occurred. Please try again later.");
     } finally {
       setLoading(false);
