@@ -7,6 +7,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Paper from '@mui/material/Paper';
 import Draggable from 'react-draggable';
+import { Spinner } from 'flowbite-react';
 
 function PaperComponent(props) {
     return (
@@ -45,11 +46,16 @@ export default function ConfirmAlert({ loading, open, handleClose, confirm, canc
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button autoFocus onClick={cancel}>Annuler</Button>
                     {loading ? (
-                        <Button disabled onClick={confirm}>Loading... </Button>
+                        <>
+                            <Button  disabled onClick={cancel}>Annuler</Button>
+                            <Button disabled onClick={confirm}>Loading... <Spinner className='w-4 ml-2 flex justify-end items-center' disabled={false} /> </Button>
+                        </>
                     ) : (
-                        <Button onClick={confirm}>Confirmer</Button>
+                        <>
+                            <Button autoFocus onClick={cancel}>Annuler</Button>
+                            <Button onClick={confirm}>Confirmer</Button>
+                        </>
                     )}
                 </DialogActions>
             </Dialog>

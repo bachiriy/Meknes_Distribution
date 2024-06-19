@@ -3,9 +3,10 @@ import { Link } from 'react-router-dom';
 import { Input, Button, Select, MenuItem, FormControl, InputLabel, TextField } from '@mui/material';
 import GET from '../../utils/GET';
 import POST from '../../utils/POST';
+import Spinner from '../Other/Spinner';
+import { toast } from 'react-toastify';
 
 function Create() {
-    // State variables to store form data and loading state
     const [products, setProducts] = useState([]);
     const [clients, setClients] = useState([]);
     const [communes, setCommunes] = useState([]);
@@ -18,33 +19,29 @@ function Create() {
     const [status, setStatus] = useState('');
     const [loading, setLoading] = useState(true);
 
-    // Fetch clients, products, and communes from API
+    const [formLoading, setFormLoad] = useState(false);
+
     useEffect(() => {
         const fetchInitialData = async () => {
             try {
                 const clientsData = await GET('clients', true);
                 const productsData = await GET('products', true);
                 const communesData = await GET('stats/communes', true);
-                console.log("Clients Data:", clientsData);
-                console.log("Products Data:", productsData);
-                console.log("Communes Data:", communesData);
                 setClients(clientsData.clients);
                 setProducts(productsData.products);
                 setCommunes(communesData.communes);
-                setLoading(false); // Update loading state when data fetching is completed
+                setLoading(false);
             } catch (error) {
                 console.error("Error fetching data:", error);
-                // Handle error, e.g., display an error message
             }
         };
 
         fetchInitialData();
     }, []);
 
-    // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // Construct payload object with form data
+        setFormLoad(true);
         const payload = {
             file_name: fileName,
             product_ids: selectedProducts,
@@ -54,17 +51,15 @@ function Create() {
             more_detail: moreDetail,
             status: status
         };
-        // Submit payload to API endpoint
-        await POST('clientFiles', payload);
-        // Optionally, perform any actions after submission (e.g., redirecting)
+        let r = await POST('clientFiles', payload);
+        if(r.status === 'success') toast.success(r.message);
+        setFormLoad(false);
     };
 
-    // Render loading indicator if data is still loading
     if (loading) {
-        return <div>Loading...</div>;
+        return <Spinner />;
     }
 
-    // Render form when data fetching is completed
     return (
         <div className="p-6 bg-gray-100 min-h-screen ml-12">
             <div className="flex items-center mb-6">
@@ -172,9 +167,15 @@ function Create() {
                         <MenuItem value="archived">Archivé</MenuItem>
                     </Select>
                 </FormControl>
-                <Button type="submit" variant="contained" color="primary" sx={{ mt: 2 }}>
-                    Enregistrer
-                </Button>
+                {formLoading ? (
+                    <Button disabled type="submit" variant="contained" color="primary" sx={{ mt: 2 }}>
+                        Loading...
+                    </Button>
+                ) : (
+                    <Button type="submit" variant="contained" color="primary" sx={{ mt: 2 }}>
+                        Enregistrer
+                    </Button>
+                )}
             </form>
         </div>
     );

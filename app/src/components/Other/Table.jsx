@@ -191,7 +191,7 @@ const Table = ({ columns, data, entityType, validateEntity, updatedData }) => {
       <MaterialReactTable table={table} />
       <ConfirmAlert
         loading={alertLoad}
-        msg="Do you want to delete this item?"
+        msg="voulez-vous supprimer cet élément ?"
         open={deleteAlertOpen}
         handleClose={() => alertLoad ? setDeleteAlertOpen(true) : setDeleteAlertOpen(false)}
         cancel={() => {
