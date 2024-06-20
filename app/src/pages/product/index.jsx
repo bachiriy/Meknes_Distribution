@@ -3,7 +3,6 @@ import Table from "../../components/Other/Table";
 import Spinner from "../../components/Other/Spinner";
 import GET from "../../utils/GET";
 import { validateProduct } from "../../utils/validationFunctions";
-import SubSelect from "../../components/Client-File/SubSelect";
 
 const columns = [
   {
@@ -21,7 +20,7 @@ const columns = [
   },
   {
     accessorKey: "sub_category_id",
-    header: "Category",
+    header: "Group",
   },
   {
     accessorKey: "marge_brut",
@@ -46,6 +45,10 @@ const columns = [
   {
     accessorKey: "remise",
     header: "Remise",
+  },
+  {
+    accessorKey: "TVA",
+    header: "TVA",
   },
   {
     accessorKey: "reference",
@@ -80,7 +83,7 @@ export const Product = () => {
   ) : (
     <div className="overflow-auto ml-12 px-2 mt-10">
       <h1 className="py-10 text-center">Products Table</h1>
-      <SubSelect />
+     
       {data ? (
         <Table
           updatedData={(updatedData) => setData(updatedData.products)}
