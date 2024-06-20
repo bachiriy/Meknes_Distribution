@@ -1,12 +1,24 @@
 import { ToastContainer } from "react-toastify";
 import { LoginForm } from "../../components/Auth/LoginForm";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AuthBg from "../../assets/bg-1.png";
 import Spinner from "../../components/Other/Spinner";
-import './style.css'
+import "./style.css";
 
 export default function Login(props) {
   const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    document.documentElement.style.overflowY = "hidden";
+    document.body.style.overflowY = "hidden";
+  
+    // Clean up function to restore overflow property when component unmounts
+    return () => {
+      document.documentElement.style.overflowY = "auto";
+      document.body.style.overflowY = "auto";
+    };
+  }, []);
+  
+
   return (
     <>
       <ToastContainer className="mt-10" />
