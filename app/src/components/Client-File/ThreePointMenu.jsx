@@ -8,6 +8,10 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ConfirmAlert from '../Alerts/ConfirmAlert';
 import PUT from '../../utils/PUT';
 import DELETE from '../../utils/DELETE';
+import { toast } from 'react-toastify';
+import GET from '../../utils/GET';
+import { Spinner } from 'flowbite-react';
+import { Link } from 'react-router-dom';
 
 const options = [
   ['Modifier', <EditIcon />, 'black'],
@@ -16,13 +20,15 @@ const options = [
 
 const ITEM_HEIGHT = 48;
 
-export default function ThreePointMenu({id}) {
+export default function ThreePointMenu({id, updatedData}) {
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const [itemId, setItemId] = React.useState(id);
   const [alertLoad, setAlertLoad] = React.useState(false);
   const [AlertOpen, setAlertOpen] = React.useState(false);
+  const [fLoading, setFLoad] = React.useState(false);
+
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget); 
@@ -40,18 +46,26 @@ export default function ThreePointMenu({id}) {
 
   const handleDelete = async () => {
     setAlertLoad(true)
-    console.log(itemId);
-    let r = await DELETE('clientFiles', itemId);
+    let r = await PUT('clientFiles/softDelete', itemId, false);
+    setAlertLoad(false);
 
+    if(r.status === 'success') {
+      setFLoad(true);
+      toast.success(r.message);
+      sessionStorage.removeItem('clientFiles')
+      let rs = await GET('clientFiles');
+      updatedData(rs.clientFiles);
+      setFLoad(false);
+    }
+    
 
     setAnchorEl(null)
-    setAlertLoad(false);
     setAlertOpen(false)
   }
 
 
-  const handleEdit = () => {
-    console.log('edit');
+  if(fLoading){
+    return <><Spinner /></>
   }
 
   return (
@@ -96,9 +110,9 @@ export default function ThreePointMenu({id}) {
         }}
       >
 
-        <MenuItem onClick={handleEdit} disableRipple>
+        <MenuItem disableRipple>
           <EditIcon />
-          <p className='ml-2'>Modifier</p>
+          <Link to={'/client-file/edit/' + itemId} className='ml-2'>Modifier</Link>
         </MenuItem>
         <MenuItem onClick={() => setAlertOpen(true)} disableRipple>
           <div className='text-red-600 flex'>
