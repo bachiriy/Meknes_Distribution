@@ -28,6 +28,9 @@ import PUT from '../../utils/PUT';
 import DELETE_API from '../../utils/DELETE';
 import ConfirmAlert from '../Alerts/ConfirmAlert';
 import { Spinner } from 'flowbite-react';
+import SubSelect from '../Client-File/SubSelect';
+
+
 
 const Table = ({ columns, data, entityType, validateEntity, updatedData }) => {
   const [validationErrors, setValidationErrors] = useState({});
@@ -39,36 +42,46 @@ const Table = ({ columns, data, entityType, validateEntity, updatedData }) => {
   const ENDPOINT = entityType.toLowerCase() === 'category' ? 'categories' : `${entityType.toLowerCase()}s`;
 
   const queryClient = useQueryClient();
-
   const memoizedColumns = useMemo(() => {
-    return columns.map((col) => ({
-      ...col,
-      muiEditTextFieldProps: col.required
-        ? {
-            required: true,
-            error: !!validationErrors[col.accessorKey],
-            helperText: validationErrors[col.accessorKey],
-            onFocus: () =>
-              setValidationErrors((prev) => ({
-                ...prev,
-                [col.accessorKey]: undefined,
-              })),
-          }
-        : col.accessorKey === 'type'
-        ? {
-            select: true,
-            SelectProps: {
-              displayEmpty: true,
-              renderValue: (value) => (value ? value : 'Select Type'),
-            },
-            children: [
-              <MenuItem key="Particulier" value="Particulier">Particulier</MenuItem>,
-              <MenuItem key="Entreprise" value="Entreprise">Entreprise</MenuItem>,
-            ],
-          }
-        : undefined,
-    }));
+    return columns.map((col) => {
+      let muiEditTextFieldProps = undefined;
+  
+      if (col.required) {
+        muiEditTextFieldProps = {
+          required: true,
+          error: !!validationErrors[col.accessorKey],
+          helperText: validationErrors[col.accessorKey],
+          onFocus: () =>
+            setValidationErrors((prev) => ({
+              ...prev,
+              [col.accessorKey]: undefined,
+            })),
+        };
+      } else if (col.accessorKey === 'type') {
+        muiEditTextFieldProps = {
+          select: true,
+          SelectProps: {
+            displayEmpty: true,
+            renderValue: (value) => (value ? value : 'Select Type'),
+          },
+          children: [
+            <MenuItem key="Particulier" value="Particulier">Particulier</MenuItem>,
+            <MenuItem key="Entreprise" value="Entreprise">Entreprise</MenuItem>,
+          ],
+        };
+      } else if (col.accessorKey === 'sub_category_id') {
+        muiEditTextFieldProps = {
+          children: <SubSelect />,
+        };
+      }
+  
+      return {
+        ...col,
+        muiEditTextFieldProps,
+      };
+    });
   }, [columns, validationErrors]);
+  
 
   const queryKey = `${entityType.toLowerCase()}s`;
 
