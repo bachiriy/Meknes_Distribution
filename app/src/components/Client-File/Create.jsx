@@ -165,7 +165,7 @@ function Create() {
                     >
                         <MenuItem value="in progress">En cours</MenuItem>
                         <MenuItem value="completed">Terminé</MenuItem>
-                        <MenuItem value="archived">Archivé</MenuItem>
+                        <MenuItem value="closed">Fermée</MenuItem>
                     </Select>
                 </FormControl>
                 {formLoading ? (
