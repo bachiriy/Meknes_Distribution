@@ -19,6 +19,10 @@ const ClientFile = () => {
     fetchClientFiles();
   }, []);
 
+  const updateData = (data) => {
+    setCfs(data);
+  }
+
   if (loading) {
     return (
       <div className="w-full flex justify-center h-screen items-center">
@@ -26,9 +30,7 @@ const ClientFile = () => {
       </div>
     );
   }
-  const updateData = (data) => {
-    setCfs(data);
-  }
+
   return (
     <div className="h-screen flex flex-col ml-12">
       <div className="flex justify-end m-2">
@@ -40,12 +42,12 @@ const ClientFile = () => {
       <div className="flex-1 overflow-auto p-4">
         {cfs.length > 0 ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
-            {cfs.map((i) => (
-              <Folder updatedData={updateData} key={i.id} clientFile={i} />
+            {cfs.map((item) => (
+              <Folder key={item.id} clientFile={item} updatedData={updateData} />
             ))}
           </div>
         ) : (
-          <p className="text-center">no data.</p>
+          <p className="text-center">No data.</p>
         )}
       </div>
     </div>
