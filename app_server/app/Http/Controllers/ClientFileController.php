@@ -375,4 +375,8 @@ class ClientFileController extends Controller
             return response()->json(['message' => 'Error occurred while attaching files to client file.'], 500);
         }
     }
+
+    // function show ($id) {
+        // return ClientFile::where('id', $id)->with(['clients', 'commune', 'products'])->get();
+    // }
 }
