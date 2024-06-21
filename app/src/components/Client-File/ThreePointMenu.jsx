@@ -1,83 +1,92 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { toast } from 'react-toastify';
 import ConfirmAlert from '../Alerts/ConfirmAlert';
 import PUT from '../../utils/PUT';
-import DELETE from '../../utils/DELETE';
-import { toast } from 'react-toastify';
 import GET from '../../utils/GET';
+import PopupForm from './PopupForm';
 import { Spinner } from 'flowbite-react';
-import { Link } from 'react-router-dom';
-
-const options = [
-  ['Modifier', <EditIcon />, 'black'],
-  ['Supprimer', <DeleteIcon />, 'red']
-];
 
 const ITEM_HEIGHT = 48;
 
-export default function ThreePointMenu({id, updatedData}) {
-
-  const [anchorEl, setAnchorEl] = React.useState(null);
+export default function ThreePointMenu({ id, updatedData }) {
+  const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
-  const [itemId, setItemId] = React.useState(id);
-  const [alertLoad, setAlertLoad] = React.useState(false);
-  const [AlertOpen, setAlertOpen] = React.useState(false);
-  const [fLoading, setFLoad] = React.useState(false);
-
+  const [itemId, setItemId] = useState(id);
+  const [alertLoad, setAlertLoad] = useState(false);
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [fLoading, setFLoading] = useState(false);
+  const [popupOpen, setPopupOpen] = useState(false);
+  const [clientFileData, setClientFileData] = useState(null);
 
   const handleClick = (event) => {
-    setAnchorEl(event.currentTarget); 
+    setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
 
-
-
-  const confirmDelete = () => {
-
-  }
-
+  const handleEdit = () => {
+    const clientFiles = JSON.parse(sessionStorage.getItem('clientFiles') || '[]');
+    const clientFile = clientFiles.clientFiles.find(file => file.id === itemId);
+    
+    if (clientFile) {
+      setClientFileData(clientFile);
+      setPopupOpen(true);
+    } else {
+      toast.error('Client file not found');
+    }
+    setAnchorEl(null);
+  };
 
   const handleDelete = async () => {
-    setAlertLoad(true)
-    let r = await PUT('clientFiles/softDelete', itemId, false);
-    setAlertLoad(false);
-
-    if(r.status === 'success') {
-      setFLoad(true);
-      toast.success(r.message);
-      sessionStorage.removeItem('clientFiles')
-      let rs = await GET('clientFiles');
-      updatedData(rs.clientFiles);
-      setFLoad(false);
+    setAlertLoad(true);
+    try {
+      const response = await PUT('clientFiles/softDelete', itemId, true);
+      if (response.status === 'success') {
+        toast.success(response.message);
+        sessionStorage.removeItem('clientFiles');
+        const updatedClientFiles = await GET('clientFiles');
+        updatedData(updatedClientFiles.clientFiles);
+      } else {
+        toast.error('Error deleting client file');
+      }
+    } catch (error) {
+      toast.error('Error deleting client file');
+    } finally {
+      setAlertLoad(false);
+      setAlertOpen(false);
     }
-    
+    setAnchorEl(null);
+  };
 
-    setAnchorEl(null)
-    setAlertOpen(false)
-  }
-
-
-  if(fLoading){
-    return <><Spinner /></>
+  if (fLoading) {
+    return <Spinner />;
   }
 
   return (
     <div>
+      {popupOpen && (
+        <PopupForm
+          open={popupOpen}
+          setOpen={setPopupOpen}
+          clientFileData={clientFileData}
+          updatedData={updatedData}
+        />
+      )}
+
       <ConfirmAlert
         loading={alertLoad}
-        msg="voulez-vous supprimer cette Dossier Client ?"
-        open={AlertOpen}
-        handleClose={() => alertLoad ? setAlertOpen(true) : setAlertOpen(false)}
-        cancel={() => {
-          setAlertOpen(false);
-        }}
+        msg="Voulez-vous supprimer ce Dossier Client ?"
+        open={alertOpen}
+        handleClose={() => setAlertOpen(false)}
+        cancel={() => setAlertOpen(false)}
         confirm={handleDelete}
       />
 
@@ -92,7 +101,6 @@ export default function ThreePointMenu({id, updatedData}) {
         >
           <MoreVertIcon />
         </IconButton>
-
       </div>
       <Menu
         id="long-menu"
@@ -109,10 +117,9 @@ export default function ThreePointMenu({id, updatedData}) {
           },
         }}
       >
-
-        <MenuItem disableRipple>
+        <MenuItem onClick={handleEdit} disableRipple>
           <EditIcon />
-          <Link to={'/client-file/edit/' + itemId} className='ml-2'>Modifier</Link>
+          <p className='ml-2'>Modifier</p>
         </MenuItem>
         <MenuItem onClick={() => setAlertOpen(true)} disableRipple>
           <div className='text-red-600 flex'>
