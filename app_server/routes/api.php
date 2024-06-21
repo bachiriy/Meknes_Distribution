@@ -67,6 +67,7 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/read', [ClientFileController::class, 'read']);
         Route::post('/upload', [ClientFileController::class, 'upload']);
         Route::post('/rename', [ClientFileController::class, 'rename']);
+        // Route::get('/{id}', [ClientFileController::class, 'show']);
     });
 
 

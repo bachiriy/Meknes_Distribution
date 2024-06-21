@@ -12,6 +12,9 @@ import {
   DialogTitle,
   IconButton,
   Tooltip,
+  MenuItem,
+  Select,
+  TextField,
 } from '@mui/material';
 
 import EditIcon from '@mui/icons-material/Edit';
@@ -25,6 +28,9 @@ import PUT from '../../utils/PUT';
 import DELETE_API from '../../utils/DELETE';
 import ConfirmAlert from '../Alerts/ConfirmAlert';
 import { Spinner } from 'flowbite-react';
+import SubSelect from '../Client-File/SubSelect';
+
+
 
 const Table = ({ columns, data, entityType, validateEntity, updatedData }) => {
   const [validationErrors, setValidationErrors] = useState({});
@@ -36,32 +42,46 @@ const Table = ({ columns, data, entityType, validateEntity, updatedData }) => {
   const ENDPOINT = entityType.toLowerCase() === 'category' ? 'categories' : `${entityType.toLowerCase()}s`;
 
   const queryClient = useQueryClient();
-
   const memoizedColumns = useMemo(() => {
-    return columns.map((col) => ({
-      ...col,
-      muiEditTextFieldProps: col.required
-        ? {
-            required: true,
-            error: !!validationErrors[col.accessorKey],
-            helperText: validationErrors[col.accessorKey],
-            onFocus: () =>
-              setValidationErrors((prev) => ({
-                ...prev,
-                [col.accessorKey]: undefined,
-              })),
-          }
-        : col.accessorKey === 'password'
-        ? {
-            type: 'password',
-          }
-        : col.accessorKey === 'roleName'
-        ? {
-            readOnly: true,
-          }
-        : undefined,
-    }));
+    return columns.map((col) => {
+      let muiEditTextFieldProps = undefined;
+  
+      if (col.required) {
+        muiEditTextFieldProps = {
+          required: true,
+          error: !!validationErrors[col.accessorKey],
+          helperText: validationErrors[col.accessorKey],
+          onFocus: () =>
+            setValidationErrors((prev) => ({
+              ...prev,
+              [col.accessorKey]: undefined,
+            })),
+        };
+      } else if (col.accessorKey === 'type') {
+        muiEditTextFieldProps = {
+          select: true,
+          SelectProps: {
+            displayEmpty: true,
+            renderValue: (value) => (value ? value : 'Select Type'),
+          },
+          children: [
+            <MenuItem key="Particulier" value="Particulier">Particulier</MenuItem>,
+            <MenuItem key="Entreprise" value="Entreprise">Entreprise</MenuItem>,
+          ],
+        };
+      } else if (col.accessorKey === 'sub_category_id') {
+        muiEditTextFieldProps = {
+          children: <SubSelect />,
+        };
+      }
+  
+      return {
+        ...col,
+        muiEditTextFieldProps,
+      };
+    });
   }, [columns, validationErrors]);
+  
 
   const queryKey = `${entityType.toLowerCase()}s`;
 
@@ -69,7 +89,7 @@ const Table = ({ columns, data, entityType, validateEntity, updatedData }) => {
     mutationFn: async (values) => await POST(ENDPOINT, values),
     onSuccess: async () => {
       queryClient.invalidateQueries(queryKey);
-      toast.success('User created successfully');
+      toast.success('Item created successfully');
       setLoading(true);
       updatedData(JSON.parse(sessionStorage.getItem(ENDPOINT)));
       setLoading(false);
@@ -98,12 +118,8 @@ const Table = ({ columns, data, entityType, validateEntity, updatedData }) => {
       setValidationErrors(newValidationErrors);
       return;
     }
-    try {
-      await createEntity.mutateAsync(values);
-      table.setCreatingRow(null);
-    } catch (error) {
-      console.error('Error creating user:', error);
-    }
+    await createEntity.mutateAsync(values);
+    table.setCreatingRow(null);
   };
 
   const handleSaveEntity = async ({ values, table }) => {
@@ -149,7 +165,18 @@ const Table = ({ columns, data, entityType, validateEntity, updatedData }) => {
     renderCreateRowDialogContent: ({ table, row, internalEditComponents }) => (
       <>
         <DialogTitle>Create New {entityType}</DialogTitle>
-        <DialogContent>{internalEditComponents}</DialogContent>
+        <DialogContent>
+          {internalEditComponents}
+          {entityType === 'User' && (
+            <TextField
+              label="Password"
+              type="password"
+              fullWidth
+              margin="normal"
+              onChange={(e) => table.setValueForField('password', e.target.value)}
+            />
+          )}
+        </DialogContent>
         <DialogActions>
           <MRT_EditActionButtons variant="text" table={table} row={row} />
         </DialogActions>
@@ -191,9 +218,9 @@ const Table = ({ columns, data, entityType, validateEntity, updatedData }) => {
       <MaterialReactTable table={table} />
       <ConfirmAlert
         loading={alertLoad}
-        msg="voulez-vous supprimer cet élément ?"
+        msg="Do you want to delete this item?"
         open={deleteAlertOpen}
-        handleClose={() => alertLoad ? setDeleteAlertOpen(true) : setDeleteAlertOpen(false)}
+        handleClose={() => setDeleteAlertOpen(false)}
         cancel={() => {
           setDeleteAlertOpen(false);
           setCurrentRow(null);

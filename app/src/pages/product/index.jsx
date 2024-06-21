@@ -15,16 +15,12 @@ const columns = [
     header: "Designation",
   },
   {
-    accessorKey: "supplier.name",
+    accessorKey: "supplier_id",
     header: "Fournisseur",
   },
   {
-    accessorKey: "group.name",
+    accessorKey: "sub_category_id",
     header: "Group",
-  },
-  {
-    accessorKey: "group.category.name",
-    header: "Category",
   },
   {
     accessorKey: "marge_brut",
@@ -51,8 +47,19 @@ const columns = [
     header: "Remise",
   },
   {
+    accessorKey: "TVA",
+    header: "TVA",
+  },
+  {
     accessorKey: "reference",
     header: "Reference",
+  },
+  {
+    accessorKey: "image",
+    header: "Image",
+    Cell: ({ cell }) => (
+      cell.value ? <img src={cell.value} alt="Product" style={{ width: '50px', height: '50px' }} /> : 'No Image'
+    ),
   },
 ];
 
@@ -76,6 +83,7 @@ export const Product = () => {
   ) : (
     <div className="overflow-auto ml-12 px-2 mt-10">
       <h1 className="py-10 text-center">Products Table</h1>
+     
       {data ? (
         <Table
           updatedData={(updatedData) => setData(updatedData.products)}

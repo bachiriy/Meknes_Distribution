@@ -1,13 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import ThreePointMenu from './ThreePointMenu';
+import { ToastContainer } from 'react-toastify';
 
 
-const Folder = ({ clientFile }) => {
+const Folder = ({ clientFile, updatedData }) => {
   return (
     <div className="p-3 hover:opacity-80 border border-black hover:shadow-lg transition-all rounded-lg">
+      <ToastContainer />
       <div className='flex justify-end'>
-        <ThreePointMenu id={clientFile.id} />
+        <ThreePointMenu updatedData={updatedData} id={clientFile.id} />
       </div>
       <Link to={`/client-file/${clientFile.id}`}>
         <div className="w-full text-center">

@@ -4,7 +4,7 @@ import { Input, Button, Select, MenuItem, FormControl, InputLabel, TextField } f
 import GET from '../../utils/GET';
 import POST from '../../utils/POST';
 import Spinner from '../Other/Spinner';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 
 function Create() {
     const [products, setProducts] = useState([]);
@@ -62,8 +62,9 @@ function Create() {
 
     return (
         <div className="p-6 bg-gray-100 min-h-screen ml-12">
+            <ToastContainer />
             <div className="flex items-center mb-6">
-                <Link to="/" className="text-gray-600 hover:text-gray-800">
+                <Link to="/client-file" className="text-gray-600 hover:text-gray-800">
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
                     </svg>
@@ -164,7 +165,7 @@ function Create() {
                     >
                         <MenuItem value="in progress">En cours</MenuItem>
                         <MenuItem value="completed">Terminé</MenuItem>
-                        <MenuItem value="archived">Archivé</MenuItem>
+                        <MenuItem value="closed">Fermée</MenuItem>
                     </Select>
                 </FormControl>
                 {formLoading ? (
