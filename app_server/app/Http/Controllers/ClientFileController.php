@@ -137,7 +137,7 @@ class ClientFileController extends Controller
         $clientFile = ClientFile::findOrFail($id);
         if ($clientFile['is_deleted'] === 'yes') {
             return response()->json([
-                'errors' => "You Can't Update Client Who Is Archived"
+                'errors' => "You Can't Update ClientFile Who Is Archived"
             ], 422);
         }
         $clientFile->update($data);

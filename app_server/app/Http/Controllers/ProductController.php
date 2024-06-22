@@ -135,7 +135,7 @@ class ProductController extends Controller
         $product = Product::findOrFail($id);
         if ($product['is_deleted'] === 'yes') {
             return response()->json([
-                'errors' => "You Can't Update Client Who Is Archived"
+                'errors' => "You Can't Update Product Who Is Archived"
             ], 422);
         }
         $product->update($data);
