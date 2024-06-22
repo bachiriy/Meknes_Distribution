@@ -26,7 +26,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
-    // Admin Routes
+
     Route::group(['middleware' => ['role:admin']], function () {
         Route::prefix('users')->group(function () {
             Route::post('assignRole', [UserController::class, 'assignRoleToUser']);
@@ -63,11 +63,11 @@ Route::middleware('auth:api')->group(function () {
         Route::put('/{id}', [ClientFileController::class, 'update']);
         Route::put('/softDelete/{id}', [ClientFileController::class, 'softDelete']);
         Route::delete('/{id}', [ClientFileController::class, 'delete']);
+        Route::get('/download/files', [ClientFileController::class, 'filesDownload']);
+        Route::get('/download/file/{fileId}', [ClientFileController::class, 'filesDownload']);
         Route::get('/download/{id}', [ClientFileController::class, 'download']);
-        Route::get('/read', [ClientFileController::class, 'read']);
         Route::post('/upload', [ClientFileController::class, 'upload']);
         Route::post('/rename', [ClientFileController::class, 'rename']);
-        // Route::get('/{id}', [ClientFileController::class, 'show']);
     });
 
 

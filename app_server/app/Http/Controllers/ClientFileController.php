@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\MediaLibrary\Support\MediaStream;
 use ZipArchive;
 
@@ -22,11 +25,14 @@ class ClientFileController extends Controller
 
         if (!$clientFiles) {
             $clientFiles = ClientFile::where('is_deleted', 'no')
-                ->with('invoices')
-                ->with('deliveryNotes')
-                ->with('commune.caidat.cercle.province.region')
-                ->with('products.subCategory.category')
-                ->with('clients')
+                ->with([
+                    'invoices',
+                    'deliveryNotes',
+                    'commune.caidat.cercle.province.region',
+                    'products.subCategory.category',
+                    'clients',
+                    'media'
+                ])
                 ->get();
             Cache::put('client_files', $clientFiles, 1440);
         }
@@ -41,14 +47,15 @@ class ClientFileController extends Controller
     function store(Request $request): \Illuminate\Http\JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'file_name' => 'required|string|max:255',
+            'file_name' => 'required|string|max:255|unique:client_files',
             'client_ids' => 'required|array',
             'client_ids.*' => 'required|numeric|exists:clients,id',
             'commune_id' => 'required|numeric|exists:communes,id',
             'product_ids' => 'required|array',
             'product_ids.*' => 'required|numeric|exists:products,id',
             'exploitation_surface' => 'required|numeric',
-            'files' => 'nullable|file',
+            'files' => 'nullable|array',
+            'files.*' => 'required|file|mimes:jpg,jpeg,png,pdf,doc,docx',
         ]);
 
         if ($validator->fails()) {
@@ -84,7 +91,9 @@ class ClientFileController extends Controller
 
         // Handle file upload with Media Library
         if ($request->hasFile('files')) {
-            $clientFile->addMedia($request->file('uploadFiles'))->toMediaCollection('client_files');
+            foreach ($request->file('files') as $file) {
+                $clientFile->addMedia($file)->toMediaCollection($data['file_name']);
+            }
         }
 
         // Clear cache and return response
@@ -92,11 +101,14 @@ class ClientFileController extends Controller
         Cache::forget('clients');
         Cache::forget('products');
         $clientFiles = ClientFile::where('is_deleted', 'no')
-            ->with('invoices')
-            ->with('deliveryNotes')
-            ->with('commune.caidat.cercle.province.region')
-            ->with('products.subCategory.category')
-            ->with('clients')
+            ->with([
+                'invoices',
+                'deliveryNotes',
+                'commune.caidat.cercle.province.region',
+                'products.subCategory.category',
+                'clients',
+                'media'
+            ])
             ->get();
         Cache::put('client_files', $clientFiles, 1440);
 
@@ -121,7 +133,8 @@ class ClientFileController extends Controller
         $data['id'] = $id;
 
         $validator = Validator::make($data, [
-            'file_name' => 'required|string|max:255',
+            'file_name' => ['required', 'string', 'max:255',
+                Rule::unique('client_files')->ignore($id),],
             'commune_id' => 'required|numeric|exists:communes,id',
             'more_detail' => 'sometimes|string',
             'exploitation_surface' => 'required|numeric',
@@ -162,11 +175,14 @@ class ClientFileController extends Controller
         Cache::forget('clients');
         Cache::forget('products');
         $clientFiles = ClientFile::where('is_deleted', 'no')
-            ->with('invoices')
-            ->with('deliveryNotes')
-            ->with('commune.caidat.cercle.province.region')
-            ->with('products.subCategory.category')
-            ->with('clients')
+            ->with([
+                'invoices',
+                'deliveryNotes',
+                'commune.caidat.cercle.province.region',
+                'products.subCategory.category',
+                'clients',
+                'media'
+            ])
             ->get();
         Cache::put('client_files', $clientFiles, 1440);
 
@@ -181,9 +197,8 @@ class ClientFileController extends Controller
     }
 
 
-    function download($id): \Symfony\Component\HttpFoundation\BinaryFileResponse|\Illuminate\Http\JsonResponse
+    function download($id): MediaStream|\Illuminate\Http\JsonResponse
     {
-        // Validate the provided ID
         $validator = Validator::make(['id' => $id], [
             'id' => 'required|numeric|exists:client_files,id'
         ]);
@@ -192,47 +207,27 @@ class ClientFileController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        // Find the ClientFile by ID
         $clientFile = ClientFile::find($id);
-
-        // Get all the media files associated with the ClientFile
         $medias = $clientFile->getMedia('*');
 
         if (!$medias) {
             return response()->json(['message' => 'File not found.'], 404);
         }
 
-        // Create a temporary directory
-        $tempFolderName = 'temp_' . Str::random(10);
-        Storage::disk('public')->makeDirectory($tempFolderName);
+        return MediaStream::create($clientFile->file_name . '.zip')->addMedia($medias);
 
-        // Move media files into the temporary directory
-        foreach ($medias as $media) {
-            Storage::disk('public')->move($media->getPath(), $tempFolderName . '/' . $media->file_name);
-        }
-
-        // Zip the temporary directory
-        $zipFileName = $tempFolderName . '.zip';
-        $zipFilePath = storage_path('app/public/' . $zipFileName);
-        $zip = new ZipArchive;
-        $zip->open($zipFilePath, ZipArchive::CREATE | ZipArchive::OVERWRITE);
-        $files = Storage::disk('public')->files($tempFolderName);
-        foreach ($files as $file) {
-            $zip->addFile(storage_path('app/public/' . $file), $file);
-        }
-        $zip->close();
-
-        // Delete the temporary directory
-        Storage::disk('public')->deleteDirectory($tempFolderName);
-
-        // Return the zip file as a download response
-        return response()->download($zipFilePath, $clientFile->file_name . '.zip')->deleteFileAfterSend(true);
     }
 
-    function fileDownload($clientFileId, $fileId): \Symfony\Component\HttpFoundation\BinaryFileResponse|\Illuminate\Http\JsonResponse
+    function filesDownload(Request $request): MediaStream|\Illuminate\Http\JsonResponse
     {
-        $validator = Validator::make(['file_id' => $fileId, 'client_file_id' => $clientFileId], [
-            'file_id' => 'required|numeric|exists:medias,id',
+        $clientFileId = $request->input('client_file_id');
+        $data = [
+            'file_ids' => $request->input('file_ids'),
+            'client_file_id' => $clientFileId
+        ];
+        $validator = Validator::make($data, [
+            'file_ids' => 'required|array',
+            'file_ids.*' => 'required|numeric|exists:media,id',
             'client_file_id' => 'required|numeric|exists:client_files,id'
         ]);
 
@@ -242,28 +237,32 @@ class ClientFileController extends Controller
 
         $clientFile = ClientFile::find($clientFileId);
 
-        $medias = $clientFile->getMedia("*");
-        $media = $medias->where('id', $fileId)->first();
-        return response()->download($media->getPath(), $media->file_name);
-    }
-
-    function filesDownload($clientFileId, $fileId): MediaStream|\Illuminate\Http\JsonResponse
-    {
-        $validator = Validator::make(['file_id' => $fileId, 'client_file_id' => $clientFileId], [
-            'file_id.*' => 'required|numeric|exists:medias,id',
-            'client_file_id' => 'required|numeric|exists:client_files,id'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+        if (!$clientFile) {
+            return response()->json(['error' => 'Client file not found'], 404);
         }
 
-        $clientFile = ClientFile::find($clientFileId);
+        $medias = $clientFile->getMedia()->whereIn('id', $data['file_ids']);
 
-        $medias = $clientFile->getMedia("*");
-        $media = $medias->where('id', $fileId)->get();
+        if ($medias->isEmpty()) {
+            return response()->json(['error' => 'No media found for the given IDs'], 404);
+        }
+
         $zipName = $clientFile->file_name . '.zip';
-        return MediaStream::create($zipName)->addMedia($media);
+        return MediaStream::create($zipName)->addMedia($medias);
+    }
+
+    function fileDownload($fileId): \Symfony\Component\HttpFoundation\BinaryFileResponse|\Illuminate\Http\JsonResponse
+    {
+        $validator = Validator::make(['file_id' => $fileId], [
+            'file_id' => 'required|numeric|exists:medias,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $media = Media::find($fileId);
+        return response()->download($media->getPath(), $media->file_name);
     }
 
     function rename(Request $request): \Illuminate\Http\JsonResponse
@@ -357,11 +356,14 @@ class ClientFileController extends Controller
             // Clear cache and return response
             Cache::forget('client_files');
             $clientFiles = ClientFile::where('is_deleted', 'no')
-                ->with('invoices')
-                ->with('deliveryNotes')
-                ->with('commune.caidat.cercle.province.region')
-                ->with('products.subCategory.category')
-                ->with('clients')
+                ->with([
+                    'invoices',
+                    'deliveryNotes',
+                    'commune.caidat.cercle.province.region',
+                    'products.subCategory.category',
+                    'clients',
+                    'media'
+                ])
                 ->get();
             Cache::put('client_files', $clientFiles, 1440);
 
@@ -381,8 +383,4 @@ class ClientFileController extends Controller
             return response()->json(['message' => 'Error occurred while attaching files to client file.'], 500);
         }
     }
-
-    // function show ($id) {
-    // return ClientFile::where('id', $id)->with(['clients', 'commune', 'products'])->get();
-    // }
 }

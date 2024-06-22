@@ -1,20 +1,22 @@
-import React, { useState } from 'react';
-import IconButton from '@mui/material/IconButton';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { toast } from 'react-toastify';
-import ConfirmAlert from '../Alerts/ConfirmAlert';
-import PUT from '../../utils/PUT';
-import GET from '../../utils/GET';
-import PopupForm from './PopupForm';
-import { Spinner } from 'flowbite-react';
+import React, { useState } from "react";
+import IconButton from "@mui/material/IconButton";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import DownloadIcon from "@mui/icons-material/Download";
+import { toast } from "react-toastify";
+import ConfirmAlert from "../Alerts/ConfirmAlert";
+import PUT from "../../utils/PUT";
+import GET from "../../utils/GET";
+import download from "../../utils/DOWNLOAD";
+import PopupForm from "./PopupForm";
+import { Spinner } from "flowbite-react";
 
 const ITEM_HEIGHT = 48;
 
-export default function ThreePointMenu({ id, updatedData }) {
+export default function ThreePointMenu({ id, updatedData, name }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const [itemId, setItemId] = useState(id);
@@ -33,14 +35,18 @@ export default function ThreePointMenu({ id, updatedData }) {
   };
 
   const handleEdit = () => {
-    const clientFiles = JSON.parse(sessionStorage.getItem('clientFiles') || '[]');
-    const clientFile = clientFiles.clientFiles.find(file => file.id === itemId);
-    
+    const clientFiles = JSON.parse(
+      sessionStorage.getItem("clientFiles") || "[]"
+    );
+    const clientFile = clientFiles.clientFiles.find(
+      (file) => file.id === itemId
+    );
+
     if (clientFile) {
       setClientFileData(clientFile);
       setPopupOpen(true);
     } else {
-      toast.error('Client file not found');
+      toast.error("Client file not found");
     }
     setAnchorEl(null);
   };
@@ -48,21 +54,30 @@ export default function ThreePointMenu({ id, updatedData }) {
   const handleDelete = async () => {
     setAlertLoad(true);
     try {
-      const response = await PUT('clientFiles/softDelete', itemId, true);
-      if (response.status === 'success') {
+      const response = await PUT("clientFiles/softDelete", itemId, true);
+      if (response.status === "success") {
         toast.success(response.message);
-        sessionStorage.removeItem('clientFiles');
-        const updatedClientFiles = await GET('clientFiles');
+        sessionStorage.removeItem("clientFiles");
+        const updatedClientFiles = await GET("clientFiles");
         updatedData(updatedClientFiles.clientFiles);
       } else {
-        toast.error('Error deleting client file');
+        toast.error("Error deleting client file");
       }
     } catch (error) {
-      toast.error('Error deleting client file');
+      toast.error("Error deleting client file");
     } finally {
       setAlertLoad(false);
       setAlertOpen(false);
     }
+    setAnchorEl(null);
+  };
+
+  const handleDownload = async () => {
+    const endpoint = "clientFiles/download";
+    const fileName = `client_file_${itemId}_${name}.zip`;
+    setFLoading(true);
+    await download(endpoint, itemId, fileName);
+    setFLoading(false);
     setAnchorEl(null);
   };
 
@@ -90,12 +105,12 @@ export default function ThreePointMenu({ id, updatedData }) {
         confirm={handleDelete}
       />
 
-      <div className='w-8'>
+      <div className="w-8">
         <IconButton
           aria-label="more"
           id="long-button"
-          aria-controls={open ? 'long-menu' : undefined}
-          aria-expanded={open ? 'true' : undefined}
+          aria-controls={open ? "long-menu" : undefined}
+          aria-expanded={open ? "true" : undefined}
           aria-haspopup="true"
           onClick={handleClick}
         >
@@ -105,7 +120,7 @@ export default function ThreePointMenu({ id, updatedData }) {
       <Menu
         id="long-menu"
         MenuListProps={{
-          'aria-labelledby': 'long-button',
+          "aria-labelledby": "long-button",
         }}
         anchorEl={anchorEl}
         open={open}
@@ -113,18 +128,24 @@ export default function ThreePointMenu({ id, updatedData }) {
         PaperProps={{
           style: {
             maxHeight: ITEM_HEIGHT * 4.5,
-            width: '20ch',
+            width: "20ch",
           },
         }}
       >
         <MenuItem onClick={handleEdit} disableRipple>
           <EditIcon />
-          <p className='ml-2'>Modifier</p>
+          <p className="ml-2">Modifier</p>
         </MenuItem>
         <MenuItem onClick={() => setAlertOpen(true)} disableRipple>
-          <div className='text-red-600 flex'>
+          <div className="text-red-600 flex">
             <DeleteIcon />
-            <p className='ml-2'>Supprimer</p>
+            <p className="ml-2">Supprimer</p>
+          </div>
+        </MenuItem>
+        <MenuItem onClick={handleDownload} disableRipple>
+          <div className="text-blue-600 flex">
+            <DownloadIcon />
+            <p className="ml-2">Telecharger</p>
           </div>
         </MenuItem>
       </Menu>

@@ -26,7 +26,7 @@ import DefaultAvatar from "../../assets/default_avatar.png";
 import PUT from "../../utils/PUT";
 import { json } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
-import POST from "../../utils/POSTFILE";
+import POST from "../../utils/POSTPIC";
 import { dark } from "@mui/material/styles/createPalette";
 
 export default function Profile() {

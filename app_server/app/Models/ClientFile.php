@@ -45,14 +45,14 @@ class ClientFile extends Model implements HasMedia
     {
         return $this->belongsToMany(Invoice::class, 'client_file_invoice');
     }
-    // Define relationship for subfolders
-    public function subfolders()
+    // Define relationship for folders
+    public function subfolders(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(ClientFile::class, 'parent_id');
     }
 
     // Define relationship for parent folder
-    public function parentFolder()
+    public function parentFolder(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(ClientFile::class, 'parent_id');
     }
