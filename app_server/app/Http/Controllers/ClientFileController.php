@@ -54,8 +54,8 @@ class ClientFileController extends Controller
             'product_ids' => 'required|array',
             'product_ids.*' => 'required|numeric|exists:products,id',
             'exploitation_surface' => 'required|numeric',
-            'files' => 'required|array',
-            'files.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx',
+            'files' => 'nullable|array',
+            'files.*' => 'required|file|mimes:jpg,jpeg,png,pdf,doc,docx',
         ]);
 
         if ($validator->fails()) {

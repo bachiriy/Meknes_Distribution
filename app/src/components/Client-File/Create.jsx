@@ -10,7 +10,7 @@ import {
   TextField,
 } from "@mui/material";
 import GET from "../../utils/GET";
-import POST from "../../utils/POST";
+import POST from "../../utils/POSTFILE";
 import Spinner from "../Other/Spinner";
 import { toast, ToastContainer } from "react-toastify";
 
@@ -27,9 +27,14 @@ function Create() {
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const [selectedFiles, setSelectedFiles] = useState(null);
 
   const [formLoading, setFormLoad] = useState(false);
 
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length !== 0) setSelectedFiles(files);
+  };
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
@@ -51,21 +56,43 @@ function Create() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormLoad(true);
-    const payload = {
-      file_name: fileName,
-      product_ids: selectedProducts,
-      client_ids: selectedClients,
-      commune_id: communeId,
-      exploitation_surface: parseFloat(exploitationSurface),
-      more_detail: moreDetail,
-      status: status,
-    };
-    let r = await POST("clientFiles", payload);
-    if (r.status === "success") {
-      toast.success(r.message);
-        navigate('/client-file');
+
+    try {
+      const payload = {
+        file_name: fileName,
+        product_ids: selectedProducts,
+        client_ids: selectedClients,
+        commune_id: communeId,
+        exploitation_surface: parseFloat(exploitationSurface),
+        more_detail: moreDetail,
+        status: status,
+      };
+
+      const response = await POST("clientFiles", payload, selectedFiles);
+
+      if (response.status === "success") {
+        toast.success(response.message);
+        navigate("/client-file");
+      } else {
+        throw new Error(JSON.stringify(response));
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      try {
+        const errorData = JSON.parse(error.message);
+        if (errorData.errors) {
+          Object.entries(errorData.errors).forEach(([key, messages]) => {
+            messages.forEach((message) => toast.error(`${key}: ${message}`));
+          });
+        } else {
+          toast.error("Error submitting form");
+        }
+      } catch {
+        toast.error("Error submitting form");
+      }
+    } finally {
+      setFormLoad(false);
     }
-    setFormLoad(false);
   };
 
   if (loading) {
@@ -193,6 +220,21 @@ function Create() {
             <MenuItem value="closed">Fermée</MenuItem>
           </Select>
         </FormControl>
+
+        <FormControl
+          fullWidth
+          sx={{ my: 2 }}
+          className="flex justify-center items-center"
+        >
+          <input
+            id="file-upload"
+            multiple
+            type="file"
+            onChange={handleFileChange}
+            accept=".pdf,.doc,.docx,image/*"
+          />
+        </FormControl>
+
         {formLoading ? (
           <Button
             disabled
