@@ -15,7 +15,6 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\MediaLibrary\Support\MediaStream;
-use ZipArchive;
 
 class ClientFileController extends Controller
 {
@@ -164,10 +163,23 @@ class ClientFileController extends Controller
             $clientFile->products()->sync($request->input('product_ids'));
         }
 
-        // Handle file upload with Media Library
         if ($request->hasFile('files')) {
-            $clientFile->clearMediaCollection('client_files');
-            $clientFile->addMedia($request->file('files'))->toMediaCollection('client_files');
+            foreach ($request->file('files') as $file) {
+                // Generate a hash of the file content
+                $fileHash = md5_file($file->getPathname());
+
+                // Check if a media item with this hash already exists in the collection
+                $existingMedia = $clientFile->getMedia($data['file_name'])->first(function ($mediaItem) use ($fileHash) {
+                    return $mediaItem->getCustomProperty('file_hash') === $fileHash;
+                });
+
+                // If no media item with this hash exists, add the new file to the collection
+                if (!$existingMedia) {
+                    $clientFile->addMedia($file)
+                        ->withCustomProperties(['file_hash' => $fileHash])
+                        ->toMediaCollection($data['file_name']);
+                }
+            }
         }
 
         // Clear cache and return response
