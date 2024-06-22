@@ -9,7 +9,7 @@ const Folder = ({ clientFile, updatedData }) => {
     <div className="p-3 hover:opacity-80 border border-black hover:shadow-lg transition-all rounded-lg">
       <ToastContainer />
       <div className='flex justify-end'>
-        <ThreePointMenu updatedData={updatedData} id={clientFile.id} />
+        <ThreePointMenu updatedData={updatedData} id={clientFile.id} name={clientFile.file_name} />
       </div>
       <Link to={`/client-file/${clientFile.id}`}>
         <div className="w-full text-center">
