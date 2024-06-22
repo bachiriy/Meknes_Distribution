@@ -133,7 +133,13 @@ class ClientFileController extends Controller
             ], 422);
         }
 
+
         $clientFile = ClientFile::findOrFail($id);
+        if ($clientFile['is_deleted'] === 'yes') {
+            return response()->json([
+                'errors' => "You Can't Update Client Who Is Archived"
+            ], 422);
+        }
         $clientFile->update($data);
 
         // Attach clients and products
@@ -377,6 +383,6 @@ class ClientFileController extends Controller
     }
 
     // function show ($id) {
-        // return ClientFile::where('id', $id)->with(['clients', 'commune', 'products'])->get();
+    // return ClientFile::where('id', $id)->with(['clients', 'commune', 'products'])->get();
     // }
 }

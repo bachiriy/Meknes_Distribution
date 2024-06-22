@@ -133,6 +133,11 @@ class ProductController extends Controller
         }
 
         $product = Product::findOrFail($id);
+        if ($product['is_deleted'] === 'yes') {
+            return response()->json([
+                'errors' => "You Can't Update Client Who Is Archived"
+            ], 422);
+        }
         $product->update($data);
         Cache::forget('products');
         Cache::forget('client_files');

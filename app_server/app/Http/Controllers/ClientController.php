@@ -6,6 +6,7 @@ use App\Models\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class ClientController extends Controller
 {
@@ -26,7 +27,7 @@ class ClientController extends Controller
     function store(Request $request): \Illuminate\Http\JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'CIN_ICE' => 'required|string',
+            'CIN_ICE' => 'required|string|unique:clients',
             'type' => 'required|string',
             'email' => 'required|email',
             'phone' => 'required|string',
@@ -87,7 +88,9 @@ class ClientController extends Controller
         $data['id'] = $id;
 
         $validator = Validator::make($data, [
-            'CIN_ICE' => 'required|string',
+            'id' => 'required|exists:client_files,id',
+            'CIN_ICE' => ['required', 'string',
+                Rule::unique('clients')->ignore($id),],
             'type' => 'required|string',
             'email' => 'required|email',
             'phone' => 'required|string',
@@ -104,6 +107,11 @@ class ClientController extends Controller
         }
 
         $client = Client::findOrFail($id);
+        if ($client['is_deleted'] === 'yes') {
+            return response()->json([
+                'errors' => "You Can't Update Client Who Is Archived"
+            ], 422);
+        }
         $client->update($data);
         Cache::forget('clients');
 
