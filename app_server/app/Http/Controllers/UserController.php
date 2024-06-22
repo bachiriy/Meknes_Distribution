@@ -72,7 +72,11 @@ class UserController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
         $user = User::find($id);
-
+        if ($user['is_deleted'] === 'yes') {
+            return response()->json([
+                'errors' => "You Can't Update User Who Is Archived"
+            ], 422);
+        }
 
         if (isset($data['password'])) {
             $validator = Validator::make(['password' => $data['password']], [

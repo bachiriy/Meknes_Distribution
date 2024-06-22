@@ -109,6 +109,11 @@ class SupplierController extends Controller
         }
 
         $supplier = Supplier::findOrFail($id);
+        if ($supplier['is_deleted'] === 'yes') {
+            return response()->json([
+                'errors' => "You Can't Update supplier Who Is Archived"
+            ], 422);
+        }
         $supplier->update($data);
         Cache::forget('suppliers');
 
