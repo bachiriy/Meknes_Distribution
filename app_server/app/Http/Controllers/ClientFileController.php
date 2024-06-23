@@ -296,22 +296,44 @@ class ClientFileController extends Controller
     function rename(Request $request): \Illuminate\Http\JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'fileId' => 'required|numeric|exists:client_files,id',
+            'file_id' => 'required|numeric|exists:media,id',
             'newName' => 'required|string|max:255',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
-
-        $clientFile = ClientFile::find($request->input('fileId'));
-        if ($clientFile) {
-            $clientFile->file_name = $request->input('newName');
-            $clientFile->save();
+        $fileId = $request->input('file_id');
+        $newName = $request->input('newName');
+        $media = Media::findOrFail($fileId);
+        if ($media) {
+            $media->update(['file_name' => $newName]);
             Cache::forget('client_files');
         }
+        return response()->json([
+            'message' => 'Media renamed successfully',
+            'media' => $media
+        ], 200);
+    }
 
-        return response()->json(['success' => true]);
+    function deleteFile(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'file_id' => 'required|numeric|exists:media,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+        $fileId = $request->input('file_id');
+        $media = Media::findOrFail($fileId);
+        if ($media) {
+            $media->delete();
+            Cache::forget('client_files');
+        }
+        return response()->json([
+            'message' => 'Media deleted successfully',
+        ], 200);
     }
 
     function softDelete($id): \Illuminate\Http\JsonResponse

@@ -67,7 +67,8 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/download/file/{ClientFileId}/{fileId}', [ClientFileController::class, 'fileDownload']);
         Route::get('/download/{id}', [ClientFileController::class, 'download']);
         Route::post('/upload', [ClientFileController::class, 'upload']);
-        Route::post('/rename', [ClientFileController::class, 'rename']);
+        Route::post('/file/rename', [ClientFileController::class, 'rename']);
+        Route::delete('/file/delete', [ClientFileController::class, 'deleteFile']);
     });
 
 
