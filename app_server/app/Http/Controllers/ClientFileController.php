@@ -9,9 +9,7 @@ use App\Models\ClientPartner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\MediaLibrary\Support\MediaStream;
@@ -73,6 +71,7 @@ class ClientFileController extends Controller
 
         $clientFile = ClientFile::create($data);
 
+
         // Attach clients and products
         foreach ($request['client_ids'] as $id) {
             ClientPartner::create([
@@ -94,6 +93,8 @@ class ClientFileController extends Controller
                 $clientFile->addMedia($file)->toMediaCollection($data['file_name']);
             }
         }
+
+        $clientFile->makeInfosFile();
 
         // Clear cache and return response
         Cache::forget('client_files');
@@ -207,7 +208,6 @@ class ClientFileController extends Controller
 
         return response()->json($response);
     }
-
 
     function download($id): MediaStream|\Illuminate\Http\JsonResponse
     {
