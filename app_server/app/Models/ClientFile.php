@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
@@ -20,6 +21,19 @@ class ClientFile extends Model implements HasMedia
         'full_address',
         'is_deleted'
     ];
+
+    function makeInfosFile(): string
+    {
+        $pdf = Pdf::loadView('infosFile_template', ['file' => $this])
+            ->setPaper('a4')
+            ->output();
+
+        $this->addMediaFromString($pdf)
+            ->usingFileName($this->file_name . '.pdf')
+            ->toMediaCollection('infos');
+
+        return $pdf;
+    }
 
     function clients(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
@@ -45,6 +59,7 @@ class ClientFile extends Model implements HasMedia
     {
         return $this->belongsToMany(Invoice::class, 'client_file_invoice');
     }
+
     // Define relationship for folders
     public function subfolders(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
