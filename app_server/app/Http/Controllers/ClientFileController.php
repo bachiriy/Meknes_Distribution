@@ -253,7 +253,7 @@ class ClientFileController extends Controller
             return response()->json(['error' => 'Client file not found'], 404);
         }
 
-        $medias = $clientFile->getMedia()->whereIn('id', $data['file_ids']);
+        $medias = $clientFile->getMedia('*')->whereIn('id', $data['file_ids']);
 
         if ($medias->isEmpty()) {
             return response()->json(['error' => 'No media found for the given IDs'], 404);
@@ -263,17 +263,33 @@ class ClientFileController extends Controller
         return MediaStream::create($zipName)->addMedia($medias);
     }
 
-    function fileDownload($fileId): \Symfony\Component\HttpFoundation\BinaryFileResponse|\Illuminate\Http\JsonResponse
+    function fileDownload($clientFileId, $fileId): \Symfony\Component\HttpFoundation\BinaryFileResponse|\Illuminate\Http\JsonResponse
     {
-        $validator = Validator::make(['file_id' => $fileId], [
-            'file_id' => 'required|numeric|exists:medias,id',
+        $data = [
+            'file_id' => $fileId,
+            'client_file_id' => $clientFileId
+        ];
+        $validator = Validator::make($data, [
+            'file_id' => 'required|numeric|exists:media,id',
+            'client_file_id' => 'required|numeric|exists:client_files,id'
         ]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $media = Media::find($fileId);
+        $clientFile = ClientFile::find($clientFileId);
+
+        if (!$clientFile) {
+            return response()->json(['error' => 'Client file not found'], 404);
+        }
+
+        $media = $clientFile->getMedia('*')->where('id', $fileId)->first();
+
+        if (!$media) {
+            return response()->json(['error' => 'No media found for the given ID'], 404);
+        }
+
         return response()->download($media->getPath(), $media->file_name);
     }
 
