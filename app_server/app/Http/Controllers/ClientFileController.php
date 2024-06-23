@@ -9,13 +9,10 @@ use App\Models\ClientPartner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\MediaLibrary\Support\MediaStream;
-use ZipArchive;
 
 class ClientFileController extends Controller
 {
@@ -74,6 +71,7 @@ class ClientFileController extends Controller
 
         $clientFile = ClientFile::create($data);
 
+
         // Attach clients and products
         foreach ($request['client_ids'] as $id) {
             ClientPartner::create([
@@ -95,6 +93,8 @@ class ClientFileController extends Controller
                 $clientFile->addMedia($file)->toMediaCollection($data['file_name']);
             }
         }
+
+        $clientFile->makeInfosFile();
 
         // Clear cache and return response
         Cache::forget('client_files');
@@ -164,10 +164,23 @@ class ClientFileController extends Controller
             $clientFile->products()->sync($request->input('product_ids'));
         }
 
-        // Handle file upload with Media Library
         if ($request->hasFile('files')) {
-            $clientFile->clearMediaCollection('client_files');
-            $clientFile->addMedia($request->file('files'))->toMediaCollection('client_files');
+            foreach ($request->file('files') as $file) {
+                // Generate a hash of the file content
+                $fileHash = md5_file($file->getPathname());
+
+                // Check if a media item with this hash already exists in the collection
+                $existingMedia = $clientFile->getMedia($data['file_name'])->first(function ($mediaItem) use ($fileHash) {
+                    return $mediaItem->getCustomProperty('file_hash') === $fileHash;
+                });
+
+                // If no media item with this hash exists, add the new file to the collection
+                if (!$existingMedia) {
+                    $clientFile->addMedia($file)
+                        ->withCustomProperties(['file_hash' => $fileHash])
+                        ->toMediaCollection($data['file_name']);
+                }
+            }
         }
 
         // Clear cache and return response
@@ -195,7 +208,6 @@ class ClientFileController extends Controller
 
         return response()->json($response);
     }
-
 
     function download($id): MediaStream|\Illuminate\Http\JsonResponse
     {
@@ -241,7 +253,7 @@ class ClientFileController extends Controller
             return response()->json(['error' => 'Client file not found'], 404);
         }
 
-        $medias = $clientFile->getMedia()->whereIn('id', $data['file_ids']);
+        $medias = $clientFile->getMedia('*')->whereIn('id', $data['file_ids']);
 
         if ($medias->isEmpty()) {
             return response()->json(['error' => 'No media found for the given IDs'], 404);
@@ -251,39 +263,77 @@ class ClientFileController extends Controller
         return MediaStream::create($zipName)->addMedia($medias);
     }
 
-    function fileDownload($fileId): \Symfony\Component\HttpFoundation\BinaryFileResponse|\Illuminate\Http\JsonResponse
+    function fileDownload($clientFileId, $fileId): \Symfony\Component\HttpFoundation\BinaryFileResponse|\Illuminate\Http\JsonResponse
     {
-        $validator = Validator::make(['file_id' => $fileId], [
-            'file_id' => 'required|numeric|exists:medias,id',
+        $data = [
+            'file_id' => $fileId,
+            'client_file_id' => $clientFileId
+        ];
+        $validator = Validator::make($data, [
+            'file_id' => 'required|numeric|exists:media,id',
+            'client_file_id' => 'required|numeric|exists:client_files,id'
         ]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $media = Media::find($fileId);
+        $clientFile = ClientFile::find($clientFileId);
+
+        if (!$clientFile) {
+            return response()->json(['error' => 'Client file not found'], 404);
+        }
+
+        $media = $clientFile->getMedia('*')->where('id', $fileId)->first();
+
+        if (!$media) {
+            return response()->json(['error' => 'No media found for the given ID'], 404);
+        }
+
         return response()->download($media->getPath(), $media->file_name);
     }
 
     function rename(Request $request): \Illuminate\Http\JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'fileId' => 'required|numeric|exists:client_files,id',
+            'file_id' => 'required|numeric|exists:media,id',
             'newName' => 'required|string|max:255',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
-
-        $clientFile = ClientFile::find($request->input('fileId'));
-        if ($clientFile) {
-            $clientFile->file_name = $request->input('newName');
-            $clientFile->save();
+        $fileId = $request->input('file_id');
+        $newName = $request->input('newName');
+        $media = Media::findOrFail($fileId);
+        if ($media) {
+            $media->update(['file_name' => $newName]);
             Cache::forget('client_files');
         }
+        return response()->json([
+            'message' => 'Media renamed successfully',
+            'media' => $media
+        ], 200);
+    }
 
-        return response()->json(['success' => true]);
+    function deleteFile(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'file_id' => 'required|numeric|exists:media,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+        $fileId = $request->input('file_id');
+        $media = Media::findOrFail($fileId);
+        if ($media) {
+            $media->delete();
+            Cache::forget('client_files');
+        }
+        return response()->json([
+            'message' => 'Media deleted successfully',
+        ], 200);
     }
 
     function softDelete($id): \Illuminate\Http\JsonResponse
