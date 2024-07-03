@@ -16,7 +16,7 @@ const CircleGraph = () => {
         const newData = response.trending.map(e => {
           let randomColor = Math.floor(Math.random() * 16777215).toString(16);
           return {
-            label: e.name,
+            label: e.name.includes('(M)') ? e.name.replace('(M)', "") : e.name,
             value: e.nbr,
             color: `#${randomColor}`,
             cutout: "50%",
