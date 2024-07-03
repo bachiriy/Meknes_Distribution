@@ -56,7 +56,7 @@ const CircleGraph = () => {
   };
 
   return (
-    <div className="w-[600px]">
+    <div className="w-[600px] h-max-[500px]">
       <Doughnut data={finalData} options={options} />
     </div>
   );
