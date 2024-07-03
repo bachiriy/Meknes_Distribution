@@ -111,4 +111,21 @@ class StatsController extends Controller
         return response()->json($response, 200);
     }
 
+    function getTrendingCommune(): \Illuminate\Http\JsonResponse
+    {
+        $trending = DB::select("
+            SELECT communes.id, communes.name, COUNT(client_files.id) AS nbr
+            FROM communes
+            INNER JOIN client_files ON communes.id = client_files.commune_id
+            GROUP BY communes.id
+             ORDER BY nbr DESC
+             LIMIT 4
+");
+
+        return response()->json([
+            'status' => 'success',
+            'trending' => $trending
+        ]);
+    }
+
 }
