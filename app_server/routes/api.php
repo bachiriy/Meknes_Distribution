@@ -101,6 +101,7 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/communes', [StatsController::class, 'getCommunes']);
         Route::get('/groups', [StatsController::class, 'trendingGroup']);
         Route::get('/trending', [StatsController::class, 'getTrendingCommune']);
+        Route::get('/productsStats', [StatsController::class, 'getProductsStats']);
     });
 
     Route::prefix('mails')->group(function () {
