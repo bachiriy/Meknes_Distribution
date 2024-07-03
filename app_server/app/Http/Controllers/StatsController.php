@@ -141,6 +141,7 @@ class StatsController extends Controller
                 INNER JOIN products ON client_file_products.product_id = products.id
                 INNER JOIN client_files ON client_file_products.client_file_id = client_files.id
                 INNER JOIN communes ON client_files.commune_id = communes.id
+                WHERE client_files.created_at > (CURRENT_DATE - INTERVAL '12 months')
                 GROUP BY communes.name, EXTRACT(MONTH FROM client_files.created_at)
                 )
                 SELECT product_total, name, created_month
