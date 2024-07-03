@@ -128,4 +128,30 @@ class StatsController extends Controller
         ]);
     }
 
+    function getProductsStats(): \Illuminate\Http\JsonResponse
+    {
+        $data = DB::select("
+                WITH ranked_data AS (
+                SELECT
+                    COUNT(products.id) AS product_total,
+                    communes.name,
+                    EXTRACT(MONTH FROM client_files.created_at) AS created_month,
+                    ROW_NUMBER() OVER (PARTITION BY EXTRACT(MONTH FROM client_files.created_at) ORDER BY COUNT(products.id) DESC) AS rank
+                FROM client_file_products
+                INNER JOIN products ON client_file_products.product_id = products.id
+                INNER JOIN client_files ON client_file_products.client_file_id = client_files.id
+                INNER JOIN communes ON client_files.commune_id = communes.id
+                GROUP BY communes.name, EXTRACT(MONTH FROM client_files.created_at)
+                )
+                SELECT product_total, name, created_month
+                FROM ranked_data
+                WHERE rank <= 5
+                ORDER BY created_month, product_total DESC;
+        ");
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $data
+        ]);
+    }
 }
