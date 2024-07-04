@@ -52,6 +52,7 @@ Route::middleware('auth:api')->group(function () {
 
     Route::prefix('clients')->group(function () {
         Route::get('', [ClientController::class, 'index']);
+        Route::get('/{id}', [ClientController::class, 'show']);
         Route::post('', [ClientController::class, 'store']);
         Route::put('/{id}', [ClientController::class, 'update']);
         Route::put('/softDelete/{id}', [ClientController::class, 'softDelete']);
