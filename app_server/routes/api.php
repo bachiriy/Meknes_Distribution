@@ -43,6 +43,7 @@ Route::middleware('auth:api')->group(function () {
 
     Route::prefix('products')->group(function () {
         Route::get('', [ProductController::class, 'index']);
+        Route::get('/{id}', [ProductController::class, 'show']);
         Route::post('', [ProductController::class, 'store']);
         Route::put('/{id}', [ProductController::class, 'update']);
         Route::put('/softDelete/{id}', [ProductController::class, 'softDelete']);
