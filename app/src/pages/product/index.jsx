@@ -3,6 +3,7 @@ import Table from "../../components/Other/Table";
 import Spinner from "../../components/Other/Spinner";
 import GET from "../../utils/GET";
 import { validateProduct } from "../../utils/validationFunctions";
+import { Link } from "react-router-dom";
 
 const columns = [
   {
@@ -61,6 +62,17 @@ const columns = [
       cell.value ? <img src={cell.value} alt="Product" style={{ width: '50px', height: '50px' }} /> : 'No Image'
     ),
   },
+  {
+    accessorKey: 'view-more',
+    header: "View More",
+    Cell: ({ row }) => (
+      <Link
+      to={`/products/${row.original.id}`}
+      >
+        View More
+      </Link>
+    ),
+  }
 ];
 
 export const Product = () => {
