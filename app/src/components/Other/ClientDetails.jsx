@@ -11,7 +11,7 @@ const ClientDetails = () => {
 
     useEffect(() => {
         get_client();
-    }, []);
+    }, [id]);
 
     const get_client = async () => {
         setLoading(true);
@@ -48,10 +48,10 @@ const ClientDetails = () => {
                     ></path>
                 </svg>
             </Link>
-            <div className="md:flex items-start justify-center pb-12 2xl:px-20 md:px-6 px-4">
-                <div>
-                    <div className="mx-auto px-5">
-                        <div className="max-w-xl cursor-pointer rounded-lg bg-white p-2 shadow duration-150 hover:scale-105 hover:shadow-md">
+            <div className="flex justify-center items-center pb-12 2xl:px-20 md:px-6 px-4">
+                <div className="w-full flex justify-center items-center">
+                    <div className="w-full max-w-4xl">
+                        <div className="cursor-pointer rounded-lg bg-white p-6 shadow duration-150 hover:scale-105 hover:shadow-md">
                             <div>
                                 <div className="my-6 flex items-center justify-between px-4">
                                     <img className="w-32 object-cover p-4 object-center rounded-full" src={DefaultAvatar} alt="client" />
