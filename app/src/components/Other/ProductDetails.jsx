@@ -15,9 +15,8 @@ const ProductDetails = () => {
         console.log(product);
     }, []);
     const get_products = async () => {
-        const r = await GET('products');
-        const findProduct = r.products.find((p) => p.id = id);
-        setProduct(findProduct);
+        const r = await GET(`products/${id}`);
+        setProduct(r.product);
     }
 
     const format_date = (dateString) => {
