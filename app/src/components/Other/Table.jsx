@@ -73,7 +73,7 @@ const Table = ({ columns, data, entityType, validateEntity, updatedData }) => {
             style: {
               width: "100%",
             },
-            value: col.accessorKey === "date_debut" ? today : "",
+            value: col.accessorKey === "date_debut" ? today : undefined,
           };
           break;
 
