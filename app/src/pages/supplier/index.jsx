@@ -34,6 +34,7 @@ const columns = [
     accessorKey: "date_fin",
     header: "Date de Fin",
     DataTypeNeeded: "date",
+    nullable: true,
   },
 ];
 const Supplier = () => {

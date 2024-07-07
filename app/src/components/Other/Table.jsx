@@ -73,7 +73,6 @@ const Table = ({ columns, data, entityType, validateEntity, updatedData }) => {
             style: {
               width: "100%",
             },
-            value: col.accessorKey === "date_debut" ? today : undefined,
           };
           break;
 
@@ -88,67 +87,30 @@ const Table = ({ columns, data, entityType, validateEntity, updatedData }) => {
           break;
       }
 
-      switch (col.accessorKey) {
-        case "required":
-          muiEditTextFieldProps = {
-            required: true,
-            error: !!validationErrors[col.accessorKey],
-            helperText: validationErrors[col.accessorKey],
-            onFocus: () =>
-              setValidationErrors((prev) => ({
-                ...prev,
-                [col.accessorKey]: undefined,
-              })),
-          };
-          break;
-
-        case "type":
-          muiEditTextFieldProps = {
-            select: true,
-            SelectProps: {
-              displayEmpty: true,
-              renderValue: (value) => (value ? value : "Select Type"),
-            },
-            children: [
-              <MenuItem key="Particulier" value="Particulier">
-                Particulier
-              </MenuItem>,
-              <MenuItem key="Entreprise" value="Entreprise">
-                Entreprise
-              </MenuItem>,
-            ],
-          };
-          break;
-
-        case "sub_category_id":
-          muiEditTextFieldProps = {
-            select: true,
-            children: subCategoriesLoading ? (
-              <MenuItem disabled>Loading...</MenuItem>
-            ) : (
-              subCategoryOptions.map((option) => (
-                <MenuItem key={option.key} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))
-            ),
-          };
-          break;
-
-        default:
-          if (col.required) {
-            muiEditTextFieldProps = {
-              required: true,
-              error: !!validationErrors[col.accessorKey],
-              helperText: validationErrors[col.accessorKey],
-              onFocus: () =>
-                setValidationErrors((prev) => ({
-                  ...prev,
-                  [col.accessorKey]: undefined,
-                })),
-            };
-          }
-          break;
+      if (col.nullable) {
+        // Allow nullable fields to be empty without error
+        muiEditTextFieldProps = {
+          ...muiEditTextFieldProps,
+          error: !!validationErrors[col.accessorKey],
+          helperText: validationErrors[col.accessorKey],
+          onFocus: () =>
+            setValidationErrors((prev) => ({
+              ...prev,
+              [col.accessorKey]: undefined,
+            })),
+        };
+      } else if (col.required) {
+        muiEditTextFieldProps = {
+          ...muiEditTextFieldProps,
+          required: true,
+          error: !!validationErrors[col.accessorKey],
+          helperText: validationErrors[col.accessorKey],
+          onFocus: () =>
+            setValidationErrors((prev) => ({
+              ...prev,
+              [col.accessorKey]: undefined,
+            })),
+        };
       }
 
       return {
@@ -204,14 +166,14 @@ const Table = ({ columns, data, entityType, validateEntity, updatedData }) => {
         setValidationErrors(newValidationErrors);
         return;
       }
-  
+
       // Perform mutation to update entity
       await updateEntity.mutateAsync(values);
-  
+
       // Invalidate query and update data
       queryClient.invalidateQueries(ENDPOINT);
       toast.success("Item updated successfully");
-  
+
       // Reset editing state
       table.setEditingRow(null);
     } catch (error) {
@@ -219,7 +181,6 @@ const Table = ({ columns, data, entityType, validateEntity, updatedData }) => {
       toast.error("Failed to save item. Please try again.");
     }
   };
-  
 
   const openDeleteConfirmModal = (row) => {
     setCurrentRow(row);

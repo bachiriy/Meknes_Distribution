@@ -76,17 +76,6 @@ const columns = [
       ) : (
         "No Image"
       ),
-  },
-  {
-    accessorKey: 'view-more',
-    header: "View More",
-    Cell: ({ row }) => (
-      <Link
-        to={`/products/${row.original.id}`}
-      >
-        View More
-      </Link>
-    ),
   }
 ];
 
