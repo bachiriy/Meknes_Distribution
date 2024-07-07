@@ -22,6 +22,7 @@ import Create from "../components/Client-File/Create";
 import { Mails } from "../pages/Mails";
 import ProductDetails from "../components/Other/ProductDetails";
 import ClientDetails from "../components/Other/ClientDetails";
+import { Archive } from "../pages/Archive";
 
 export const Router = (props) => {
   const [isConnected, setIsConnected] = useState(false);
@@ -72,6 +73,7 @@ export const Router = (props) => {
             <Route path="/mails" element={<Mails />} />
             <Route path="/products/:id" element={<ProductDetails />} />
             <Route path="/clients/:id" element={<ClientDetails />} />
+            <Route path="/archive" element={<Archive />} />
           </Route>
         )}
       </Routes>
