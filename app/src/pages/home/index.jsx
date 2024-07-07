@@ -18,8 +18,10 @@ export const Home = (props) => {
   };
 
   return (
-    <div className="hero relative w-full h-[96vh] flex flex-col justify-between items-center overflow-hidden">
-      <img className="absolute inset-0 w-full h-full object-cover" src="./sapiens (1).png" alt="Welcome Image" />
+    <div className="hero relative w-full h-[95vh] flex flex-col justify-between items-center overflow-hidden">
+      <div className="">
+        <img className="absolute mx-auto inset-0 h-[100vh] object-cover" src="./sapiens (1).png" alt="Welcome Image" />
+      </div>
 
       <div className="relative z-10 flex flex-col justify-end items-center text-center text-white p-4 flex-grow">
         <h1 className="mb-4 text-xl sm:text-2xl md:text-4xl lg:text-5xl font-extrabold">
