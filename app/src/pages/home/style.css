@@ -1,4 +1,10 @@
 .hero {
   background-image: url("https://assets-global.website-files.com/60c3992427a0440349d4d2fd/60c3992427a04469d6d4d369_BG_Illustration_CSE%402x.png");
   background-size: 80%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.text-shadow {
+  text-shadow: 2px 2px 1px rgb(0, 0, 0);
 }

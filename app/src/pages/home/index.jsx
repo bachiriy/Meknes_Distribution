@@ -3,6 +3,7 @@ import "./style.css";
 import { ToastContainer, toast } from "react-toastify";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
+
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
@@ -12,27 +13,30 @@ export const Home = (props) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-      props.setPage(8);
+    props.setPage(8);
     navigate('stats');
   };
-  
+
   return (
-    <div className="hero">
-
-      <div className="flex justify-end items-center w-full flex-col absolute top-[74%]">
-        <h1 class="mb-4 text-lg font-extrabold text-gray-900 dark:text-white md:text-5xl lg:text-4xl"><span class="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">Welcome <span className="">{capitalizeFirstLetter(user.name)}</span> </span> To Meknes Distribution.</h1>
-        <p class="text-sm font-normal text-gray-500 lg:text-sm dark:text-gray-400">Here at Flowbite we focus on markets where technology, innovation, and capital can unlock long-term value and drive economic growth.</p>
-
+    <div className="hero relative w-full h-[95vh] flex flex-col justify-between items-center overflow-hidden">
+      <div className="">
+        <img className="absolute mx-auto inset-0 h-[100vh] object-cover" src="./sapiens (1).png" alt="Welcome Image" />
       </div>
 
-      <div className="flex justify-center items-center flex-col">
-        <img className="h-1/2 w-1/2" src="./sapiens (1).png" alt="" />
-        <Button
-          onClick={handleClick}
-          color="dark"
-        >
-          {" "}
-          See Analytics
+      <div className="relative z-10 flex flex-col justify-end items-center text-center text-white p-4 flex-grow">
+        <h1 className="mb-4 text-xl sm:text-2xl md:text-4xl lg:text-5xl font-extrabold">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">
+            Welcome <span>{capitalizeFirstLetter(user.name)}</span>
+          </span>
+          <span className="text-shadow">
+            To Meknes Distribution.
+          </span>
+        </h1>
+      </div>
+
+      <div className="relative z-10 mb-8">
+        <Button onClick={handleClick} color="dark">
+          Voir les Analyses
         </Button>
       </div>
     </div>
