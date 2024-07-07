@@ -172,7 +172,7 @@ export default function Profile() {
                 <MDBListGroup flush className="rounded-3">
                   <Link to={'/archive'}>
                     <MDBListGroupItem className="d-flex hover:bg-gray-200 cursor-pointer justify-content-between align-items-center p-3">
-                      <MDBCardText>Archive</MDBCardText>
+                      <MDBCardText>Archives</MDBCardText>
                       <i class="fas fa-trash-can text-red-700"></i>
                     </MDBListGroupItem>
                   </Link>
