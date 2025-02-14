@@ -5,6 +5,7 @@ Welcome to the Meknes Distribution desktop application README. This document out
 ## Overview
 
 The Meknes Distribution desktop application is designed to enhance the efficiency of managing client records by providing online accessibility. It facilitates the entry of client data, allows for file uploads, and enables seamless interaction with the database. Our goal is to offer a user-friendly interface that simplifies the process of managing client information for Meknes Distribution.
+
 ![Screenshot from 2025-02-14 10-03-25](https://github.com/user-attachments/assets/08b8f6f9-64d9-4c1e-a643-0352c06ccb59)
 ---
 
